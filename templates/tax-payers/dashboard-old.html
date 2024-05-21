@@ -1,0 +1,30 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<div class="container mt-5 mb-5">
+  <div class="row justify-content-center mt-5">
+    <div class="col-12">
+      <div class="text-center">
+        <!-- <img
+          src="{% static '/images/nsib-logo-150.jpg' %}"
+          alt="NSIB Logo"
+          class=""
+        /> -->
+        <h3 class="text-center">Dashboard</h3>
+      </div>
+      <div class="py-4 px-3 rounded my-3 bg-light text-dark"></div>
+      <div class="d-flex justify-content-center mt-5">
+        <p>
+          {%  if request.user.is_authenticated %}
+            <p>You are logged in as {{ request.user }}. Click here to <a href="{% url 'logout_user' %}">log out</a></p>
+            <p>
+              <a href="{% url 'setup_profile' %}">Setup Profile</a>
+            </p>
+        {% endif %}
+        </p>
+        <!-- <p><a href="" class="text-decoration-none">Reset password</a></p> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,155 @@
+{% load static %} 
+
+<div class="container mt-5 mb-5">
+  <div class="row justify-content-center mt-5">
+    <div class="col-5">
+      <div class="text-center">
+        <!-- <img
+          src="{% static '/images/nsib-logo-150.jpg' %}"
+          alt="NSIB Logo"
+          class=""
+        /> -->
+        <h3 class="text-center">Welcome {{ user.company_name }}</h3>
+        <p>Enter the required details below to complete your profile setup.</p>
+      </div>
+      <div class="py-4 px-3 rounded my-3 bg-light text-dark">
+        <p>
+          <strong>Company name</strong><br/>
+          {{ user.company_name }}
+        </p>
+        <p>
+          <strong>Telephone</strong><br/>
+          {{ user.phone_number }}
+        </p>
+        <p>
+          <strong>Email</strong><br/>
+          {{ user.email }}
+        </p>
+        <p>
+          <strong>RC Number</strong><br/>
+          {{ user.rc_number }}
+        </p>
+        <hr>
+        
+        <div class="d-flex justify-content-left mt-5">
+          <form method="POST" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+            <strong>Sector</strong>
+            {% if user.sector is None %}
+            {{ form.sector }} 
+            {% else %}
+            {{ user.sector.name }}
+            {% endif %}<br/>
+            <strong>Company logo</strong>
+            {{ form.company_logo }}
+            {% if user.company_logo is None %}
+            {% else %}
+            <img src="{{ user.company_logo }}"  width="200px" />
+            {{ user.company_logo }}
+            {% endif %}<br/>
+
+            <input type="submit" value="Submit" class="btn btn-warning btn-block btn-large my-4" />
+          </form>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center mt-5">
+        <p>
+          {%  if request.user.is_authenticated %}
+            <p>You are logged in as {{ request.user }}. Click here to <a href="{% url 'logout_user' %}">log out</a></p>
+            <p>
+              <a href="{% url 'setup_profile' %}">Setup Profile</a>
+            </p>
+        {% endif %}
+        </p>
+        <!-- <p><a href="" class="text-decoration-none">Reset password</a></p> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+<div>
+              <label for="company" class="label text-sm text-gray600"
+                >Company Name</label
+              >
+              <div class="mt-1">
+                <input
+                  id="company"
+                  name="company_name"
+                  value="{% if user.company_name %}{{ user.company_name }} {% endif %}"
+                  type="company"
+                  autocomplete="company"
+                  placeholder="MTN Nigeria"
+                  required
+                  class="w-full input input-bordered input-md bg-white block py-1 sm:text-sm sm:leading-2"
+                />
+              </div>
+            </div>
+            <div>
+              <label for="address" class="label text-sm text-gray600"
+                >Company Address</label
+              >
+              <div class="mt-1">
+                <input
+                  id="address"
+                  name="address"
+                  value="{% if user.address %}{{ user.address }} {% endif %}"
+                  type="address"
+                  autocomplete="company"
+                  placeholder="7 Alakija Street"
+                  required
+                  class="w-full input input-bordered input-md bg-white block py-1 sm:text-sm sm:leading-2"
+                />
+              </div>
+            </div>
+            <div>
+              <label for="name" class="label text-sm text-gray600"
+                >RC Number</label
+              >
+              <div class="mt-1">
+                <input
+                  id="rcnumber"
+                  name="rc_number"
+                  value="{% if user.rc_number %}{{ user.rc_number }} {% endif %}"
+                  type="text"
+                  placeholder="RC-567890BN"
+                  autocomplete="name"
+                  required
+                  class="w-full input input-bordered input-md bg-white block py-1 sm:text-sm sm:leading-2"
+                />
+              </div>
+            </div>
+            <div>
+              <label for="phone" class="label text-sm text-gray600"
+                >Telephone</label
+              >
+              <div class="mt-1">
+                <input
+                  id="phone"
+                  name="phone"
+                  type="phone"
+                  value="{% if user.company_name %}{{ user.phone_number }} {% endif %}"
+                  autocomplete="phone"
+                  placeholder="mobile number"
+                  required
+                  class="w-full input input-bordered input-md bg-white block py-1 sm:text-sm sm:leading-2"
+                />
+              </div>
+            </div>
+            <div>
+              <label for="email" class="label text-sm text-gray600"
+                >Email Address</label
+              >
+              <div class="mt-1">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value="{% if user.company_name %}{{ user.email }} {% endif %}"
+                  placeholder="your email address"
+                  autocomplete="email"
+                  disabled
+                  class="w-full input input-bordered input-md bg-white block py-1 sm:text-sm sm:leading-2"
+                />
+              </div>
+            </div>

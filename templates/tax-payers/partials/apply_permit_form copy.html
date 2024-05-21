@@ -1,0 +1,40 @@
+<tbody>
+  <form method="POST" action="" enctype="multipart/form-data"
+  hx-post="{% url 'add_permit_form' %}"
+  hx-trigger="click from:#submit-all-permit" >
+  {% csrf_token %}
+  <tr>
+    <td>{{ form.infra_type }}</td>
+    <!-- <td class="w-32">
+      <select name="infrastructure" type="select" id="" >
+        <option value="">Select Infrastructure</option>
+        <option value="mast">Mast</option>
+        <option value="fibre">Fibre</option>
+        <option value="pipeline">Pipeline</option>
+        <option value="powerline">Powerline</option>
+      </select>
+    </td> -->
+    <td>
+      <input type="number">
+    </td>
+    <td>
+      {{ form.length }}
+    </td>
+    <td>
+      {{ form.add_from }}
+    </td>
+    <td>
+      {{ form.add_to }}
+    </td>
+    <td>
+      {{ form.year_installed }}
+    </td>
+    <td>{{ form.upload_application_letter }}</td>
+    <td>{{ form.upload_asBuilt_drawing }}</td>
+    <!-- <td>{{ form.upload_payment_receipt }}</td> -->
+    <td><button hx-on="click: this.closest('tbody').remove()" class="btn" type="button" title="Close">x</button></td>
+    <td class="!text-right font-semibold"><span class="border-2 border-gray-600 rounded-md px-2 py-1 hover:border-orange-500 hover:bg-orange-500 hover:text-white cursor-pointer" 
+      >+</span>
+    </td>
+</tr>
+</tbody>

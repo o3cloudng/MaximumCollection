@@ -1,0 +1,100 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@4.10.1/dist/full.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <!-- <script src="https://cdn.tailwindcss.com?plugins=typography"></script> -->
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <title>LASIMRA:: Tax Payers</title>
+  </head>
+  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <section class="w-full flex flex-row items-start justify-start h-screen">
+      <aside
+        class="md:w-64 w-20 flex flex-col h-screen items-start justify-start space-y-10 bg-lightGrayBg"
+      >
+        <div class="w-full">
+          <img
+            class="w-20 mx-auto mt-10"
+            src="{% static 'img/lasimra_logo.png' %}"
+            alt=""
+          />
+        </div>
+        <div>
+          <ul class="sidebar-menu">
+            <li><a href="{% url 'dashboard' %}">
+              <img  src="https://img.icons8.com/ios-filled/100/home.png" alt="home"/>
+              <span class="hidden md:block">Dashboard</span>
+            </a></li>
+            <li><a href="{% url 'demand-notice' %}">
+              <img src="https://img.icons8.com/carbon-copy/100/file.png" alt="file"/>
+              <span class="hidden md:block">Demand Notices</span>
+            </a>
+          </li>
+            <li><a href="{% url 'disputes' %}">
+              <img  src="https://img.icons8.com/pastel-glyph/64/file-alert--v1.png" alt="file-alert--v1"/>
+              <span class="hidden md:block">Disputes</span>
+            </a>
+          </li>
+            <hr class="border-b-[1px] border-gray-300 w-1/2 mx-auto" />
+            <li><a href="">
+              <img src="https://img.icons8.com/sf-regular/48/suitcase.png" alt="suitcase"/>
+              <span class="hidden md:block">Companies</span></a></li>
+            <li><a href="">
+              <img src="https://img.icons8.com/external-flatart-icons-outline-flatarticons/64/external-infrastructure-information-technology-flatart-icons-outline-flatarticons.png" alt="external-infrastructure-information-technology-flatart-icons-outline-flatarticons"/>
+              <span class="hidden md:block">Infrastructure</span></a></li>
+            <hr class="border-b border-gray-300 w-1/2 mx-auto" />
+            <li><a href="">
+              <img src="https://img.icons8.com/ios/100/settings--v1.png" alt="settings--v1"/>
+              <span class="hidden md:block">Settings</span></a></li>
+            <li><a href="">
+              <img width="64" height="64" src="https://img.icons8.com/wired/64/documents.png" alt="documents"/>
+              <span class="hidden md:block">Resources</span></a></li>
+            <li class="mt-10"><a href="{% url 'logout_user' %}">
+              <img src="https://img.icons8.com/ios/100/logout-rounded--v1.png" alt="logout-rounded--v1"/>
+              <span class="hidden md:block">Logout</span></a></li>
+          </ul>
+        </div>
+      </aside>
+      <main class="flex flex-col p-9 w-screen h-screen overflow-y-auto overflow-x-hidden">
+        {% block content %}
+        {% endblock %}
+            </div>
+          </div>
+        </section>
+
+
+      </main>
+    </section>
+
+           
+
+
+    <!-- Script -->
+
+    <script>
+      const modal = document.getElementById('modal')
+      const closeButton = document.getElementById('close-modal-btn')
+      const btn = document.getElementsByName('button')
+
+      document.addEventListener('DOMContentLoaded', function (e) {
+        modal.classList.remove('hidden')
+        console.log('modal output')
+      })
+
+      closeButton.addEventListener('click', function (e) {
+        modal.classList.add('hidden')
+      })
+
+      // btn.addEventListener('click', ())
+    </script>
+  </body>
+</html>
