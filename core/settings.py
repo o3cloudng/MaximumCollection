@@ -101,24 +101,6 @@ DATABASES = {
 #         'PORT': config('DBPORT'),
 #     }
 # }
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default='postgres://lasimrauser:#1Million@164.92.108.254/lasimra',
-#         conn_max_age=600,
-#         conn_health_checks=True,
-#     ),
-# }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'defaultdb',
-#         'USER': 'avnadmin',
-#         'PASSWORD': 'AVNS_a3GS-beFtOEdaZug-ae',
-#         'HOST': 'lasimra-lasimra.c.aivencloud.com',
-#         'PORT': '23049',
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
