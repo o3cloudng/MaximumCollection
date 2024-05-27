@@ -4,15 +4,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
+    {% comment %} <link
       href="https://cdn.jsdelivr.net/npm/daisyui@4.10.1/dist/full.min.css"
       rel="stylesheet"
       type="text/css"
-    />
+    /> {% endcomment %}
     <!-- <script src="https://cdn.tailwindcss.com?plugins=typography"></script> -->
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     <link rel="stylesheet" href="{% static 'css/main.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    {% comment %} <link rel="stylesheet" href="{% static 'css/style.css' %}" /> {% endcomment %}
     <title>LASIMRA:: Tax Payers</title>
     <style>
       ul.errorlist {
@@ -27,7 +27,7 @@
       >
         <img
           src="{% static 'img/lasimra_logo.png' %}"
-          class="w-40 my-3"
+          class="w-20 my-3"
           alt=""
           srcset=""
         />
@@ -35,7 +35,7 @@
           Create your account
         </div>
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form class="space-y-2 form-control" action="#" method="POST">
+          <form class="flex flex-col gap-4 form-control" action="#" method="POST">
             {% csrf_token %} {{ form.as_p}}
 
             <div>
