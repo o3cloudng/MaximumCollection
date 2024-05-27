@@ -1294,16 +1294,8 @@ select {
   overflow-y: auto;
 }
 
-.overflow-x-hidden {
-  overflow-x: hidden;
-}
-
 .overflow-y-scroll {
   overflow-y: scroll;
-}
-
-.overscroll-x-none {
-  overscroll-behavior-x: none;
 }
 
 .rounded {
@@ -1575,11 +1567,6 @@ select {
 .px-10 {
   padding-left: 2.5rem;
   padding-right: 2.5rem;
-}
-
-.px-16 {
-  padding-left: 4rem;
-  padding-right: 4rem;
 }
 
 .px-2 {
@@ -2299,10 +2286,6 @@ tfoot > tr > td {
 
   .md\:w-4\/5 {
     width: 80%;
-  }
-
-  .md\:w-64 {
-    width: 16rem;
   }
 
   .md\:w-80 {

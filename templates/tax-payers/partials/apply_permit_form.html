@@ -1,21 +1,12 @@
 <tbody>
-  <form method="POST" action="" enctype="multipart/form-data"
-  hx-post="{% url 'add_permit_form' %}"
+  <form
+  hx-post="{% url 'apply_for_permit' %}"
+  hx-on="htmx:afterRequest: this.remove()"
   hx-trigger="click from:#submit-all-permit" >
-  {% csrf_token %}
   <tr>
     <td>{{ form.infra_type }}</td>
-    <!-- <td class="w-32">
-      <select name="infrastructure" type="select" id="" >
-        <option value="">Select Infrastructure</option>
-        <option value="mast">Mast</option>
-        <option value="fibre">Fibre</option>
-        <option value="pipeline">Pipeline</option>
-        <option value="powerline">Powerline</option>
-      </select>
-    </td> -->
     <td>
-      <input type="number">
+      {{ form.amount }}
     </td>
     <td>
       {{ form.length }}

@@ -1,12 +1,17 @@
 
 from pathlib import Path
-import os
 from urllib.parse import urlparse
 from datetime import timedelta
 from django.core.management.utils import get_random_secret_key
+import os
 
-# import dj_database_url
-# from decouple import config
+from decouple import config
+
+# SECRET_KEY = config('SECRET_KEY ')
+# DEBUG = config('DEBUG')
+
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -17,12 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = os.environ.get('SECRET_KEY')
-SECRET_KEY = 'django-insecure-yx1+@pzo7&x(zxj#y4)4+e_64c_vsshn06iy1$o*15!q&)al#o'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG')
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["164.92.108.254", "localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -81,6 +86,39 @@ DATABASES = {
     }
 }
 
+# print("DBUSER", config('DB_USER'))
+# print("DBNAME", config('DB_NAME'))
+# print("DBPASS", config('DBPASS'))
+# print("DBHOST", config('DBHOST'))
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': config('DB_NAME'),
+#         'USER': config('DB_USER'),
+#         'PASSWORD': config('DBPASS'),
+#         'HOST': config('DBHOST'),
+#         'PORT': config('DBPORT'),
+#     }
+# }
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default='postgres://lasimrauser:#1Million@164.92.108.254/lasimra',
+#         conn_max_age=600,
+#         conn_health_checks=True,
+#     ),
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'defaultdb',
+#         'USER': 'avnadmin',
+#         'PASSWORD': 'AVNS_a3GS-beFtOEdaZug-ae',
+#         'HOST': 'lasimra-lasimra.c.aivencloud.com',
+#         'PORT': '23049',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

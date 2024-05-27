@@ -19,41 +19,15 @@ modal = getElementById('modal')
 closeButton = getElementById('close-modal-btn')
 
 // load pop on page load
-window.onload = function () {
-  
-}
+const modal = document.getElementById('modal')
+const closeButton = document.getElementById('close-modal-btn')
+const btn = document.getElementsByName('button')
 
+document.addEventListener('DOMContentLoaded', function (e) {
+  modal.classList.remove('hidden')
+  console.log('modal output')
+})
 
-const LoadPopup = function () {
-  window.addEventListener('load', modal.classList.remove('hidden'))
-} 
-
-
-document
-  .getElementById('open-modal-btn')
-  .addEventListener('onLoad', function () {
-    document.getElementById('modal').classList.remove('hidden')
-  })
-
-document
-  .getElementById('close-modal-btn')
-  .addEventListener('click', function () {
-    document.getElementById('modal').classList.add('hidden')
-  })
-
-
-
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const openModalBtn = document.getElementById('openModal')
-    const closeModalBtn = document.getElementById('closeModal')
-    const modal = document.getElementById('modal')
-
-    openModalBtn.addEventListener('click', () => {
-      modal.classList.remove('hidden')
-    })
-
-    closeModalBtn.addEventListener('click', () => {
-      modal.classList.add('hidden')
-    })
-  })
+closeButton.addEventListener('click', function (e) {
+  modal.classList.add('hidden')
+})

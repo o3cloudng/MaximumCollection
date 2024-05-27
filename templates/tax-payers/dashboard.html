@@ -1,10 +1,15 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
-<!-- Top Bar with title page, buttons and notification tabs -->
-        <section class="w-full flex flex-row justify-between items-center">
+<section class="relative w-full flex flex-row items-start justify-start h-screen z-10">
+      
+      {% include 'tax-payers/aside.html' %}
+      <main class="w-full md:w-4/5 md:ml-[20%] ml-20 bg-gray-50 min-h-screen transition-all p-10">
+
+        <!-- Top Bar with title page, buttons and notification tabs -->
+        <section class="w-full flex flex-row justify-between items-center mb-10">
           <article class="flex flex-col">
             <h2 class="text-xl text-darkBlue">Dashboard</h2>
             <p class="text-sm text-gray600">
-              Overview of what's happening
+              Overview of what's happening 
             </p>
           </article>
           
@@ -12,7 +17,7 @@
             class="w-fit space-x-5 flex flex-row items-center justify-between bg-lightGray600 rounded-full bg-slate-100 p-3"
           >
           <img width="20" height="20" src="https://img.icons8.com/ios/100/appointment-reminders--v1.png" alt="appointment-reminders--v1"/>
-            <p class="text-sm text-gray800">{{ user.email }}</p>
+            <p class="text-sm text-gray800">{{ request.user }}</p>
             <div class="w-6 h-6 rounded-full">
               <img  src="https://img.icons8.com/ios-glyphs/90/user--v1.png" alt="user--v1"/>
             </div>
@@ -20,48 +25,125 @@
           </article>
         </section>
         <!-- Form Tab -->
-        <section class="w-full flex flex-wrap gap-3  md:flex-row justify-between items-center mt-10 ">
-          <div class="card card-compact w-[256px] bg-white border-orange-200 border  shadow-md text-gray900 rounded-md">
-          <div class="card-body space-y-8">
+        <section class="w-full grid grid-rows  md:grid-cols-4 gap-4 justify-between items-center mt-10">
+          <div class="card">
+          
             <p>Total Demand Notices</p>
-            <p class="card-title">50000</p>
+            <h4>50000</h4>
+          
           </div>
-          </div>
-          <div class="card card-compact w-[256px] bg-white border-orange-200 border shadow-md text-gray900 rounded-md">
-          <div class="card-body space-y-8">
+          <div class="card">
+          
             <p>Paid Demand Notices</p>
-            <p class="card-title">700000</p>
+            <h4>700000</h4>
+          
           </div>
-          </div>
-          <div class="card card-compact w-[256px] bg-white border-orange-200 border shadow-md text-gray900 rounded-md">
-          <div class="card-body space-y-8">
+          <div class="card">
+          
             <p>Unpaid Demand Notices</p>
-            <p class="card-title">50000</p>
+            <h4>50000</h4>
           </div>
-          </div>
-          <div class="card card-compact w-[256px] bg-white border-orange-200 border shadow-md text-gray900 rounded-md">
-          <div class="card-body space-y-8">
+          <div class="card">
+          
             <p>Disputed Demand Notices</p>
-            <p class="card-title">50000</p>
-          </div>
+            <h4>50000</h4>
+          
           </div>
         </div>
         </section>
         
         <section class="mt-5 space-x-4 flex flex-col md:flex-row">
           <article class="flex flex-row items-center justify-start space-x-2">
-            <a href="{% url 'apply_for_permit' %}" class="btn bg-darkBlue border-0 btn-normal text-white">Upload Existing Facilities</a>
-            <a href="{% url 'apply_for_permit' %}" class="btn btn-outline btn-normal text-darkBlue border-darkBlue">Apply for New Permit to Build</a>
+            <a href="{% url 'upload-existing-facilities' %}" class="btn">Upload Existing Facilities</a>
+            <a href="{% url 'apply_for_permit' %}" class="btn-outline">Apply for New Permit to Build</a>
           </article>
         </section>
 
-        <section class="mt-5 w-full">
-          <div role="tablist" class="tabs active:tabs-bordered border-0 hover:border-1 hover:border-darkBlue ">
-            <input type="radio" name="my_tabs_1" role="tab" class="tab text-darkBlue" aria-label="All" />
-            <div role="tabpanel" class="tab-content p-3">
+        <section class="mt-10 w-full" >
+          <!--Tabs navigation-->
+          <div x-data="{currentTab: 'All'}">
+
+          <ul
+            class="mb-5 flex list-none flex-row flex-wrap md:gap-4 border-b-0 ps-0"
+            role="tablist"
+            data-twe-nav-ref>
+            <li role="presentation">
+              <a
+                href="#tabs-all"
+                class="my-2 block border-x-0 border-b-2 border-t-0 border-transparent px-7 pb-3.5 pt-4 text-sm font-medium titlecase text-gray-600 leading-tight"
+                id="tabs-all-tab"
+                data-bs-toggle="pill"
+                data-bs-target="#tabs-all"
+                role="tab"
+                aria-controls="tabs-all"
+                aria-selected="true"
+                
+                @click = "currentTab=$el.innerHTML"
+                :class = "currentTab == $el.innerHTML ? 'active' : '' "
+                >All</a
+              >
+            </li>
+            <li role="presentation">
+              <a
+                href="#tabs-paid"
+                class="my-2 block border-x-0 border-b-2 border-t-0 border-transparent px-7 pb-3.5 pt-4 text-sm font-medium titlecase text-gray-600 leading-tight"
+                id="tabs-paid-tab"
+                data-bs-toggle="pill"
+                data-bs-target="#tabs-paid"
+                role="tab"
+                aria-controls="tabs-paid"
+                aria-selected="false"
+                @click = "currentTab=$el.innerHTML"
+                :class = "currentTab == $el.innerHTML ? 'active' : '' "
+                >Paid</a
+              >
+            </li>
+            <li role="presentation">
+              <a
+                href="#tabs-disputed"
+                class="my-2 block border-x-0 border-b-2 border-t-0 border-transparent px-7 pb-3.5 pt-4 text-sm font-medium titlecase text-gray-600 leading-tight"
+                id="tabs-disputed-tab"
+                data-bs-toggle="pill"
+                data-bs-target="#tabs-disputed"
+                role="tab"
+                aria-controls="tabs-disputed"
+                aria-selected="false"
+                @click = "currentTab=$el.innerHTML"
+                :class = "currentTab == $el.innerHTML ? 'active' : '' "
+                >Disputed</a
+              >
+            </li>
+            <li role="presentation">
+              <a
+                href="#tabs-revised"
+                class="my-2 block border-x-0 border-b-2 border-t-0 border-transparent px-7 pb-3.5 pt-4 text-sm font-medium titlecase text-gray-600 leading-tight"
+                id="tabs-revised-tab"
+                data-bs-toggle="pill"
+                data-bs-target="#tabs-revised"
+                role="tab"
+                aria-controls="tabs-revised"
+                aria-selected="false"
+                @click = "currentTab=$el.innerHTML"
+                :class = "currentTab == $el.innerHTML ? 'active' : '' "
+                >Revised</a
+              >
+            </li>
+            
+          </ul>
+
+          <!--Tabs content-->
+          <div class="mb-6">
+            <div
+              x-show = "currentTab == 'All'"
+              class=" opacity-100 transition-opacity duration-150 ease-linear"
+              id="tabs-all"
+              role="tabpanel"
+              aria-labelledby="tabs-all-tab"
+              >
+              <!-- All Tabs -->
               <section class="flex flex-col w-full">
                 
-                <article class="flex md:self-end md:-mt-[50px] spacing-x-2 gap-4">
+                <article class="flex md:self-end md:-mt-[80px] spacing-x-2 gap-4">
                   <!-- Search and Sort Table -->
                   <div class="flex flex-row justify-start items-center  spacing-x-1 border-[1px] border-slate-200 rounded-full w-80 px-2">
                     <svg xmlns="http://www.w3.org/2000/svg"  fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-darkBlue">
@@ -157,22 +239,26 @@
                 </article>
               </section>
             </div>
-
-            <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Paid" checked />
-            <div role="tabpanel" class="tab-content p-3">
+            <div
+              x-show = "currentTab == 'Paid'"
+              class="transition-opacity duration-150 ease-linear"
+              id="tabs-paid"
+              role="tabpanel"
+              aria-labelledby="tabs-paid-tab">
+              <!-- Paid Tabs -->
               <section class="flex flex-col w-full">
                 
-                <article class="flex md:self-end md:-mt-[50px] spacing-x-2 gap-4">
+                <article class="flex md:self-end md:-mt-[80px] spacing-x-2 gap-4">
                   <!-- Search and Sort Table -->
                   <div class="flex flex-row justify-start items-center  spacing-x-1 border-[1px] border-slate-200 rounded-full w-80 px-2">
                     <svg xmlns="http://www.w3.org/2000/svg"  fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-darkBlue">
                       <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                     </svg>
                     <form>
-                    <input type="text" placeholder="Search" class="w-full text-gray800 placeholder-gray400 text-semibold border-0 p-2 ring-0 outline-none bg-transparent focus-within:border-0 rounded-full" />
+                    <input type="text" placeholder="Search" class="w-full text-gray800 placeholder-gray400 text-semibold border-0 p-2 ring-0 outline-none bg-transparent focus-within:border-0 rounded-full cursor-pointer" />
                     </form>
                   </div>
-                  <div class="flex flex-row justify-start items-center  spacing-x-1 border-[1px] border-slate-200 rounded-full w-20 px-2">
+                  <div class="flex flex-row justify-start items-center  spacing-x-1 border-[1px] border-slate-200 rounded-full w-20 px-2 cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"    stroke="currentColor" class="w-6 h-6 text-orange-600">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
                     </svg>
@@ -202,9 +288,7 @@
                       <td>500000</td>
                       <td>12-7-2027</td>
                       <td>
-                        <span class="status-disputed">
-                          Disputed
-                        </span>
+                        <span class="status-paid">Paid</span>
                         
                       </td>
                       <td>
@@ -222,7 +306,7 @@
                       <td>500000</td>
                       <td>12-7-2027</td>
                       <td>
-                        <span class="status-revised">Revised</span>
+                        <span class="status-paid">Paid</span>
                         </td>
                       <td>
                         <span class="flex justify-end items-center text-gray-400">
@@ -258,22 +342,26 @@
                 </article>
               </section>
             </div>
-
-            <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Disputed" />
-            <div role="tabpanel" class="tab-content p-3">
+            <div
+              x-show = "currentTab == 'Disputed'"
+              class="transition-opacity duration-150 ease-linear"
+              id="tabs-disputed"
+              role="tabpanel"
+              aria-labelledby="tabs-disputed-tab">
+              <!-- Disputed Tabs -->
               <section class="flex flex-col w-full">
                 
-                <article class="flex md:self-end md:-mt-[50px] spacing-x-2 gap-4">
+                <article class="flex md:self-end md:-mt-[80px] spacing-x-2 gap-4">
                   <!-- Search and Sort Table -->
                   <div class="flex flex-row justify-start items-center  spacing-x-1 border-[1px] border-slate-200 rounded-full w-80 px-2">
                     <svg xmlns="http://www.w3.org/2000/svg"  fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-darkBlue">
                       <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                     </svg>
                     <form>
-                    <input type="text" placeholder="Search" class="w-full text-gray800 placeholder-gray400 text-semibold border-0 p-2 ring-0 outline-none bg-transparent focus-within:border-0 rounded-full" />
+                    <input type="text" placeholder="Search" class="w-full text-gray800 placeholder-gray400 text-semibold border-0 p-2 ring-0 outline-none bg-transparent focus-within:border-0 rounded-full cursor-pointer" />
                     </form>
                   </div>
-                  <div class="flex flex-row justify-start items-center  spacing-x-1 border-[1px] border-slate-200 rounded-full w-20 px-2">
+                  <div class="flex flex-row justify-start items-center  spacing-x-1 border-[1px] border-slate-200 rounded-full w-20 px-2 cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"    stroke="currentColor" class="w-6 h-6 text-orange-600">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
                     </svg>
@@ -323,7 +411,9 @@
                       <td>500000</td>
                       <td>12-7-2027</td>
                       <td>
-                        <span class="status-revised">Revised</span>
+                        <span class="status-disputed">
+                          Disputed
+                        </span>
                         </td>
                       <td>
                         <span class="flex justify-end items-center text-gray-400">
@@ -339,7 +429,9 @@
                       <td>ED1234GTH</td>
                       <td>500000</td>
                       <td>12-7-2027</td>
-                      <td><span class="status-paid">Paid</span></td>
+                      <td><span class="status-disputed">
+                          Disputed
+                        </span></td>
                       <td>
                         <span class="flex justify-end items-center text-gray-400">
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -359,22 +451,26 @@
                 </article>
               </section>
             </div>
-
-            <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Revised" />
-            <div role="tabpanel" class="tab-content p-3">
+            <div
+              x-show = "currentTab == 'Revised'"
+              class="transition-opacity duration-150 ease-linear"
+              id="tabs-revised"
+              role="tabpanel"
+              aria-labelledby="tabs-revised-tab">
+              <!-- Revised Tabs -->
               <section class="flex flex-col w-full">
                 
-                <article class="flex md:self-end md:-mt-[50px] spacing-x-2 gap-4">
+                <article class="flex md:self-end md:-mt-[80px] spacing-x-2 gap-4">
                   <!-- Search and Sort Table -->
                   <div class="flex flex-row justify-start items-center  spacing-x-1 border-[1px] border-slate-200 rounded-full w-80 px-2">
                     <svg xmlns="http://www.w3.org/2000/svg"  fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-darkBlue">
                       <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                     </svg>
                     <form>
-                    <input type="text" placeholder="Search" class="w-full text-gray800 placeholder-gray400 text-semibold border-0 p-2 ring-0 outline-none bg-transparent focus-within:border-0 rounded-full" />
+                    <input type="text" placeholder="Search" class="w-full text-gray800 placeholder-gray400 text-semibold border-0 p-2 ring-0 outline-none bg-transparent focus-within:border-0 rounded-full cursor-pointer" />
                     </form>
                   </div>
-                  <div class="flex flex-row justify-start items-center  spacing-x-1 border-[1px] border-slate-200 rounded-full w-20 px-2">
+                  <div class="flex flex-row justify-start items-center  spacing-x-1 border-[1px] border-slate-200 rounded-full w-20 px-2 cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"    stroke="currentColor" class="w-6 h-6 text-orange-600">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
                     </svg>
@@ -404,9 +500,7 @@
                       <td>500000</td>
                       <td>12-7-2027</td>
                       <td>
-                        <span class="status-disputed">
-                          Disputed
-                        </span>
+                        <span class="status-revised">Revised</span>
                         
                       </td>
                       <td>
@@ -440,7 +534,7 @@
                       <td>ED1234GTH</td>
                       <td>500000</td>
                       <td>12-7-2027</td>
-                      <td><span class="status-paid">Paid</span></td>
+                      <td><span class="status-revised">Revised</span></td>
                       <td>
                         <span class="flex justify-end items-center text-gray-400">
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -459,22 +553,96 @@
                     </table>
                 </article>
               </section>
-<!-- Script -->
+            </div>
+            
+          </div>
 
+        </div>
+      </section>
+<!-- Popup -->
+{% if not user.is_profile_complete %}
+      <div id="modal" class="fixed z-50 inset-0 w-screen">
+        <!-- bg-gray-500 bg-opacity-75 transition-opacity -->
+        <div
+          class="flex items-center justify-center w-screen min-h-screen bg-gray-100 bg-opacity-75 transition-opacity"
+        >
+          <!-- Modal Box -->
+          <div
+            class="flex flex-col items-center justify-between bg-white p-10 rounded-md w-2/4 shadow-sm gap-4"
+          >
+            <div class="self-end cursor-pointer" id="close-modal-btn">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-8 h-8 text-gray-800 self-end"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6 18 18 6M6 6l12 12"
+                />
+              </svg>
+            </div>
+
+            <img src="{% static 'img/Success.png'  %}" alt="Success Icon" class="mt-5" />
+
+            <div class="flex flex-col items-center justify-between">
+              <h3
+                class="text-2xl leading-6 font-medium text-black tracking-wider titlecase"
+                id="modal-title"
+              >
+                Congratulations!
+              </h3>
+              <p
+                class="mt-4 text-xl text-gray-700 font-light md:w-80 text-center"
+              >
+                Your Company's profile has been successfully created
+              </p>
+            </div>
+            <div
+              class="flex flex-col md:flex-row justify-between items-center md:gap-10 my-6 mb-20"
+            >
+              <a
+                href="{% url 'upload-existing-facilities' %}"
+                id="close-modal-btn"
+                type="button"
+                class="border border-gray-200 px-4 py-3 mt-10 bg-orange-400 hover:bg-orange-600 text-white rounded tracking-wider"
+              >
+               {% if not is_profile_complete %} Upload Existing Facilities {% endif %}
+              </a>
+              <a
+                href="{% url 'apply_for_permit' %}"
+                id="close-modal-btn"
+                type="button"
+                class="border border-orange-400 px-4 py-3 mt-10 bg-transparent hover:border-gray-800 hover:text-gray-800 text-orange-400 rounded tracking-wider"
+              >
+                Apply for New permit to Build
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endif %}      
+{% endblock %}
+</script>
+
+{% block script %}
     <script>
-      const modal = document.getElementById('modal')
-      const closeButton = document.getElementById('close-modal-btn')
-      const btn = document.getElementsByName('button')
+      const modal = document.getElementById("modal");
+      const closeButton = document.getElementById("close-modal-btn");
+      const btn = document.getElementsByName("button");
 
-      document.addEventListener('DOMContentLoaded', function (e) {
-        modal.classList.remove('hidden')
-        console.log('modal output')
-      })
+      document.addEventListener("DOMContentLoaded", function (e) {
+        modal.classList.remove("hidden");
+      });
 
-      closeButton.addEventListener('click', function (e) {
-        modal.classList.add('hidden')
-      })
+      closeButton.addEventListener("click", function (e) {
+        modal.classList.add("hidden");
+      });
 
       // btn.addEventListener('click', ())
     </script>
-        {% endblock %}
+    {% endblock %}

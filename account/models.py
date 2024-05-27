@@ -59,6 +59,7 @@ class User(AbstractUser, TrackingModel, PermissionsMixin):
     rc_number = models.CharField(max_length=20)
     phone_number = PhoneNumberField(blank=True)
     is_tax_admin = models.BooleanField(default=False)
+    is_profile_complete = models.BooleanField(default=False)
     
 
     USERNAME_FIELD = "email"

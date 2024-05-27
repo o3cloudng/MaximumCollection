@@ -1,14 +1,14 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
-<section class="relative w-full flex flex-row items-start justify-start h-screen z-10">
+    <section class="relative w-full flex flex-row items-start justify-start h-screen z-10">
       {% include 'tax-payers/aside.html' %}
       <main class="w-full md:w-4/5 md:ml-[20%] ml-20 bg-gray-50 min-h-screen transition-all p-10">
 
         <!-- Top Bar with title page, buttons and notification tabs -->
         <section class="w-full flex flex-row justify-between items-center mb-10">
           <article class="flex flex-col">
-            <h2 class="text-xl text-darkBlue">Demand Notices</h2>
+            <h2 class="text-xl text-darkBlue">Infrastructures</h2>
             <p class="text-sm text-gray600">
-              Overview of your demand notices
+              Overview of your infrastructures
             </p>
           </article>
           
@@ -27,24 +27,24 @@
         <section class="w-full grid grid-rows  md:grid-cols-4 gap-4 justify-between items-center mt-10">
           <div class="card">
           
-            <p>Total Demand Notices</p>
+            <p>Mast</p>
             <h4>50000</h4>
           
           </div>
           <div class="card">
           
-            <p>Paid Demand Notices</p>
+            <p>Fibre</p>
             <h4>700000</h4>
           
           </div>
           <div class="card">
           
-            <p>Unpaid Demand Notices</p>
+            <p>Power Lines</p>
             <h4>50000</h4>
           </div>
           <div class="card">
           
-            <p>Disputed Demand Notices</p>
+            <p>Pipe Lines</p>
             <h4>50000</h4>
           
           </div>
@@ -87,7 +87,7 @@
                 aria-selected="false"
                 @click = "currentTab=$el.innerHTML"
                 :class = "currentTab == $el.innerHTML ? 'active' : '' "
-                >Paid</a
+                >Mast</a
               >
             </li>
             <li role="presentation">
@@ -102,7 +102,7 @@
                 aria-selected="false"
                 @click = "currentTab=$el.innerHTML"
                 :class = "currentTab == $el.innerHTML ? 'active' : '' "
-                >Disputed</a
+                >Fibre</a
               >
             </li>
             <li role="presentation">
@@ -117,7 +117,7 @@
                 aria-selected="false"
                 @click = "currentTab=$el.innerHTML"
                 :class = "currentTab == $el.innerHTML ? 'active' : '' "
-                >Revised</a
+                >Power Line</a
               >
             </li>
             
@@ -552,12 +552,4 @@
         </div>
       </section>
 
-        
-
-<footer class="bottom-10 w-full md:w-4/5 md:ml-[20%] ml-20 text-right mt-20 text-xs text-blue-800">
-  <p>Powered by Maximum Collections</p>
-
-</footer>
-      </main>
-    </section>
 {% endblock %}

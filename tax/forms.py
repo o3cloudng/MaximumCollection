@@ -53,50 +53,71 @@ from django import forms
 class PermitForm(forms.ModelForm):
     class Meta:
         model = Permit
-        fields = ['infra_type', 'add_from', 'add_to', 'length', 'year_installed', 'upload_application_letter',
+        # fields = ['company', 'referenceid', 'infra_type', 'amount', 'add_from', 'add_to', 'length', 'year_installed', 'upload_application_letter',
+        #           'upload_asBuilt_drawing', 'upload_payment_receipt']
+        fields = ['infra_type', 'amount', 'add_from', 'add_to', 'length', 'year_installed', 'upload_application_letter',
                   'upload_asBuilt_drawing', 'upload_payment_receipt']
 
         widgets = {
-            'infra_type': forms.Select(choices = InfrastructureType.objects.all(), attrs={
+            # 'company': forms.HiddenInput(attrs={'value' : '{{company}}'}),
+            # 'referenceid': forms.HiddenInput(attrs={'value' : '{{referenceid}}'}),
+            'infra_type': forms.Select(
+                choices = InfrastructureType.objects.all(), 
+                attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
+                'required': False,
                 'placeholder': 'Infrastructure Type'
+                }),
+            'amount': forms.TextInput(attrs={
+                'class': "form-control",
+                'style': 'max-width: 150px;',
+                'required': False,
+                'placeholder': 'Amount',
+                'type': "number"
+                }),
+            'length': forms.TextInput(attrs={
+                'class': "form-control",
+                'style': 'max-width: 150px;',
+                'placeholder': 'Length',
+                'required': False,
+                'type': "number"
                 }),
             'add_from': forms.TextInput(attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
+                'required': False,
                 'placeholder': 'Address from'
                 }),
             'add_to': forms.TextInput(attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
+                'required': False,
                 'placeholder': 'Address to'
-                }),
-            'length': forms.TextInput(attrs={
-                'class': "form-control",
-                'style': 'max-width: 150px;',
-                'placeholder': 'Total length',
-                'type': "number"
                 }),
             'year_installed': forms.DateInput(attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
+                'required': False,
                 'placeholder': 'Year of installation',
                 'type':"Date"
                 }),
             'upload_application_letter': forms.FileInput(attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
+                'required': False,
                 'placeholder': 'Upload application letter'
                 }),
             'upload_asBuilt_drawing': forms.FileInput(attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
+                'required': False,
                 'placeholder': 'Upload as-built drawing'
                 }),
             'upload_payment_receipt': forms.FileInput(attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
+                'required': False,
                 'placeholder': 'Upload payment receipt'
                 }),
         }

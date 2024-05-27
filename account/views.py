@@ -61,7 +61,15 @@ def logout_user(request):
 
 @login_required
 def dashboard(request):
-    context = {}
+    user = User.objects.get(id = request.user.id)
+    print("Complete? ", user.is_profile_complete)
+    if user.is_profile_complete:
+        context = {
+            "is_profile_complete" : True
+        }
+    context = {
+         "is_profile_complete" : False
+    }
     return render(request, 'tax-payers/dashboard.html', context)
 
 @login_required
@@ -73,6 +81,7 @@ def setup_profile(request):
             print("PROFILE: ", form)
             profile = form.save(commit=False)
             profile.email = request.user.email
+            profile.is_profile_complete = True
             profile.save()
             # user = user.update(
             #     company_name = form.cleaned_data['company_name'], 
