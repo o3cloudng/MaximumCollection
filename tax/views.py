@@ -122,9 +122,9 @@ def downloads(request):
     return render(request, 'tax-payers/downloads.html', context)
 
 
-def admin_settings(request):
+def settings(request):
     context = {}
-    return render(request, 'tax-payers/admin-settings.html', context)
+    return render(request, 'tax-payers/settings.html', context)
 
 
 def resources(request):

@@ -8,15 +8,15 @@ class SignupForm(UserCreationForm):
     
     email = forms.EmailField(max_length=255, required=True, 
                                 widget=forms.widgets.Input(
-            attrs={"placeholder": "Enter email address.","class": "w-full input input-bordered input-md bg-white block py-1 sm:text-sm sm:leading-2 label text-sm text-gray600", }),
+            attrs={"placeholder": "Enter email address.", "type":"email","class": "bg-white py-3 focus:bg-white label text-sm !text-gray-600", }),
             label="Email address",)
     phone_number = forms.CharField(max_length=50, required=True, 
                                 widget=forms.widgets.Input(
-            attrs={"placeholder": "Enter phone number.","class": "w-full input input-bordered input-md bg-white block py-1 sm:text-sm sm:leading-2 label text-sm text-gray600", }),
+            attrs={"placeholder": "Enter phone number.", "type":"text", "class": "bg-white py-3 focus:bg-white label text-sm text-gray-600", }),
             label="Phone number",)
-    password1 = forms.CharField(widget=forms.PasswordInput(attrs={"placeholder": "Enter password","class": "w-full input input-bordered input-md bg-white block py-1 sm:text-sm sm:leading-2 label text-sm text-gray600", }),
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={"placeholder": "Enter password","type":"password","class": "bg-white py-3 label text-sm text-gray-600", }),
                                 label="Enter password",)
-    password2 = forms.CharField(widget=forms.PasswordInput(attrs={"placeholder": "Confirm password","class": "w-full input input-bordered input-md bg-white block py-1 sm:text-sm sm:leading-2 label text-sm text-gray600", }),
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={"placeholder": "Confirm password","type":"password", "class": "bg-white py-3 focus:bg-white label text-sm text-gray-600", }),
                                 label="Confirm password",)
 
 
