@@ -97,8 +97,19 @@ def dashboard(request):
             "is_profile_complete" : True,
             "user":user
         }
+
+    demand_notices = Permit.objects.filter(company=request.user)
+    demand_notices_paid = Permit.objects.filter(company=request.user, status="PAID")
+    demand_notices_unpaid = Permit.objects.filter(company=request.user, status="UNPAID")
+    demand_notices_disputed = Permit.objects.filter(company=request.user, status="DISPUTED")
+    demand_notices_resolved = Permit.objects.filter(company=request.user, status="RESOLVED")
     context = {
-         "is_profile_complete" : False
+         "is_profile_complete" : False,
+         "demand_notices": demand_notices,
+         "demand_notices_paid": demand_notices_paid,
+         "demand_notices_unpaid": demand_notices_unpaid,
+        "demand_notices_disputed": demand_notices_disputed,
+        "demand_notices_resolved": demand_notices_resolved
     }
     return render(request, 'tax-payers/dashboard.html', context)
 

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'account',
     'phonenumber_field',
     'tax',
+    'django_htmx',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_htmx.middleware.HtmxMiddleware',
 ]
 
 
@@ -97,8 +99,8 @@ DATABASES = {
 #         'NAME': config('DB_NAME'),
 #         'USER': config('DB_USER'),
 #         'PASSWORD': config('DBPASS'),
-#         'HOST': config('DBHOST'),
-#         'PORT': config('DBPORT'),
+#         'HOST': 'lasimra-db-do-user-16653632-0.c.db.ondigitalocean.com',
+#         'PORT': '25060',
 #     }
 # }
 
