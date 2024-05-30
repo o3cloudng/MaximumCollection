@@ -5,6 +5,7 @@ urlpatterns = [
     path('dashboard/', dashboard, name="dashboard"),
     path('apply/permit/', apply_for_permit, name="apply_for_permit"),
     path('apply/permit/add_permit_form/', add_permit_form, name="add_permit_form"),
+    path('apply/permit/edit/<str:ref_id>/', apply_for_permit_edit, name="apply_for_permit_edit"),
     path('apply/permit/upload_existing_facilities/', upload_existing_facilities, name="upload-existing-facilities"),
     path('apply/permit/demand_notice/', demand_notice, name="demand-notice"),
     path('apply/permit/disputes/', disputes, name="disputes"),

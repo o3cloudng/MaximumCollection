@@ -2,10 +2,11 @@ from django.shortcuts import render, redirect
 from tax.forms import PermitForm
 from django.contrib.auth.decorators import login_required
 from account.models import User
-from .models import Permit
+from .models import Permit, InfrastructureType
 from datetime import date, timedelta
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django_htmx.http import HttpResponseClientRedirect
 
 
 def generate_ref_id():
@@ -16,14 +17,11 @@ def generate_ref_id():
 
 @login_required
 def apply_for_permit(request):
-    print("GETTING HERE.......")
     if Permit.objects.all().exists(): 
         last = Permit.objects.latest("pk").id
         ref_id = "LA"+generate_ref_id() + str(last + 1).zfill(5)
-        # print("No Ref: ", ref_id)
     else:
         ref_id = generate_ref_id() + "00001"
-        # print("No Ref here: ", ref_id)
 
     if request.method == "POST":
         form = PermitForm(request.POST, request.FILES)
@@ -34,12 +32,6 @@ def apply_for_permit(request):
             permit.referenceid = ref_id
             permit.company = request.user
             permit.save()
-            # context = {
-            #     'referenceid': ref_id
-            # }
-            return HttpResponseRedirect(reverse('payment-receipt', ref_id))
-            # return render(request, "tax-payers/payment-receipt.html", context)
-        
         else:
             print("FILE FORMAT INVALID")
     form = PermitForm()
@@ -50,15 +42,43 @@ def apply_for_permit(request):
         'company': request.user
     }
 
+    if request.htmx:
+        return HttpResponseClientRedirect('/tax/apply/permit/payment_receipt/'+permit.referenceid)
+
     return render(request, 'tax-payers/apply_for_permit.html', context)
 
 @login_required
-def demand_notice(request):
-    user = User.objects.get(id=request.user.id)
+def apply_for_permit_edit(request, ref_id):
+
+    permits = Permit.objects.filter(referenceid = ref_id)
+    infra_type = InfrastructureType.objects.all()
+    form = PermitForm(request.POST, request.FILES)
+
+    if request.htmx:
+        infra = InfrastructureType.objects.get(infra_name=request.POST['infra_type'])
+        print("INFRA: ", infra)
+        form.infra_type = infra
+
+        if form.is_valid():
+            print("Form is valid")
+            # permit = form.save(commit=False)
+            # permit.infra_type = infra
+            form.save()
+        else:
+            print(form.errors)
+        
+
+    # form = PermitForm(instance = permits)
     context = {
-        "user": user
+        'permits': permits,
+        'ref_id': ref_id,
+        'infra_type': infra_type
     }
-    return render(request, 'tax-payers/demand_notice.html', context)
+    if request.htmx:
+        return HttpResponseClientRedirect('/tax/apply/permit/edit/'+ref_id)
+    
+    return render(request, 'tax-payers/apply_for_permit_edit.html', context)
+
 
 @login_required
 def add_permit_form(request):
@@ -115,6 +135,23 @@ def dashboard(request):
 
 
 @login_required
+def demand_notice(request):
+    demand_notices = Permit.objects.filter(company=request.user)
+    demand_notices_paid = Permit.objects.filter(company=request.user, status="PAID")
+    demand_notices_unpaid = Permit.objects.filter(company=request.user, status="UNPAID")
+    demand_notices_disputed = Permit.objects.filter(company=request.user, status="DISPUTED")
+    demand_notices_resolved = Permit.objects.filter(company=request.user, status="RESOLVED")
+    context = {
+         "is_profile_complete" : False,
+         "demand_notices": demand_notices,
+         "demand_notices_paid": demand_notices_paid,
+         "demand_notices_unpaid": demand_notices_unpaid,
+        "demand_notices_disputed": demand_notices_disputed,
+        "demand_notices_resolved": demand_notices_resolved,
+    }
+    return render(request, 'tax-payers/demand_notice.html', context)
+
+@login_required
 def disputes(request):
     user = User.objects.get(id = request.user.id)
     context = {
@@ -124,7 +161,19 @@ def disputes(request):
 
 
 def infrastructures(request):
-    context = {}
+    demand_notices = Permit.objects.filter(company=request.user, infra_type = "Mast")
+    demand_notices_paid = Permit.objects.filter(company=request.user, infra_type = "", status="PAID")
+    demand_notices_unpaid = Permit.objects.filter(company=request.user, infra_type = "", status="UNPAID")
+    demand_notices_disputed = Permit.objects.filter(company=request.user, infra_type = "", status="DISPUTED")
+    demand_notices_resolved = Permit.objects.filter(company=request.user, infra_type = "", status="RESOLVED")
+    context = {
+         "is_profile_complete" : False,
+         "demand_notices": demand_notices,
+         "demand_notices_paid": demand_notices_paid,
+         "demand_notices_unpaid": demand_notices_unpaid,
+        "demand_notices_disputed": demand_notices_disputed,
+        "demand_notices_resolved": demand_notices_resolved,
+    }
     return render(request, 'tax-payers/infrastructure.html', context)
 
 
@@ -150,6 +199,8 @@ def upload_existing_facilities(request):
 
 def payment_receipt(request, ref_id):
     permits = Permit.objects.filter(referenceid = ref_id)
+    if not permits.first().company == request.user:
+        return redirect('apply_for_permit')
     # print("REF ID: ", permit.reference)
     ref = permits.first()
     print("REF: ", ref.referenceid)
