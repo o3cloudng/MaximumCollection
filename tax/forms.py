@@ -66,13 +66,13 @@ class PermitForm(forms.ModelForm):
                 attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
-                'required': False,
+                'required': True,
                 'placeholder': 'Infrastructure Type'
                 }),
             'amount': forms.TextInput(attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
-                'required': False,
+                'required': True,
                 'placeholder': 'Amount',
                 'type': "number"
                 }),
@@ -80,25 +80,25 @@ class PermitForm(forms.ModelForm):
                 'class': "form-control",
                 'style': 'max-width: 150px;',
                 'placeholder': 'Length',
-                'required': False,
+                'required': True,
                 'type': "number"
                 }),
             'add_from': forms.TextInput(attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
-                'required': False,
+                'required': True,
                 'placeholder': 'Address from'
                 }),
             'add_to': forms.TextInput(attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
-                'required': False,
+                'required': True,
                 'placeholder': 'Address to'
                 }),
             'year_installed': forms.DateInput(attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
-                'required': False,
+                'required': True,
                 'placeholder': 'Year of installation',
                 'type':"Date"
                 }),
