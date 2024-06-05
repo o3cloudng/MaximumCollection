@@ -24,19 +24,28 @@ def apply_for_permit(request):
     else:
         ref_id = generate_ref_id() + "00001"
 
-    if request.htmx:
+    print("WE RAE HERE...")
+
+    if request.method == 'POST':
         print("REF: ", ref_id)
         form = PermitForm(request.POST, request.FILES)
 
         infra_rate = InfrastructureType.objects.get(pk=request.POST['infra_type'])
         print("READY POST: ", infra_rate.rate, type(infra_rate.rate))
+        print("Permit type: ", request.POST['amount'], type(request.POST['amount']))
+        if "Mast" in request.POST['infra_type']:
+            infra_cost = infra_rate.rate * int(request.POST['amount'])
+        elif "Roof" in request.POST['infra_type']:
+            infra_cost = infra_rate.rate * int(request.POST['amount'])
+        else:
+            infra_cost = infra_rate.rate * int(request.POST['length'])
 
         if form.is_valid():
             print("Form is valid")
             permit = form.save(commit=False)
             permit.referenceid = ref_id
             permit.company = request.user
-            permit.infra_cost = infra_rate.rate * permit.amount
+            permit.infra_cost = infra_cost
             permit.save()
         else:
             print("FILE FORMAT INVALID")
@@ -244,11 +253,8 @@ def payment_receipt(request, ref_id):
     permits = Permit.objects.filter(referenceid = ref_id)
     if not permits.first().company == request.user:
         return redirect('apply_for_permit')
-    # print("REF ID: ", permit.reference)
+    
     ref = permits.first()
-    # print("REF: ", ref.referenceid)
-    # admin_settings = AdminSetting.objects.all()
-    # print(admin_settings)
     app_fee = AdminSetting.objects.get(slug="application-fee")
     site_assessment = AdminSetting.objects.get(slug="site-assessment")
     admin_pm_fees = AdminSetting.objects.get(slug="admin-pm-fees")
