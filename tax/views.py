@@ -33,12 +33,17 @@ def apply_for_permit(request):
         infra_rate = InfrastructureType.objects.get(pk=request.POST['infra_type'])
         print("READY POST: ", infra_rate.rate, type(infra_rate.rate))
         print("Permit type: ", request.POST['amount'], type(request.POST['amount']))
-        if "Mast" in request.POST['infra_type']:
+        if "mast" in infra_rate.infra_name.lower():
             infra_cost = infra_rate.rate * int(request.POST['amount'])
-        elif "Roof" in request.POST['infra_type']:
+            # request.POST['length'] = 0
+        elif "roof" in infra_rate.infra_name.lower():
             infra_cost = infra_rate.rate * int(request.POST['amount'])
+            # request.POST['length'] = 0
         else:
             infra_cost = infra_rate.rate * int(request.POST['length'])
+            # request.POST['amount'] = 0
+
+        print("AMOUNT OR NUMBER: ", infra_rate.infra_name.lower())
 
         if form.is_valid():
             print("Form is valid")
