@@ -11,6 +11,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from django.urls import reverse
 from enum import Enum
 import uuid
+from django.utils.text import slugify
 
 
 class Sector(models.Model):
@@ -74,3 +75,20 @@ class User(AbstractUser, TrackingModel, PermissionsMixin):
 
     # def get_absolute_url(self, *args, **kwargs):
     #     return reverse("User:detail", kwargs={"email": self.email})
+
+class AdminSetting(models.Model):
+    name = models.CharField(max_length=20)
+    slug = models.SlugField(null=True, default="slug")
+    description = models.CharField(max_length=200)
+    rate = models.IntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.name)
+        super(AdminSetting, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.name} {self.rate}"

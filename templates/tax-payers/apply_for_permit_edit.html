@@ -46,7 +46,7 @@
                     <tr class="[&>th]:text-orange-600">
                       <!-- <th class="w-20 p-3 text-sm font-semibold tracking-wide text-left">No.</th> -->
                       <th class="p-3 text-xs font-semibold tracking-wide text-left">Infrastructure</th>
-                      <th class="w-24 p-3 text-xs font-semibold tracking-wide text-left">Amount <span class="block text-[8px]">(no of sites)</span></th>
+                      <th class="w-24 p-3 text-xs font-semibold tracking-wide text-left">Number <span class="block text-[8px]">(no of sites)</span></th>
                       <th class="w-24 p-3 text-xs font-semibold tracking-wide text-left">Length <span class="block text-[8px]">(Meters)</span></th>
                       <th class="w-32 p-3 text-xs font-semibold tracking-wide text-left">Address <span class="block text-[8px]">(From)</span></th>
                       <th class="w-32 p-3 text-xs font-semibold tracking-wide text-left">Address To</th>
@@ -62,20 +62,22 @@
                       <tbody class="divide-y divide-gray-100 bg-white "></tbody>
                       
                       <tbody>
+                        
+                        <!-- hx-trigger="click from:#submit-all-permit" -->
                         <form
                         hx-post="{% url 'apply_for_permit_edit' ref_id %}"
-                        hx-on="htmx:afterRequest: this.remove()"
-                        hx-trigger="click from:#submit-all-permit" 
+                        hx-on="htmx:afterRequest: this.remove()" 
                         enctype="multipart/form-data">
                         {% for perm in permits %}
                         <tr>
                           <td>
-                            <select name="infra_type">
+                            {{ form.infra_type }}
+                            <!-- <select name="infra_type">
                               <option value="{{ perm.infra_type }}">{{ perm.infra_type }}</option>
                               {% for infra in infra_type %}
                               <option value="{{ infra.id|floatformat:"0" }}">{{ infra.infra_name }} - {{ infra.id }}</option>
                               {% endfor %}
-                            </select>
+                            </select> -->
                           <td>
                             <input type="text" name="amount" value="{{ perm.amount }}" />
                           </td>
@@ -113,7 +115,7 @@
                   </table>     
             </div>
             <div class="mt-10 mx-auto w-80">
-              <button id="submit-all-permit" 
+              <button id="submit-all-permit" type="submit"
               class="bg-orange-500 border-2 border-orange-500 px-20 py-3 text-white rounded-md hover:bg-transparent hover:border-orange-500 hover:text-orange-500">
               Update </button>
             </form>

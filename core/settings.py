@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'tax',
     'django_htmx',
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [

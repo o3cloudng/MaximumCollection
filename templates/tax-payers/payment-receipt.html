@@ -1,4 +1,6 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
+{% extends 'base.html' %} {% load static %} 
+{% load humanize %}
+{% block content %}
 <section class="w-full flex flex-row items-start justify-start h-screen">
   {% include 'tax-payers/aside.html' %}
   <main
@@ -96,7 +98,7 @@
               </div>
               <div class="text-orange-400 font-normal mt-2">
                 <h2 class="block text-xl">Amount Due:</h2>
-                <h2 class="text-lg">N200,000,000.00</h2>
+                <h2 class="text-lg">N{{ tot_sum_infra.no_sum | floatformat:2 | intcomma }}</h2>
               </div>
             </div>
           </div>
@@ -105,7 +107,7 @@
 
         <div
           class="border-2 border-gray-50 rounded-md shadow-sm bg-contain bg-center bg-transparent bg-opacity-20 bg-no-repeat bg-white bg-opacity-40 w-full"
-          style="background-image: url('{% static "img/paid_receipt.png" %}')"
+          style="background-image: url('{% static "img/paid_receipt.pn" %}')"
         >
           <table class="md:w-full">
             <thead class="bg-orange-50 border-b-2 border-gray-50">
@@ -125,9 +127,9 @@
                 <td>{{ forloop.counter }}</td>
                 <td>{{ permit.infra_type}}</td>
                 <td>{{ permit.amount}}</td>
-                <td>0</td>
                 <td>{{ permit.length }}</td>
-                <td class="!text-right">{{ permit.infra_type}}</td>
+                <td class="!text-right">{{ permit.infra_type.rate | floatformat:2 | intcomma }}</td>
+                <td class="!text-right">{{ permit.infra_cost | floatformat:2 | intcomma  }}</td>
               </tr>
               {% endfor %}
             </tbody>
@@ -136,36 +138,36 @@
             class="flex flex-row justify-between items-center w-full border-y-2 border-gray-600 text-gray-800 p-3"
           >
             <h3>Sub-Total(Permit Fees)</h3>
-            <h3>9, 000, 000:00</h3>
+            <h3>{{ tot_sum_infra.no_sum | floatformat:2 | intcomma }}</h3>
           </div>
           <table class="md:w-full">
             <!-- hover:[&>*:nth-child(odd)]:bg-white -->
             <tbody class="divide-y divide-gray-100 bg-white">
               <tr>
-                <td>Application Fee</td>
-                <td>8</td>
+                <td>{{ app_fee.description }}</td>
+                <td>{{ app_count }}</td>
+                <td class="!text-right">{{ app_fee.rate | floatformat:2 | intcomma }}</td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td class="!text-right">300,000</td>
+                <td class="!text-right">{{ total_app_fee | floatformat:2 | intcomma }}</td>
               </tr>
               <tr>
                 <td class="!w-40">
-                  15% Administrative & Project Management Fees
+                  {{ admin_pm_fees.description }}
                 </td>
                 <td></td>
+                <td class="!text-right">{{admin_pm_fees.rate }}%</td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td class="!text-right">300,000</td>
+                <td class="!text-right">{{ admin_pm_fees_sum | floatformat:2 | intcomma }}</td>
               </tr>
               <tr>
                 <td>Site Assessment Report (SAR)</td>
-                <td>7</td>
+                <td>{{ site_assess_count }}</td>
+                <td class="!text-right">{{ site_assessment.rate | floatformat:2 | intcomma }}</td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td class="!text-right">300,000</td>
+                <td class="!text-right">{{ sar_rate | floatformat:2 | intcomma }}</td>
               </tr>
             </tbody>
           </table>
@@ -173,33 +175,33 @@
             class="font-normal w-full text-sm text-orange-800 flex flex-row justify-between items-center p-3"
           >
             <p>Total Due</p>
-            <h4>N 120,000,000.00</h4>
+            <h4>N {{ total_due | floatformat:2 | intcomma }}</h4>
           </div>
           <div
             class="font-normal text-sm w-full text-green-800 flex flex-row justify-between items-center p-3"
           >
             <p>Waiver Applied</p>
-            <h4 class="">N 20,000,000.00</h4>
+            <h4 class="">N{{ waver | floatformat:2 | intcomma }}</h4>
           </div>
           <div
             class="bg-orange-100 font-normal w-full text-orange-800 flex flex-row justify-between items-center p-3"
           >
             <h3>Total Liability</h3>
-            <h3>N 100,000,000.00</h3>
+            <h3>N{{ total_liability | floatformat:2 | intcomma }}</h3>
           </div>
         </div>
         <div class="flex flex-col p-3 gap-4 w-full">
-          <!-- <div class="flex flex-row justify-between items-center">
-                <div class="flex flex-col gap-4">
-                  <h3 class="text-sm font-semibold text-gray-800">Uploaded Documents</h3>
-                    <div class="flex flex-row gap-5">
-                      <p class="text-sm text-orange-400">file1.pdf</p>
-                      <p class="text-sm text-orange-400">receipt-1.pdf</p>
-                      <p class="text-sm text-orange-400">remitance_doc.pdf</p>
-                    </div>
-                </div>
-                
-              </div> -->
+          <div class="flex flex-row justify-between items-center">
+              <!-- <div class="flex flex-col gap-4">
+                <h3 class="text-sm font-semibold text-gray-800">Uploaded Documents</h3>
+                  <div class="flex flex-row gap-5">
+                    <p class="text-sm text-orange-400">file1.pdf</p>
+                    <p class="text-sm text-orange-400">receipt-1.pdf</p>
+                    <p class="text-sm text-orange-400">remitance_doc.pdf</p>
+                  </div>
+              </div>
+               -->
+              </div>
 
           <div
             class="flex flex-row justify-center items-center gap-10 px-auto my-4 mt-20 mb-0"

@@ -4,6 +4,7 @@ from tax.views import *
 urlpatterns = [
     path('dashboard/', dashboard, name="dashboard"),
     path('apply/permit/', apply_for_permit, name="apply_for_permit"),
+    path('apply/permit/existing_permit', existing_permit, name="existing_permit"),
     path('apply/permit/add_permit_form/', add_permit_form, name="add_permit_form"),
     path('apply/permit/edit/<str:ref_id>/', apply_for_permit_edit, name="apply_for_permit_edit"),
     path('apply/permit/upload_existing_facilities/', upload_existing_facilities, name="upload-existing-facilities"),
