@@ -478,7 +478,7 @@
         </div>
       </section>
 <!-- Popup -->
-{% if not user.is_profile_complete %}
+{% comment %} {% if not user.is_profile_complete %} {% endcomment %}
       <div id="modal" class="fixed z-50 inset-0 w-screen">
         <!-- bg-gray-500 bg-opacity-75 transition-opacity -->
         <div
@@ -543,7 +543,7 @@
           </div>
         </div>
       </div>
-{% endif %}      
+{% comment %} {% endif %}       {% endcomment %}
 {% endblock %}
 </script>
 
