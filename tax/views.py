@@ -146,7 +146,7 @@ def payment_receipt(request, ref_id):
         'permits': permits,
         'ref': ref
     }
-    return render(request, 'tax-payers/payment-receipt.html', context)
+    return render(request, 'tax-payers/undisputed-receipt.html', context)
 
 
 def template(request):
