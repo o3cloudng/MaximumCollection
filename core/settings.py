@@ -6,6 +6,7 @@ from django.core.management.utils import get_random_secret_key
 import os
 
 from decouple import config
+import dj_database_url
 
 # SECRET_KEY = config('SECRET_KEY ')
 # DEBUG = config('DEBUG')
@@ -27,7 +28,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG')
 
-ALLOWED_HOSTS = ["164.92.108.254", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["178.128.127.132", "164.92.108.254", "localhost", "127.0.0.1"]
 
 
 # Application definition
@@ -81,13 +82,21 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if config('DEBUG'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=config('DB_URL'),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
 
 # print("DBUSER", config('DB_USER'))
 # print("DBNAME", config('DB_NAME'))

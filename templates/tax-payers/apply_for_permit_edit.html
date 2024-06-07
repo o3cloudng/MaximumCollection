@@ -56,62 +56,35 @@
                       <!-- <th></th> -->
                     </tr>
                   </thead>
-                      <!-- hover:[&>*:nth-child(odd)]:bg-white -->
-                    
-                      
-                      <tbody class="divide-y divide-gray-100 bg-white "></tbody>
-                      
                       <tbody>
-                        
                         <!-- hx-trigger="click from:#submit-all-permit" -->
                         <form
-                        hx-post="{% url 'apply_for_permit_edit' ref_id %}"
+                        hx-post="{% url 'dispute-demand-notice' ref_id %}"
                         hx-on="htmx:afterRequest: this.remove()" 
-                        enctype="multipart/form-data">
-                        {% for perm in permits %}
+                        enctype="multipart/form-data"> 
+                        {% for dn in demand_notices %}
                         <tr>
                           <td>
-                            {{ form.infra_type }}
-                            <!-- <select name="infra_type">
-                              <option value="{{ perm.infra_type }}">{{ perm.infra_type }}</option>
-                              {% for infra in infra_type %}
-                              <option value="{{ infra.id|floatformat:"0" }}">{{ infra.infra_name }} - {{ infra.id }}</option>
+                            <select class="form-control" name="infra_type" name="infra_type">
+                              <option value="{{ dn.infra_type.id }}">{{ dn.infra_type }}</option>
+                              {% for i in infra %}
+                              <option value="{{ i.id }}">{{ i.infra_name }}</option>
                               {% endfor %}
-                            </select> -->
-                          <td>
-                            <input type="text" name="amount" value="{{ perm.amount }}" />
+                            </select>
+                            <!-- <input type="text" class="form-control" name="infra_type" value="{{ dn.infra_type }}" /> -->
                           </td>
-                          <td>
-                            <input type="text" name="length" value="{{ perm.length }}" />
-                          </td>
-                          <td>
-                            <input type="text" name="add_from" value="{{ perm.add_from }}" />
-                          </td>
-                          <td>
-                            <input type="text" name="add_to" value="{{ perm.add_to }}" />
-                          </td>
-                          <td>
-                            <input type="text" name="year_installed" value="{{ perm.year_installed }}" />
-                          </td>
-                          <td><input type="file" name="upload_application_letter" value="{{ perm.upload_application_letter }}" /></td>
-                          <td><input type="file" name="upload_asBuilt_drawing" value="{{ perm.upload_asBuilt_drawing }}" /></td>
-                          <!-- <td>{{ form.upload_payment_receipt }}</td> -->
-                          <!-- <td><button hx-on="click: this.closest('tbody').remove()" class="border-2 bg-orange-600 text-orange-600 border-orange-500 rounded-md px-2 py-1 hover:border-grey-500 hover:bg-grey-500 hover:text-grey-500 cursor-pointer" type="button" title="Close">-</button>
-                          <td class="!text-right font-semibold"><span class="border-2 border-gray-600 rounded-md px-2 py-1 hover:border-orange-500 hover:bg-orange-500 hover:text-white cursor-pointer"  -->
-                            <!-- >+</span> 
-                          <button class="border-2 border-gray-600 rounded-md px-2 py-1 hover:border-orange-500 hover:bg-orange-500 hover:text-white cursor-pointer" title="Add new infrstructure"
-                                    hx-post="{% url 'add_permit_form' %}"
-                                    hx-swap="beforeend"
-                                    hx-target="#infra-table">+</button> -->
-                          </td>
+                          <td><input type="text" class="form-control" name="amount" value="{{ dn.amount }}" /></td>
+                          <td><input type="text" class="form-control" name="length" value="{{ dn.length }}" /></td>
+                          <td><input type="text" class="form-control" name="add_from" value="{{ dn.add_from }}" /></td>
+                          <td><input type="text" class="form-control" name="add_to" value="{{ dn.add_to }}" /></td>
+                          <td><input type="date" class="form-control" name="year_installed" value="{{ dn.year_installed | date:"d-m-Y" }}" /></td>
+                          <td><input type="file" class="form-control" name="upload_application_letter" value="{{ dn.upload_application_letter }}" /></td>
+                          <td><input type="file" class="form-control" name="upload_asBuilt_drawing" value="{{ dn.upload_asBuilt_drawing }}" /></td>
                         </tr>
-                        {% endfor %}
-                      </tbody>
+                        
 
-          <!-- <button type="submit" class="btn btn-warning" id="submit-all-permit">Next</button> -->
+                        {% endfor %} 
                     </tbody>
-                    
-                      
                   </table>     
             </div>
             <div class="mt-10 mx-auto w-80">

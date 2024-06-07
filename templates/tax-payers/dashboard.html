@@ -215,7 +215,7 @@
                     {% endfor %}
                     {% else %}
                     <tr>
-                      <td colspan="6"> No paid demand notice
+                      <td colspan="6"> No demand notice
                       </td>
                     </tr>
                     {% endif %}
@@ -478,7 +478,6 @@
         </div>
       </section>
 <!-- Popup -->
-{% if not user.is_profile_complete %}
       <div id="modal" class="fixed z-50 inset-0 w-screen">
         <!-- bg-gray-500 bg-opacity-75 transition-opacity -->
         <div
@@ -543,7 +542,7 @@
           </div>
         </div>
       </div>
-{% endif %}      
+   
 {% endblock %}
 </script>
 

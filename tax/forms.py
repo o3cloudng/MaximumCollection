@@ -3,64 +3,13 @@ from tax.models import Permit, InfrastructureType
 from django import forms
 
 
-# class PermitForm(forms.ModelForm):
-#     infra_type = forms.CharField(max_length=50, required=True,
-#         widget=forms.widgets.Input(attrs={
-#                                          'class': "form-control form-select text-center",
-#                                      }), label="Infrastructure Type")
-    
-#     add_from = forms.CharField(max_length=50, required=True,
-#         widget=forms.widgets.Input(attrs={
-#                                          'class': "form-control form-select text-center",
-#                                      }), label="Address from")
-    
-#     add_to = forms.CharField(max_length=50, required=True,
-#         widget=forms.widgets.Input(attrs={
-#                                          'class': "form-control form-select text-center",
-#                                      }), label="Address to")
-    
-#     length = forms.CharField(max_length=50, required=True,
-#         widget=forms.widgets.Input(attrs={
-#                                          'class': "form-control form-select text-center",
-#                                      }), label="Length")
-    
-#     year_installed = forms.CharField(max_length=50, required=True,
-#         widget=forms.widgets.Input(attrs={
-#                                          'class': "form-control form-select text-center",
-#                                      }), label="Year of installation")
-    
-#     upload_application_letter = forms.FileField(required=True,
-#         widget=forms.widgets.Input(attrs={
-#                                          'class': "form-control form-select text-center",
-#                                      }), label="Upload application letter")
-    
-#     upload_asbuilt_drawing = forms.FileField(required=True,
-#         widget=forms.widgets.Input(attrs={
-#                                          'class': "form-control form-select text-center",
-#                                      }), label="Upload as-built drawing")
-    
-#     upload_payment_receipt = forms.FileField(required=True,
-#         widget=forms.widgets.Input(attrs={
-#                                          'class': "form-control form-select text-center",
-#                                      }), label="Upload payment receipt")
-#     class Meta:
-#         model = Permit
-#         fields = ['infra_type', 'add_from', 'add_to', 'length', 'year_installed', 'upload_application_letter',
-#                   'upload_asbuilt_drawing', 'upload_payment_receipt']
-    
-
-
 class PermitForm(forms.ModelForm):
     class Meta:
         model = Permit
-        # fields = ['company', 'referenceid', 'infra_type', 'amount', 'add_from', 'add_to', 'length', 'year_installed', 'upload_application_letter',
-        #           'upload_asBuilt_drawing', 'upload_payment_receipt']
         fields = ['infra_type', 'amount', 'add_from', 'add_to', 'length', 'year_installed', 'upload_application_letter',
                   'upload_asBuilt_drawing', 'upload_payment_receipt']
 
         widgets = {
-            # 'company': forms.HiddenInput(attrs={'value' : '{{company}}'}),
-            # 'referenceid': forms.HiddenInput(attrs={'value' : '{{referenceid}}'}),
             'infra_type': forms.Select(
                 choices = InfrastructureType.objects.all(), 
                 attrs={
@@ -74,14 +23,14 @@ class PermitForm(forms.ModelForm):
                 'style': 'max-width: 150px;',
                 'required': True,
                 'placeholder': 'Amount',
-                'type': "number"
+                'type': "text"
                 }),
             'length': forms.TextInput(attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
                 'placeholder': 'Length',
                 'required': True,
-                'type': "number"
+                'type': "text"
                 }),
             'add_from': forms.TextInput(attrs={
                 'class': "form-control",

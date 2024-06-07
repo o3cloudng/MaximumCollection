@@ -1,12 +1,12 @@
 version: '3.8'
 
 services:
-  eportal:
+  lasimra:
     build:
       context: .
       dockerfile: Dockerfile.prod
       image: o3cloudng/MaximunCollection
-    command: gunicorn nsib.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn core.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static_volume:/home/django/web/static
       - media_volume:/home/django/web/media
@@ -30,7 +30,7 @@ services:
       - vhost:/etc/nginx/vhost.d
       - /var/run/docker.sock:/tmp/docker.sock:ro
     depends_on:
-      - eportal
+      - lasimra
 
   acme-companion:
     image: nginxproxy/acme-companion

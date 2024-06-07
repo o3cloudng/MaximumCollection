@@ -13,7 +13,9 @@ urlpatterns = [
     path('apply/permit/infrastructures/', infrastructures, name="infrastructures"),
     path('apply/permit/downloads/', downloads, name="downloads"),
     path('apply/permit/settings/', settings, name="settings"),
-    path('apply/permit/payment_receipt/<str:ref_id>/', payment_receipt, name="payment-receipt"),
+    path('apply/permit/demand_notice/<str:ref_id>/', payment_receipt, name="payment-receipt"),
+    path('apply/permit/dispute_notice/<str:ref_id>/', dispute_demand_notice, name="dispute-demand-notice"),
+    path('apply/permit/demand_notice/receipt/<str:ref_id>/', dispute_demand_notice_receipt, name="dispute-demand-notice-receipt"),
     path('apply/permit/resources/', resources, name="resources"),
-    path('template/', template, name="template"),
+    # path('template/', template, name="template"),
 ]

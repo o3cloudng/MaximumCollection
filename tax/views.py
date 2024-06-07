@@ -10,6 +10,59 @@ from django_htmx.http import HttpResponseClientRedirect
 from django.db.models import Q, Count, Avg, Sum
 
 
+
+@login_required
+def dispute_demand_notice(request, ref_id):
+
+    # if Permit.objects.filter(referenceid=ref_id, is_disputed=True).exists():
+    #     return "You have disputed this..."
+
+    demand_notices = Permit.objects.filter(referenceid=ref_id, is_disputed=False)
+    infra = InfrastructureType.objects.all()
+    
+    if request.htmx:
+        print("REF: ", ref_id)
+        form = PermitForm(request.POST or None, request.FILES or None)
+
+        infra_rate = InfrastructureType.objects.get(pk=request.POST['infra_type'])
+        print("READY POST: ", infra_rate.rate, type(infra_rate.rate))
+        print("Permit type: ", request.POST['amount'], type(request.POST['amount']))
+        if "mast" in infra_rate.infra_name.lower():
+            infra_cost = infra_rate.rate * int(request.POST['amount'])
+            len = 0
+            qty = request.POST['amount']
+        elif "roof" in infra_rate.infra_name.lower():
+            infra_cost = infra_rate.rate * int(request.POST['amount'])
+            len = 0
+            qty = request.POST['amount']
+        else:
+            infra_cost = infra_rate.rate * int(request.POST['length'])
+            qty = 0
+            len = request.POST['length']
+
+        print("AMOUNT OR NUMBER: ", infra_rate.infra_name.lower())
+
+        if form.is_valid():
+            print("Form is valid")
+            permit = form.save(commit=False)
+            permit.referenceid = ref_id
+            permit.company = request.user
+            permit.infra_cost = infra_cost
+            permit.is_disputed = True
+            permit.save()
+        else:
+            print("FILE FORMAT INVALID")
+
+    context = {
+        'ref_id': ref_id,
+        'infra': infra,
+        'demand_notices': demand_notices
+    }
+
+    if request.htmx:
+        return HttpResponseClientRedirect('/tax/apply/permit/demand_notice/receipt/'+ref_id)
+    return render(request, 'tax-payers/apply_for_permit_edit.html', context)
+
 def generate_ref_id():
     today = date.today()
     year = str(today.year)
@@ -28,20 +81,23 @@ def apply_for_permit(request):
 
     if request.method == 'POST':
         print("REF: ", ref_id)
-        form = PermitForm(request.POST, request.FILES)
+        form = PermitForm(request.POST or None, request.FILES or None)
 
         infra_rate = InfrastructureType.objects.get(pk=request.POST['infra_type'])
         print("READY POST: ", infra_rate.rate, type(infra_rate.rate))
         print("Permit type: ", request.POST['amount'], type(request.POST['amount']))
         if "mast" in infra_rate.infra_name.lower():
             infra_cost = infra_rate.rate * int(request.POST['amount'])
-            # request.POST['length'] = 0
+            len = 0
+            qty = request.POST['amount']
         elif "roof" in infra_rate.infra_name.lower():
             infra_cost = infra_rate.rate * int(request.POST['amount'])
-            # request.POST['length'] = 0
+            len = 0
+            qty = request.POST['amount']
         else:
             infra_cost = infra_rate.rate * int(request.POST['length'])
-            # request.POST['amount'] = 0
+            qty = 0
+            len = request.POST['length']
 
         print("AMOUNT OR NUMBER: ", infra_rate.infra_name.lower())
 
@@ -76,7 +132,7 @@ def apply_for_permit_edit(request, ref_id):
     print("WE ARE HERE....")
 
     if request.htmx:
-        form = PermitForm(request.POST, request.FILES)
+        form = PermitForm(request.POST or None, request.FILES or None)
         infra = InfrastructureType.objects.get(id=request.POST['infra_type'])
         print("INFRA: ", infra)
         form.infra_type = infra
@@ -141,7 +197,7 @@ def existing_permit(request):
 
     if request.htmx:
         print("EXISTING PERMIT - REF: ", ref_id)
-        form = PermitForm(request.POST, request.FILES)
+        form = PermitForm(request.POST or None, request.FILES or None)
 
         print("READY POST")
 
@@ -206,7 +262,7 @@ def demand_notice(request):
         "demand_notices_disputed": demand_notices_disputed,
         "demand_notices_resolved": demand_notices_resolved,
     }
-    return render(request, 'tax-payers/demand_notice.html', context)
+    return render(request, 'tax-payers/demand_notices.html', context)
 
 @login_required
 def disputes(request):
@@ -255,7 +311,7 @@ def upload_existing_facilities(request):
 
 
 def payment_receipt(request, ref_id):
-    permits = Permit.objects.filter(referenceid = ref_id)
+    permits = Permit.objects.filter(referenceid = ref_id, is_disputed=False)
     if not permits.first().company == request.user:
         return redirect('apply_for_permit')
     
@@ -264,8 +320,8 @@ def payment_receipt(request, ref_id):
     site_assessment = AdminSetting.objects.get(slug="site-assessment")
     admin_pm_fees = AdminSetting.objects.get(slug="admin-pm-fees")
 
-    mast_roof = Permit.objects.filter(Q(referenceid = ref_id), Q(infra_type__infra_name__istartswith='Mast') | Q(infra_type__infra_name__istartswith='Roof'))
-    length = Permit.objects.filter(Q(referenceid = ref_id), Q(infra_type__infra_name__istartswith='Optic') | Q(infra_type__infra_name__istartswith='Gas') | Q(infra_type__infra_name__istartswith='Power') | Q(infra_type__infra_name__istartswith='Pipeline'))
+    mast_roof = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=False), Q(infra_type__infra_name__istartswith='Mast') | Q(infra_type__infra_name__istartswith='Roof'))
+    length = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=False), Q(infra_type__infra_name__istartswith='Optic') | Q(infra_type__infra_name__istartswith='Gas') | Q(infra_type__infra_name__istartswith='Power') | Q(infra_type__infra_name__istartswith='Pipeline'))
     #application number = number of masts and rooftops 
 
     mast_roof_no = mast_roof.aggregate(no_sites = Sum('amount'))
@@ -306,11 +362,66 @@ def payment_receipt(request, ref_id):
         'admin_pm_fees_sum': admin_pm_fees_sum,
         'total_due': total_due,
         'waver': waver,
-        'total_liability': total_liability
+        'total_liability': total_liability,
+        'ref_id': ref_id
     }
     return render(request, 'tax-payers/payment-receipt.html', context)
 
 
-def template(request):
-    context = {}
-    return render(request, 'tax-payers/template.html', context)
+def dispute_demand_notice_receipt(request, ref_id):
+    permits = Permit.objects.filter(referenceid = ref_id, is_disputed=True)
+    if not permits.first().company == request.user:
+        return redirect('apply_for_permit')
+    
+    ref = permits.first()
+    app_fee = AdminSetting.objects.get(slug="application-fee")
+    site_assessment = AdminSetting.objects.get(slug="site-assessment")
+    admin_pm_fees = AdminSetting.objects.get(slug="admin-pm-fees")
+
+    mast_roof = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=True), Q(infra_type__infra_name__istartswith='Mast') | Q(infra_type__infra_name__istartswith='Roof'))
+    length = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=True), Q(infra_type__infra_name__istartswith='Optic') | Q(infra_type__infra_name__istartswith='Gas') | Q(infra_type__infra_name__istartswith='Power') | Q(infra_type__infra_name__istartswith='Pipeline'))
+    #application number = number of masts and rooftops 
+
+    mast_roof_no = mast_roof.aggregate(no_sites = Sum('amount'))
+    
+    app_count = mast_roof_no['no_sites'] + length.count()
+    total_app_fee = app_count * app_fee.rate
+
+    tot_sum_infra = Permit.objects.filter(referenceid = ref_id, is_disputed=True).aggregate(no_sum = Sum('infra_cost'))
+
+    # Site assessment report rate
+    sar_rate = mast_roof_no['no_sites'] * site_assessment.rate
+
+    admin_pm_fees_sum = admin_pm_fees.rate * tot_sum_infra['no_sum'] / 100
+
+    total_due = tot_sum_infra['no_sum'] + total_app_fee + admin_pm_fees_sum + sar_rate
+
+    # ADD WAVER
+    if Waver.objects.filter(referenceid=ref).exists():
+        waver = Waver.objects.get(referenceid=ref).wave_amount
+    else:
+        waver = 0
+    
+    # print("WAVER: ", waver)
+    total_liability = total_due - waver
+    
+
+    context = {
+        'permits': permits,
+        'ref': ref,
+        'site_assessment': site_assessment,
+        'site_assess_count': mast_roof_no['no_sites'],
+        'admin_pm_fees': admin_pm_fees,
+        'app_fee': app_fee,
+        'app_count': app_count,
+        'total_app_fee': total_app_fee,
+        'sar_rate': sar_rate,
+        'tot_sum_infra': tot_sum_infra,
+        'admin_pm_fees_sum': admin_pm_fees_sum,
+        'total_due': total_due,
+        'waver': waver,
+        'total_liability': total_liability,
+        'ref_id': ref_id
+    }
+    return render(request, 'tax-payers/payment-receipt.html', context)
+

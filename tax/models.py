@@ -19,7 +19,7 @@ class Permit(models.Model):
         ("UNPAID", "Unpaid"),
         ("PAID", "Paid"),
         ("DISPUTED", "Disputed"),
-        ("RESOLVED", "Resolved"),
+        ("Revised", "Revised"),
     )
     company = models.ForeignKey(User, related_name="company", on_delete=models.CASCADE, null=True)
     referenceid = models.CharField(max_length=200, null=True) 
@@ -36,6 +36,9 @@ class Permit(models.Model):
     status = models.CharField(max_length=10, choices=PAY_CHOICES, default="UNPAID")
     is_profile_complete = models.BooleanField(default=False)
     is_disputed = models.BooleanField(default=False)
+    is_undisputed = models.BooleanField(default=False)
+    is_revised = models.BooleanField(default=False)
+    is_paid = models.BooleanField(default=False)
     infra_cost = models.CharField(max_length=100, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
