@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from tax.forms import PermitForm
+from tax.forms import PermitForm, PermitEditForm
 from django.contrib.auth.decorators import login_required
 from account.models import User, AdminSetting
 from .models import Permit, InfrastructureType, Waver
@@ -8,25 +8,79 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django_htmx.http import HttpResponseClientRedirect
 from django.db.models import Q, Count, Avg, Sum
+from django.forms import inlineformset_factory, formset_factory, modelformset_factory
+from django.http import HttpResponse
 
 
 
 @login_required
-def dispute_demand_notice(request, ref_id):
-
-    # if Permit.objects.filter(referenceid=ref_id, is_disputed=True).exists():
-    #     return "You have disputed this..."
-
-    demand_notices = Permit.objects.filter(referenceid=ref_id, is_disputed=False)
-    infra = InfrastructureType.objects.all()
+def undispute_demand_notice_receipt(request, ref_id):
+    permits = Permit.objects.filter(referenceid = ref_id, is_disputed=True)
+    if not permits.first().company == request.user:
+        return redirect('apply_for_permit')
     
+    ref = permits.first()
+    app_fee = AdminSetting.objects.get(slug="application-fee")
+    site_assessment = AdminSetting.objects.get(slug="site-assessment")
+    admin_pm_fees = AdminSetting.objects.get(slug="admin-pm-fees")
+
+    mast_roof = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=False), Q(infra_type__infra_name__istartswith='Mast') | Q(infra_type__infra_name__istartswith='Roof'))
+    length = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=False), Q(infra_type__infra_name__istartswith='Optic') | Q(infra_type__infra_name__istartswith='Gas') | Q(infra_type__infra_name__istartswith='Power') | Q(infra_type__infra_name__istartswith='Pipeline'))
+    #application number = number of masts and rooftops 
+
+    mast_roof_no = mast_roof.aggregate(no_sites = Sum('amount'))
+    
+    app_count = mast_roof_no['no_sites'] + length.count()
+    total_app_fee = app_count * app_fee.rate
+
+    tot_sum_infra = Permit.objects.filter(referenceid = ref_id).aggregate(no_sum = Sum('infra_cost'))
+
+    # Site assessment report rate
+    sar_rate = mast_roof_no['no_sites'] * site_assessment.rate
+
+    admin_pm_fees_sum = admin_pm_fees.rate * tot_sum_infra['no_sum'] / 100
+
+    total_due = tot_sum_infra['no_sum'] + total_app_fee + admin_pm_fees_sum + sar_rate
+
+    # ADD WAVER
+    if Waver.objects.filter(referenceid=ref).exists():
+        waver = Waver.objects.get(referenceid=ref).wave_amount
+    else:
+        waver = 0
+    
+    # print("WAVER: ", waver)
+    total_liability = total_due - waver
+    
+
+    context = {
+        'permits': permits,
+        'ref': ref,
+        'site_assessment': site_assessment,
+        'site_assess_count': mast_roof_no['no_sites'],
+        'admin_pm_fees': admin_pm_fees,
+        'app_fee': app_fee,
+        'app_count': app_count,
+        'total_app_fee': total_app_fee,
+        'sar_rate': sar_rate,
+        'tot_sum_infra': tot_sum_infra,
+        'admin_pm_fees_sum': admin_pm_fees_sum,
+        'total_due': total_due,
+        'waver': waver,
+        'total_liability': total_liability,
+        'ref_id': ref_id
+    }
+    return render(request, 'tax-payers/receipts/undisputed_dn_receipt.html', context)
+
+@login_required
+def add_dispute_dn_edit(request):
+    ref_id = str(request.POST['referenceid'])
+    # print("REF: ", ref_id)
     if request.htmx:
-        print("REF: ", ref_id)
-        form = PermitForm(request.POST or None, request.FILES or None)
+        form = PermitEditForm(request.POST or None, request.FILES or None)
 
         infra_rate = InfrastructureType.objects.get(pk=request.POST['infra_type'])
-        print("READY POST: ", infra_rate.rate, type(infra_rate.rate))
-        print("Permit type: ", request.POST['amount'], type(request.POST['amount']))
+        # print("READY POST: ", infra_rate.rate, type(infra_rate.rate))
+        # print("Permit type: ", request.POST['amount'], type(request.POST['amount']))
         if "mast" in infra_rate.infra_name.lower():
             infra_cost = infra_rate.rate * int(request.POST['amount'])
             len = 0
@@ -43,24 +97,64 @@ def dispute_demand_notice(request, ref_id):
         print("AMOUNT OR NUMBER: ", infra_rate.infra_name.lower())
 
         if form.is_valid():
-            print("Form is valid")
+            # print("Form is valid")
             permit = form.save(commit=False)
             permit.referenceid = ref_id
             permit.company = request.user
+            permit.amount = qty
+            permit.length = len
             permit.infra_cost = infra_cost
             permit.is_disputed = True
             permit.save()
+
+            context = {
+                'form':form,
+                'referenceid': ref_id,
+                'company': request.user
+            }
+            return HttpResponseClientRedirect('/tax/apply/permit/dispute_notice/'+permit.referenceid)
+
         else:
             print("FILE FORMAT INVALID")
+    form = PermitForm()
 
     context = {
-        'ref_id': ref_id,
-        'infra': infra,
-        'demand_notices': demand_notices
+        'form':form,
+        'referenceid': ref_id,
+        'company': request.user
     }
+    return HttpResponseClientRedirect('/tax/apply/permit/dispute_notice/'+permit.referenceid)
 
-    if request.htmx:
-        return HttpResponseClientRedirect('/tax/apply/permit/demand_notice/receipt/'+ref_id)
+
+@login_required
+def dispute_dn_edit(request, pk):
+    permit = Permit.objects.get(pk=pk)
+    form = PermitEditForm(instance = permit)
+    context = {
+        'form': form
+    }
+    return render(request, 'tax-payers/partials/apply_permit_edit_form.html', context)
+
+@login_required
+def dispute_demand_notice(request, ref_id):
+
+    ref = Q(referenceid=ref_id)
+    coy = Q(company=request.user)
+    is_dis = Q(is_disputed = False)
+    not_dis = Q(is_disputed = True)
+    permits = Permit.objects.filter(ref & coy & is_dis)
+    undisputed_permits = Permit.objects.filter(ref & coy & not_dis)
+    print("PERMIT COUNT: ", permits)
+    print("UNDISPUTED COUNT: ", undisputed_permits)
+    
+    if request.method == "POST":
+        print("POST SHOWS HERE....")
+   
+    context = {
+        'ref_id': ref_id,
+        'permits': permits,
+        'undisputed_permits': undisputed_permits
+    }
     return render(request, 'tax-payers/apply_for_permit_edit.html', context)
 
 def generate_ref_id():
@@ -106,6 +200,8 @@ def apply_for_permit(request):
             permit = form.save(commit=False)
             permit.referenceid = ref_id
             permit.company = request.user
+            permit.amount = qty
+            permit.length = len
             permit.infra_cost = infra_cost
             permit.save()
         else:
@@ -119,7 +215,7 @@ def apply_for_permit(request):
     }
 
     if request.htmx:
-        return HttpResponseClientRedirect('/tax/apply/permit/payment_receipt/'+permit.referenceid)
+        return HttpResponseClientRedirect('/tax/apply/permit/demand_notice/'+permit.referenceid)
 
     return render(request, 'tax-payers/apply_for_permit.html', context)
 
@@ -310,7 +406,7 @@ def upload_existing_facilities(request):
     return render(request, 'tax-payers/upload-existing-facility.html', context)
 
 
-def payment_receipt(request, ref_id):
+def demand_notice_receipt(request, ref_id):
     permits = Permit.objects.filter(referenceid = ref_id, is_disputed=False)
     if not permits.first().company == request.user:
         return redirect('apply_for_permit')
@@ -365,13 +461,14 @@ def payment_receipt(request, ref_id):
         'total_liability': total_liability,
         'ref_id': ref_id
     }
-    return render(request, 'tax-payers/payment-receipt.html', context)
+    return render(request, 'tax-payers/receipts/demand-notice-receipt.html', context)
 
 
 def dispute_demand_notice_receipt(request, ref_id):
+    print("DN - REF ID: ", ref_id)
     permits = Permit.objects.filter(referenceid = ref_id, is_disputed=True)
     if not permits.first().company == request.user:
-        return redirect('apply_for_permit')
+        return redirect('dashboard')
     
     ref = permits.first()
     app_fee = AdminSetting.objects.get(slug="application-fee")
@@ -421,7 +518,8 @@ def dispute_demand_notice_receipt(request, ref_id):
         'total_due': total_due,
         'waver': waver,
         'total_liability': total_liability,
-        'ref_id': ref_id
+        'ref_id': ref_id,
+        'is_disputed': True
     }
-    return render(request, 'tax-payers/payment-receipt.html', context)
+    return render(request, 'tax-payers/undisputed-receipt.html', context)
 

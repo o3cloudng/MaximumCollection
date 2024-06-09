@@ -1,35 +1,30 @@
 <tbody>
-  <form
-  hx-post="{% url 'dispute-demand-notice' ref_id %}"
-  hx-on="htmx:afterRequest: this.remove()"
-  hx-trigger="click from:#submit-all-permit" >
   <tr>
+    <form hx-post="{% url 'add_dispute_dn_edit' %}" 
+        hx-swap="innerHTML"
+        hx-target="#infra-table"
+        method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
     <td>{{ form.infra_type }}</td>
     <td>
       {{ form.amount }}
+      {{ form.referenceid }}
     </td>
-    <td>
-      {{ form.length }}
+    <td>{{ form.length }}
     </td>
-    <td>
-      {{ form.add_from }}
+    <td>{{ form.add_from }}
     </td>
-    <td>
-      {{ form.add_to }}
+    <td>{{ form.add_to }}
     </td>
-    <td>
-      {{ form.year_installed }}
+    <td>{{ form.year_installed }}
     </td>
     <td>{{ form.upload_application_letter }}</td>
     <td>{{ form.upload_asBuilt_drawing }}</td>
-    <!-- <td>{{ form.upload_payment_receipt }}</td> -->
-    <td><button hx-on="click: this.closest('tbody').remove()" class="border-2 bg-orange-600 text-orange-600 border-orange-500 rounded-md px-2 py-1 hover:border-grey-500 hover:bg-grey-500 hover:text-grey-500 cursor-pointer" type="button" title="Close">-</button>
-    <!-- <td class="!text-right font-semibold"><span class="border-2 border-gray-600 rounded-md px-2 py-1 hover:border-orange-500 hover:bg-orange-500 hover:text-white cursor-pointer"  -->
-      <!-- >+</span> -->
-    <button class="border-2 border-gray-600 rounded-md px-2 py-1 hover:border-orange-500 hover:bg-orange-500 hover:text-white cursor-pointer" title="Add new infrstructure"
-              hx-post="{% url 'add_permit_form' %}"
-              hx-swap="beforeend"
-              hx-target="#infra-table">+</button>
+    <td>
+      <button class="border-2 border-orage-600 rounded-md px-2 py-1 hover:border-orange-500 bg-orange-500 hover:bg-orange-300 hover:text-white text-white cursor-pointer" title="Edit infrstructure"
+              
+              >Save</button>
+      <button hx-on="click: this.closest('tbody').remove()" class="border-2 bg-orange-600 text-orange-600 border-orange-500 rounded-md px-2 py-1 hover:border-grey-500 hover:bg-grey-500 hover:text-grey-500 cursor-pointer" type="button" title="Close">X</button>
     </td>
 </tr>
 </tbody>

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'tax',
     'django_htmx',
     'django.contrib.humanize',
+    'payments',
 ]
 
 MIDDLEWARE = [
@@ -82,21 +83,21 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-if config('DEBUG'):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+# if config('DEBUG'):
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-else:
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=config('DB_URL'),
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
+}
+# else:
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=config('DB_URL'),
+#         conn_max_age=600,
+#         conn_health_checks=True,
+#     )
+# }
 
 # print("DBUSER", config('DB_USER'))
 # print("DBNAME", config('DB_NAME'))
@@ -196,3 +197,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "assets/media")
 
 LOGIN_URL = "/clients/"
 LOGIN_REDIRECT_URL = "/clients/dashboard/"
+
+PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')
+PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY')
+
