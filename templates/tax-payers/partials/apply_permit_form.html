@@ -13,13 +13,7 @@
     <td>{{ form.upload_application_letter }}</td>
     <td>{{ form.upload_asBuilt_drawing }}</td>
     <!-- <td>{{ form.upload_payment_receipt }}</td> -->
-    <td><button hx-on="click: this.closest('tbody').remove()" class="border-2 bg-orange-600 text-orange-600 border-orange-500 rounded-md px-2 py-1 hover:border-grey-500 hover:bg-grey-500 hover:text-grey-500 cursor-pointer" type="button" title="Close">-</button>
-    <!-- <td class="!text-right font-semibold"><span class="border-2 border-gray-600 rounded-md px-2 py-1 hover:border-orange-500 hover:bg-orange-500 hover:text-white cursor-pointer"  -->
-      <!-- >+</span> -->
-    <button class="border-2 border-gray-600 rounded-md px-2 py-1 hover:border-orange-500 hover:bg-orange-500 hover:text-white cursor-pointer" title="Add new infrstructure"
-              hx-post="{% url 'add_permit_form' %}"
-              hx-swap="beforeend"
-              hx-target="#infra-table">+</button>
+    <td><button hx-on="click: this.closest('tbody').remove()" class="border-2 bg-orange-600 text-orange-600 border-orange-500 rounded-md px-2 py-1 hover:border-grey-500 hover:bg-grey-500 hover:text-grey-500 cursor-pointer" type="button" title="Close">x</button>
     </td>
 </tr>
 </tbody>

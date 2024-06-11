@@ -1,0 +1,25 @@
+<tbody>
+  <form
+  hx-post="{% url 'apply_existing_infra' %}"
+  hx-on="htmx:afterRequest: this.remove()"
+  hx-trigger="click from:#submit-all-permit" >
+  <tr>
+    <td>{{ form.infra_type }}</td>
+    <td>{{ form.amount }}</td>
+    <td>{{ form.length }}</td>
+    <td>{{ form.add_from }}</td>
+    <td>{{ form.add_to }}</td>
+    <td>{{ form.year_installed }}</td>
+    <td>{{ form.upload_application_letter }}</td>
+    <td>{{ form.upload_asBuilt_drawing }}</td>
+    <!-- <td>{{ form.upload_payment_receipt }}</td> -->
+    <td>
+      <button 
+        hx-on="click: this.closest('tbody').remove()" 
+        class="border-2 bg-orange-600 text-orange-600 border-orange-500 rounded-md px-2 py-1 hover:border-grey-500 hover:bg-grey-500 hover:text-grey-500 cursor-pointer" 
+        type="button" title="Close">
+        x
+      </button>
+    </td>
+</tr>
+</tbody>
