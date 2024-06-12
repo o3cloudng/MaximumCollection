@@ -13,6 +13,7 @@ urlpatterns = [
     path('clients/', include("account.urls")),
     path('tax/', include("tax.urls")),
     path('payments/', include("payments.urls")),
+    path('adminarea/', include("admin.urls")),
 ]
 
 if settings.DEBUG:  
