@@ -4,8 +4,8 @@ services:
   lasimra:
     build:
       context: .
-      dockerfile: Dockerfile.prod
-      image: o3cloudng/lasimra
+      dockerfile: Dockerfile
+      # image: o3cloudng/lasimra
     command: gunicorn core.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static_volume:/home/django/web/static

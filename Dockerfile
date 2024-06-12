@@ -1,5 +1,5 @@
 # start from an official image
-FROM python:3.11.4-slim-buster
+FROM python:3.10.6-alpine
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -16,16 +16,16 @@ COPY requirements.txt ./
 
 RUN pip install --upgrade pip
 
+COPY . .
+
 RUN pip install -r requirements.txt
 
 
-COPY . .
+# RUN python manage.py makemigrations --no-input
 
-RUN python manage.py makemigrations --no-input
+# RUN python manage.py migrate --no-input 
 
-RUN python manage.py migrate --no-input 
-
-RUN python manage.py collectstatic --no-input -v 2
+# RUN python manage.py collectstatic --no-input -v 2
 
 # expose the port 8000
 EXPOSE 8000

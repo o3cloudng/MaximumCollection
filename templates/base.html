@@ -1,5 +1,4 @@
-{% load static %}
-{% load humanize %}
+{% load static %} {% load humanize %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -13,6 +12,10 @@
     />
     <!-- <script src="{% static 'js/htmx.js' %}"></script> -->
     <script src="https://unpkg.com/htmx.org@1.9.11"></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.0/dist/cdn.min.js"
+    ></script>
     <script
       defer
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
@@ -31,9 +34,49 @@
       crossorigin="anonymous"
     ></script> -->
     <title>LASIMRA:: Tax Payers</title>
+    <style>
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+        }
+      }
+
+      @keyframes fade-out {
+        to {
+          opacity: 0;
+        }
+      }
+
+      @keyframes slide-from-right {
+        from {
+          transform: translateX(90px);
+        }
+      }
+
+      @keyframes slide-to-left {
+        to {
+          transform: translateX(-90px);
+        }
+      }
+
+      /* define animations for the old and new content */
+      ::view-transition-old(slide-it) {
+        animation: 180ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
+          600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
+      }
+      ::view-transition-new(slide-it) {
+        animation: 420ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
+          600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
+      }
+
+      /* tie the view transition to a given CSS class */
+      .sample-transition {
+        view-transition-name: slide-it;
+      }
+    </style>
   </head>
   <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    {% block content %} {% endblock %}
+    {% block content %}{%endblock %}
 
     <!-- Script -->
 

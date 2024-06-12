@@ -54,10 +54,15 @@
                       <th class="w-32 p-3 text-xs font-semibold tracking-wide text-left">Attach File<span class="block text-[8px]">(application letter)</span></th>
                       <th class="w-32 p-3 text-xs font-semibold tracking-wide text-left">Attach File<span class="block text-[8px]">(design drawing)</span></th>
                       <th>
-                        <a href="javascript:void(0)" onclick="return false;" class="border-2 border-gray-600 rounded-md px-2 py-1 hover:border-orange-500 hover:bg-orange-500 hover:text-white cursor-pointer" title="Add new infrstructure"
+                        <button href="javascript:void(0)" onclick="return false;" class="border-2 border-gray-600 rounded-md px-2 py-1 hover:border-orange-500 hover:bg-orange-500 hover:text-white cursor-pointer" title="Add new infrstructure"
                           hx-post="{% url 'add_permit_ex_form' %}"
-                          hx-swap="beforeend"
-                          hx-target="#infra-table">+</a>
+                          hx-swap="beforeend transition:true"
+                          hx-target="#infra-table"
+                          hx-indicator="#spinner"
+                          >
+                          +
+                          </button>
+                        <!-- <img id="spinner" class='htmx-indicator' src="{% static 'img/Circles-menu-3.gif' %}" /> -->
                       </th>
                     </tr>
                   </thead>
