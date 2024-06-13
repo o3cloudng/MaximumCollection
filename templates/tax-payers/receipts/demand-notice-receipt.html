@@ -203,7 +203,7 @@
                 <form action="{% url 'initiate_payment' %}" method="POST">
                   {% csrf_token %}
                   <input type="hidden" name="email" value="{{ request.user }}" />
-                  <input type="hidden" name="amount" value="{{ total_liability | floatformat:0 }}" />
+                  <input type="hidden" name="amount" value="{{ total_liability * 10 }}" />
                   <input type="hidden" name="referenceid" value="{{ ref_id }}" />
 
                   <button class="btn" onclick="payWithPaystack()">Make Payment</button>
@@ -268,14 +268,14 @@
   function payWithPaystack() {
 
     var handler = PaystackPop.setup({ 
-        key: 'pk_live_1326d822da1b8ed77d2fa95b96ce5539e3899be8', //put your public key here
+        key: '', //put your public key here
         email: '{{request.user }}', //put your customer's email here
         amount: '{{ total_liability }}', //amount the customer is supposed to pay
         metadata: {
             custom_fields: [
                 {
                     display_name: "{{ request.user.company }}",
-                    variable_name: "mobile_number",
+                    variable_name: "{{ request.user.phone_number }}",
                     value: "{{ request.user.phone_number }}" //customer's mobile number
                 }
             ]
