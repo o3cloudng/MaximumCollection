@@ -1,6 +1,6 @@
 from django.db import models
 from account.models import User
-import uuid
+# from dateutil.relativedelta import relativedelta
     
 
 
@@ -30,6 +30,7 @@ class Permit(models.Model):
     add_from = models.CharField(max_length=200, null=True)
     add_to = models.CharField(max_length=200, null=True)
     year_installed = models.DateField(max_length=200, null=True)
+    # age = models.PositiveIntegerField()
     upload_application_letter = models.FileField(upload_to='uploads/applications/', blank=True, null=True)
     upload_asBuilt_drawing = models.FileField(upload_to='uploads/drawings/', blank=True, null=True)
     upload_payment_receipt = models.FileField(upload_to='uploads/receipts/', blank=True, null=True)
@@ -43,6 +44,10 @@ class Permit(models.Model):
     infra_cost = models.CharField(max_length=100, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+
+    # @property
+    # def get_age(self):
+    #     return relativedelta(self.birth_date.days, datetime.date.now()).years
 
     def __str__(self):
         return f"{self.infra_type} - {self.referenceid}"

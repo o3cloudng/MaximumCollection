@@ -3,7 +3,7 @@ from tax.forms import PermitForm, PermitEditForm
 from django.contrib.auth.decorators import login_required
 from account.models import User, AdminSetting
 from tax.models import Permit, InfrastructureType, Waver
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django_htmx.http import HttpResponseClientRedirect
@@ -11,12 +11,25 @@ from django.db.models import Q, Count, Avg, Sum
 from django.forms import inlineformset_factory, formset_factory, modelformset_factory
 from django.http import HttpResponse
 
-
 def generate_ref_id():
     today = date.today()
     year = str(today.year)
     month = str(today.month).zfill(2)
     return year+month
+
+
+# Calculate penalty function
+# penalty_fee, number of days per infrastructure
+# day * years
+def age(the_date):
+    date_format = "%m/%d/%Y"
+
+    a = datetime.strptime(the_date, date_format)
+    b = datetime.now()
+
+    delta = b - a
+    return delta.days
+
 
 @login_required
 def apply_for_existing_permit(request):
@@ -50,6 +63,10 @@ def apply_for_existing_permit(request):
 
         print("AMOUNT OR NUMBER: ", infra_rate.infra_name.lower())
 
+        # age = age(request.POST['year_installed'])
+
+        # print("AGE OF INFRA", age)
+
         if form.is_valid():
             print("Form is valid")
             permit = form.save(commit=False)
@@ -57,6 +74,7 @@ def apply_for_existing_permit(request):
             permit.company = request.user
             permit.amount = qty
             permit.length = len
+            # permit.age = age
             permit.is_existing = True
             permit.infra_cost = infra_cost
             permit.save()
@@ -105,6 +123,8 @@ def add_permit_ex_form(request):
     return render(request, 'tax-payers/partials/apply_permit_ex_form.html', context)
 
 
+
+
 def demand_notice_ex_receipt(request, ref_id):
     permits = Permit.objects.filter(referenceid = ref_id, is_disputed=False)
     if not permits.first().company == request.user:
@@ -114,6 +134,7 @@ def demand_notice_ex_receipt(request, ref_id):
     app_fee = AdminSetting.objects.get(slug="application-fee")
     site_assessment = AdminSetting.objects.get(slug="site-assessment")
     admin_pm_fees = AdminSetting.objects.get(slug="admin-pm-fees")
+    penalty = AdminSetting.objects.get(slug="penalty")
 
     mast_roof = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=False), Q(infra_type__infra_name__istartswith='Mast') | Q(infra_type__infra_name__istartswith='Roof'))
     length = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=False), Q(infra_type__infra_name__istartswith='Optic') | Q(infra_type__infra_name__istartswith='Gas') | Q(infra_type__infra_name__istartswith='Power') | Q(infra_type__infra_name__istartswith='Pipeline'))
