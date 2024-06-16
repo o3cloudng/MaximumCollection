@@ -98,7 +98,7 @@
               </div>
               <div class="text-orange-400 font-normal mt-2">
                 <h2 class="block text-xl">Amount Due:</h2>
-                <h2 class="text-lg">N{{ total_liability | floatformat:2 | intcomma }}</h2>
+                <h2 class="text-lg">&#8358;{{ total_liability | floatformat:2 | intcomma }}</h2>
               </div>
             </div>
           </div>
@@ -129,7 +129,7 @@
                 <td>{{ permit.amount}}</td>
                 <td>{{ permit.length }}</td>
                 <td class="!text-right">{{ permit.infra_type.rate | floatformat:2 | intcomma }}</td>
-                <td class="!text-right">{{ permit.infra_cost | floatformat:2 | intcomma  }}</td>
+                <td class="!text-right">&#8358;{{ permit.infra_cost | floatformat:2 | intcomma  }}</td>
               </tr>
               {% endfor %}
             </tbody>
@@ -138,7 +138,7 @@
             class="flex flex-row justify-between items-center w-full border-y-2 border-gray-600 text-gray-800 p-3"
           >
             <h3>Sub-Total(Permit Fees)</h3>
-            <h3>{{ tot_sum_infra.no_sum | floatformat:2 | intcomma }}</h3>
+            <h3>&#8358;{{ tot_sum_infra.no_sum | floatformat:2 | intcomma }}</h3>
           </div>
           <table class="md:w-full">
             <!-- hover:[&>*:nth-child(odd)]:bg-white -->
@@ -149,7 +149,7 @@
                 <td class="!text-right">{{ app_fee.rate | floatformat:2 | intcomma }}</td>
                 <td></td>
                 <td></td>
-                <td class="!text-right">{{ total_app_fee | floatformat:2 | intcomma }}</td>
+                <td class="!text-right">&#8358;{{ total_app_fee | floatformat:2 | intcomma }}</td>
               </tr>
               <tr>
                 <td class="!w-40">
@@ -164,10 +164,10 @@
               <tr>
                 <td>Site Assessment Report (SAR)</td>
                 <td>{{ site_assess_count }}</td>
-                <td class="!text-right">{{ site_assessment.rate | floatformat:2 | intcomma }}</td>
+                <td class="!text-right">&#8358;{{ site_assessment.rate | floatformat:2 | intcomma }}</td>
                 <td></td>
                 <td></td>
-                <td class="!text-right">{{ sar_rate | floatformat:2 | intcomma }}</td>
+                <td class="!text-right">&#8358;{{ sar_rate | floatformat:2 | intcomma }}</td>
               </tr>
             </tbody>
           </table>
@@ -175,19 +175,19 @@
             class="font-normal w-full text-sm text-orange-800 flex flex-row justify-between items-center p-3"
           >
             <p>Total Due</p>
-            <h4>N {{ total_due | floatformat:2 | intcomma }}</h4>
+            <h4>&#8358;{{ total_due | floatformat:2 | intcomma }}</h4>
           </div>
           <div
             class="font-normal text-sm w-full text-green-800 flex flex-row justify-between items-center p-3"
           >
             <p>Waiver Applied</p>
-            <h4 class="">N{{ waver | floatformat:2 | intcomma }}</h4>
+            <h4 class="">&#8358;{{ waver | floatformat:2 | intcomma }}</h4>
           </div>
           <div
             class="bg-orange-100 font-bold w-full text-orange-800 flex flex-row justify-between items-center p-3"
           >
             <h3>Total</h3>
-            <h3>N{{ total_liability | floatformat:2 | intcomma }}</h3>
+            <h3>&#8358;{{ total_liability | floatformat:2 | intcomma }}</h3>
           </div>
         </div>
         <div class="flex flex-col p-3 gap-4 w-full">
@@ -267,7 +267,7 @@
   function payWithPaystack() {
 
     var handler = PaystackPop.setup({ 
-        key: 'pk_live_1326d822da1b8ed77d2fa95b96ce5539e3899be8', //put your public key here
+        key: '', //put your public key here
         email: '{{request.user }}', //put your customer's email here
         amount: '{{ total_liability }}', //amount the customer is supposed to pay
         metadata: {

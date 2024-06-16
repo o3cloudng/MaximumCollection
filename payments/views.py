@@ -4,7 +4,7 @@ from django.conf import settings
 
 def initiate_payment(request):
     if request.method == "POST":
-        amount = int(request.POST['amount']) * 100
+        amount = int(float(request.POST['amount'])) * 100
         email = request.POST['email']
         referenceid = request.POST['referenceid']
 
@@ -18,6 +18,7 @@ def initiate_payment(request):
             'field_values': request.POST,
             'paystack_pub_key': pk,
             'amount_value': payment.amount,
+            'display_amount_value': payment.amount / 100
         }
         return render(request, 'payments/make_payment.html', context)
 

@@ -8,7 +8,7 @@ from datetime import date, timedelta
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django_htmx.http import HttpResponseClientRedirect
-from django.db.models import Q, Count, Avg, Sum
+from django.db.models import Q, Count, Avg, Sum, Max
 from django.forms import inlineformset_factory, formset_factory, modelformset_factory
 from django.http import HttpResponse
 
@@ -34,7 +34,8 @@ def undispute_demand_notice_receipt(request, ref_id):
     app_count = mast_roof_no['no_sites'] + length.count()
     total_app_fee = app_count * app_fee.rate
 
-    tot_sum_infra = Permit.objects.filter(referenceid = ref_id).aggregate(no_sum = Sum('infra_cost'))
+    tot_sum_infra = Permit.objects.filter(Q(referenceid = ref_id) & Q(is_disputed=True)).aggregate(no_sum = Sum('infra_cost'))
+    # print("Tot Sum: ", tot_sum_infra)
 
     # Site assessment report rate
     sar_rate = mast_roof_no['no_sites'] * site_assessment.rate
@@ -172,15 +173,16 @@ def apply_for_permit(request):
     else:
         ref_id = generate_ref_id() + "00001"
 
-    print("WE RAE HERE...")
-
     if request.method == 'POST':
-        print("REF: ", ref_id)
         form = PermitForm(request.POST or None, request.FILES or None)
 
+        # Get the rate for each infrastructure from the InfrastructureType Table
         infra_rate = InfrastructureType.objects.get(pk=request.POST['infra_type'])
-        print("READY POST: ", infra_rate.rate, type(infra_rate.rate))
-        print("Permit type: ", request.POST['amount'], type(request.POST['amount']))
+        # print("READY POST: ", infra_rate.rate, type(infra_rate.rate))
+        # print("Permit type: ", request.POST['amount'], type(request.POST['amount']))
+
+        # If Infrastructure is a Mast or Roof - Make length = 0 and infra_cost = rate * quantity
+        # If Infrastructure is a others - Make amount = 0 and infra_cost = the rate * length
         if "mast" in infra_rate.infra_name.lower():
             infra_cost = infra_rate.rate * int(request.POST['amount'])
             len = 0
@@ -193,8 +195,6 @@ def apply_for_permit(request):
             infra_cost = infra_rate.rate * int(request.POST['length'])
             qty = 0
             len = request.POST['length']
-
-        print("AMOUNT OR NUMBER: ", infra_rate.infra_name.lower())
 
         if form.is_valid():
             print("Form is valid")
@@ -215,7 +215,10 @@ def apply_for_permit(request):
         'company': request.user
     }
 
+    print("APPLY PERMIT - CONTEXT: ", context)
+
     if request.htmx:
+        messages.success(request,"Infrastructure added successfully.")
         return HttpResponseClientRedirect('/tax/apply/permit/demand_notice/'+permit.referenceid)
 
     return render(request, 'tax-payers/apply_for_permit.html', context)
@@ -225,8 +228,6 @@ def apply_for_permit_edit(request, ref_id):
 
     permits = Permit.objects.filter(referenceid = ref_id)
     infra_type = InfrastructureType.objects.all()
-    # form = PermitForm(instance = permits)
-    print("WE ARE HERE....")
 
     if request.htmx:
         form = PermitForm(request.POST or None, request.FILES or None)
@@ -234,11 +235,33 @@ def apply_for_permit_edit(request, ref_id):
         print("INFRA: ", infra)
         form.infra_type = infra
 
+        # Get the rate for each infrastructure from the InfrastructureType Table
+        infra_rate = InfrastructureType.objects.get(pk=request.POST['infra_type'])
+
+        # If Infrastructure is a Mast or Roof - Make length = 0 and infra_cost = the rate * quantity
+        # If Infrastructure is a  - Make length = 0 and infra_cost = the rate * length
+        if "mast" in infra_rate.infra_name.lower():
+            infra_cost = infra_rate.rate * int(request.POST['amount'])
+            len = 0
+            qty = request.POST['amount']
+        elif "roof" in infra_rate.infra_name.lower():
+            infra_cost = infra_rate.rate * int(request.POST['amount'])
+            len = 0
+            qty = request.POST['amount']
+        else:
+            infra_cost = infra_rate.rate * int(request.POST['length'])
+            qty = 0
+            len = request.POST['length']
+
         if form.is_valid():
-            print("Form is valid")
-            # permit = form.save(commit=False)
-            # permit.infra_type = infra
-            form.save()
+            print("Dispute Form is valid")
+            permit = form.save(commit=False)
+            permit.referenceid = ref_id
+            permit.company = request.user
+            permit.amount = qty
+            permit.length = len
+            permit.infra_cost = infra_cost
+            permit.save()
         else:
             print(form.errors)
         
@@ -250,7 +273,9 @@ def apply_for_permit_edit(request, ref_id):
         'infra_type': infra_type,
         'form': form
     }
+    print("APPLY PERMIT EDIT CONTEXT: ", context)
     if request.htmx:
+        messages.success(request,"Infrastructure disputed successfully.")
         return HttpResponseClientRedirect('/tax/apply/permit/edit/'+ref_id)
     
     return render(request, 'tax-payers/apply_for_permit_edit.html', context)
@@ -328,11 +353,12 @@ def dashboard(request):
             "user":user
         }
 
-    demand_notices = Permit.objects.filter(company=request.user)
-    demand_notices_paid = Permit.objects.filter(company=request.user, status="PAID")
-    demand_notices_unpaid = Permit.objects.filter(company=request.user, status="UNPAID")
-    demand_notices_disputed = Permit.objects.filter(company=request.user, status="DISPUTED")
-    demand_notices_resolved = Permit.objects.filter(company=request.user, status="RESOLVED")
+    demand_notices = Permit.objects.values('referenceid').filter(Q(company=request.user)).annotate(total=Count('id'), created_at=Max('created_at'))
+    demand_notices_paid = Permit.objects.values('referenceid').filter(Q(company=request.user) & Q(is_paid=True)).annotate(total=Count('id'), created_at=Max('created_at'))
+    demand_notices_unpaid = Permit.objects.values('referenceid').filter(Q(company=request.user) & Q(is_paid=False)).annotate(total=Count('id'), created_at=Max('created_at'))
+    demand_notices_disputed = Permit.objects.values('referenceid').filter(Q(company=request.user) & Q(is_disputed=True)).annotate(total=Count('id'), created_at=Max('created_at'))
+    demand_notices_resolved = Permit.objects.values('referenceid').filter(Q(company=request.user) & Q(is_revised=True)).annotate(total=Count('id'), created_at=Max('created_at'))
+    # print("DN: ", demand_notices)
     context = {
          "is_profile_complete" : False,
          "demand_notices": demand_notices,
@@ -408,7 +434,10 @@ def upload_existing_facilities(request):
 
 
 def demand_notice_receipt(request, ref_id):
-    permits = Permit.objects.filter(referenceid = ref_id, is_disputed=False)
+    permits = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=False))
+    if not permits.exists():
+        return redirect('apply_for_permit')
+    
     if not permits.first().company == request.user:
         return redirect('apply_for_permit')
     
@@ -426,8 +455,8 @@ def demand_notice_receipt(request, ref_id):
     app_count = mast_roof_no['no_sites'] + length.count()
     total_app_fee = app_count * app_fee.rate
 
-    tot_sum_infra = Permit.objects.filter(referenceid = ref_id).aggregate(no_sum = Sum('infra_cost'))
-
+    tot_sum_infra = Permit.objects.filter(Q(referenceid = ref_id) & Q(is_disputed=False)).aggregate(no_sum = Sum('infra_cost'))
+    print("tot_sum_infra: ", Permit.objects.filter(Q(referenceid = ref_id)))
     # Site assessment report rate
     sar_rate = mast_roof_no['no_sites'] * site_assessment.rate
 
@@ -467,7 +496,7 @@ def demand_notice_receipt(request, ref_id):
 
 def dispute_demand_notice_receipt(request, ref_id):
     print("DN - REF ID: ", ref_id)
-    permits = Permit.objects.filter(referenceid = ref_id, is_disputed=True)
+    permits = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=True))
     if not permits.first().company == request.user:
         return redirect('dashboard')
     
@@ -485,8 +514,8 @@ def dispute_demand_notice_receipt(request, ref_id):
     app_count = mast_roof_no['no_sites'] + length.count()
     total_app_fee = app_count * app_fee.rate
 
-    tot_sum_infra = Permit.objects.filter(referenceid = ref_id, is_disputed=True).aggregate(no_sum = Sum('infra_cost'))
-
+    tot_sum_infra = Permit.objects.filter(Q(referenceid = ref_id) & Q(is_disputed=True)).aggregate(no_sum = Sum('infra_cost'))
+    # print(Permit.objects.filter(Q(referenceid = ref_id, is_disputed=True)))
     # Site assessment report rate
     sar_rate = mast_roof_no['no_sites'] * site_assessment.rate
 

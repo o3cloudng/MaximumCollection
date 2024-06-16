@@ -30,7 +30,9 @@
           />
         </div>
       </article>
+      {% include 'tax-payers/partials/toasts.html' %}
     </section>
+    
     <!-- Form Tab -->
     <!-- bg-[image-url] bg-cover bg-center bg-no-repeat -->
     <section
@@ -98,7 +100,7 @@
               </div>
               <div class="text-orange-400 font-normal mt-2">
                 <h2 class="block text-xl">Amount Due:</h2>
-                <h2 class="text-lg">NN{{ total_liability | floatformat:2 | intcomma }}</h2>
+                <h2 class="text-lg">&#8358;{{ total_liability | floatformat:2 | intcomma }}</h2>
               </div>
             </div>
           </div>
@@ -138,7 +140,7 @@
             class="flex flex-row justify-between items-center w-full border-y-2 border-gray-600 text-gray-800 p-3"
           >
             <h3>Sub-Total(Permit Fees)</h3>
-            <h3>{{ tot_sum_infra.no_sum | floatformat:2 | intcomma }}</h3>
+            <h3>&#8358;{{ tot_sum_infra.no_sum | floatformat:2 | intcomma }}</h3>
           </div>
           <table class="md:w-full">
             <!-- hover:[&>*:nth-child(odd)]:bg-white -->
@@ -156,7 +158,7 @@
                   {{ admin_pm_fees.description }}
                 </td>
                 <td></td>
-                <td class="!text-right">{{admin_pm_fees.rate }}%</td>
+                <td class="!text-right">&#8358;{{admin_pm_fees.rate }}%</td>
                 <td></td>
                 <td></td>
                 <td class="!text-right">{{ admin_pm_fees_sum | floatformat:2 | intcomma }}</td>
@@ -167,7 +169,7 @@
                 <td class="!text-right">{{ site_assessment.rate | floatformat:2 | intcomma }}</td>
                 <td></td>
                 <td></td>
-                <td class="!text-right">{{ sar_rate | floatformat:2 | intcomma }}</td>
+                <td class="!text-right">&#8358;{{ sar_rate | floatformat:2 | intcomma }}</td>
               </tr>
             </tbody>
           </table>
@@ -175,19 +177,19 @@
             class="font-normal w-full text-sm text-orange-800 flex flex-row justify-between items-center p-3"
           >
             <p>Total Due</p>
-            <h4>N {{ total_due | floatformat:2 | intcomma }}</h4>
+            <h4>&#8358;{{ total_due | floatformat:2 | intcomma }}</h4>
           </div>
           <div
             class="font-normal text-sm w-full text-green-800 flex flex-row justify-between items-center p-3"
           >
             <p>Waiver Applied</p>
-            <h4 class="">N{{ waver | floatformat:2 | intcomma }}</h4>
+            <h4 class="">&#8358;{{ waver | floatformat:2 | intcomma }}</h4>
           </div>
           <div
             class="bg-orange-100 font-bold w-full text-orange-800 flex flex-row justify-between items-center p-3"
           >
             <h3>Total</h3>
-            <h3>N{{ total_liability | floatformat:2 | intcomma }}</h3>
+            <h3>&#8358;{{ total_liability | floatformat:2 | intcomma }}</h3>
           </div>
         </div>
         <div class="flex flex-col p-3 gap-4 w-full">
@@ -203,10 +205,10 @@
                 <form action="{% url 'initiate_payment' %}" method="POST">
                   {% csrf_token %}
                   <input type="hidden" name="email" value="{{ request.user }}" />
-                  <input type="hidden" name="amount" value="{{ total_liability * 10 }}" />
+                  <input type="hidden" name="amount" value="{{ total_liability }}" />
                   <input type="hidden" name="referenceid" value="{{ ref_id }}" />
 
-                  <button class="btn" onclick="payWithPaystack()">Make Payment</button>
+                  <button type="submit" class="btn">Make Payment</button>
                 </form>
                 <a href="{% url 'dispute-demand-notice' ref_id %}" class="btn-outline">Dispute/Object</a>
               </div>

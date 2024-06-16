@@ -55,7 +55,7 @@
         
         <section class="mt-5 space-x-4 flex flex-col md:flex-row">
           <article class="flex flex-row items-center justify-start space-x-2">
-            <a href="{% url 'upload-existing-facilities' %}" class="btn">Upload Existing Facilities</a>
+            <a href="{% url 'apply_existing_infra' %}" class="btn border-2 border-orange-500">Upload Existing Facilities</a>
             <a href="{% url 'apply_for_permit' %}" class="btn-outline">Apply for New Permit to Build</a>
           </article>
         </section>
@@ -183,7 +183,7 @@
                     <tr>
                       <td> {{ forloop.counter }}</td>
                       <td>{{ demand_notice.referenceid }}</td>
-                      <td>{{ demand_notice.amount }}</td>
+                      <td>{{ demand_notice.total }}</td>
                       <td>{{ demand_notice.created_at | date:"d-m-Y" }}</td>
                       <td>
                         {% if demand_notice.status == "PAID" %}
@@ -529,7 +529,7 @@
                 type="button"
                 class="border border-gray-200 px-4 py-3 mt-10 bg-orange-400 hover:bg-orange-600 text-white rounded tracking-wider"
               >
-               {% if not is_profile_complete %} Upload Existing Facilities {% endif %}
+               Upload Existing Facilities 
               </a>
               <a
                 href="{% url 'apply_for_permit' %}"

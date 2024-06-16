@@ -1,5 +1,5 @@
 from django import forms
-from tax.models import Permit, InfrastructureType
+from tax.models import Permit, InfrastructureType, Waver
 from django import forms
 
 
@@ -21,27 +21,28 @@ class PermitForm(forms.ModelForm):
             'amount': forms.TextInput(attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
-                'required': True,
+                'required': False,
                 'placeholder': 'Amount',
+                'value': 0,
                 'type': "text"
                 }),
             'length': forms.TextInput(attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
                 'placeholder': 'Length',
-                'required': True,
+                'required': False,
                 'type': "text"
                 }),
             'add_from': forms.TextInput(attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
-                'required': True,
+                'required': False,
                 'placeholder': 'Address from'
                 }),
             'add_to': forms.TextInput(attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
-                'required': True,
+                'required': False,
                 'placeholder': 'Address to'
                 }),
             'year_installed': forms.DateInput(attrs={
@@ -97,7 +98,7 @@ class PermitEditForm(forms.ModelForm):
             'amount': forms.TextInput(attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
-                'required': True,
+                'required': False,
                 'placeholder': 'Amount',
                 'type': "text"
                 }),
@@ -112,19 +113,19 @@ class PermitEditForm(forms.ModelForm):
                 'class': "form-control",
                 'style': 'max-width: 150px;',
                 'placeholder': 'Length',
-                'required': True,
+                'required': False,
                 'type': "text"
                 }),
             'add_from': forms.TextInput(attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
-                'required': True,
+                'required': False,
                 'placeholder': 'Address from'
                 }),
             'add_to': forms.TextInput(attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
-                'required': True,
+                'required': False,
                 'placeholder': 'Address to'
                 }),
             'year_installed': forms.DateInput(attrs={
@@ -161,3 +162,33 @@ class PermitEditForm(forms.ModelForm):
              queryset=InfrastructureType.objects.all(),
              widget=forms.Select(attrs={'class': 'form-control select2', 'placeholder':'Infrastructure'})
          )
+
+
+class WaverForm(forms.ModelForm):
+    class Meta:
+        model = Waver
+        fields = ['referenceid', 'wave_amount', 'receipt']
+
+        widgets = {
+            'referenceid': forms.TextInput(
+                attrs={
+                'class': "form-control",
+                'style': 'max-width: 100%;',
+                'required': False,
+                'type': 'hidden'
+                }),
+            'wave_amount': forms.TextInput(
+                attrs={
+                'class': "form-control",
+                'style': 'max-width: 100%;',
+                'required': True,
+                'placeholder': 'Amount paid'
+                }),
+            'receipt': forms.FileInput(
+                attrs={
+                'class': "form-control",
+                'style': 'max-width: 100%;',
+                'required': True,
+                'placeholder': 'Upload receipt'
+                })
+        }

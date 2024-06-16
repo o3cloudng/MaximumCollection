@@ -32,8 +32,7 @@
         />
         <section class="w-100 p-4 d-flex justify-content-center p-4">
           <p>
-            You are about pay {{ payment.amount | floatformat:2 | intcomma }}
-            and permit reference {{payment.referenceid}}
+            You are about pay <strong>N{{ display_amount_value | floatformat:2 | intcomma }}</strong> with permit reference <strong>{{payment.referenceid}}</strong>
           </p>
 
           <button

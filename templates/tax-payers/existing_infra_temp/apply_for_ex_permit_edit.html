@@ -58,6 +58,7 @@
           />
         </div>
       </article>
+      {% include 'tax-payers/partials/toasts.html' %}
     </section>
     <section>
       <div id="infra-table"></div>
@@ -272,7 +273,7 @@
       data-modal-backdrop="static"
       tabindex="-1"
       aria-hidden="true"
-      class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+      class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-100 md:inset-0 h-[calc(100%-1rem)] max-h-full"
     >
       <div class="relative p-4 w-full max-w-2xl max-h-full">
         <!-- Modal content -->
@@ -308,23 +309,18 @@
             </button>
           </div>
           <!-- Modal body -->
+          <form action="{% url 'apply_for_waver' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
           <div class="p-4 md:p-5 space-y-4">
-            <p
+            <div
               class="text-base leading-relaxed text-gray-500 dark:text-gray-400"
             >
-              With less than a month to go before the European Union enacts new
-              consumer privacy laws for its citizens, companies around the world
-              are updating their terms of service agreements to comply.
-            </p>
-            <p
-              class="text-base leading-relaxed text-gray-500 dark:text-gray-400"
-            >
-              The European Union’s General Data Protection Regulation (G.D.P.R.)
-              goes into effect on May 25 and is meant to ensure a common set of
-              data rights in the European Union. It requires organizations to
-              notify users as soon as possible of high-risk data breaches that
-              could personally affect them.
-            </p>
+            <input type="hidden" name="referenceid" value="{{ ref_id }}" />
+              {{ form.wave_amount }}
+            </div>
+            <div class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              {{ form.receipt }}
+            </div>
           </div>
           <!-- Modal footer -->
           <div
@@ -332,7 +328,7 @@
           >
             <button
               data-modal-hide="static-modal"
-              type="button"
+              type="submit"
               class="bg-orange-500 border-2 border-orange-500 px-20 py-3 mr-2 text-white rounded-md hover:bg-transparent hover:border-orange-500 hover:text-orange-500"
             >
               Apply now
@@ -344,6 +340,7 @@
             >
               Decline
             </button>
+            </form>
           </div>
         </div>
       </div>

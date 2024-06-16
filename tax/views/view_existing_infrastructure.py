@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from tax.forms import PermitForm, PermitEditForm
+from tax.forms import PermitForm, PermitEditForm, WaverForm
 from django.contrib.auth.decorators import login_required
 from account.models import User, AdminSetting
 from tax.models import Permit, InfrastructureType, Waver
@@ -10,6 +10,33 @@ from django_htmx.http import HttpResponseClientRedirect
 from django.db.models import Q, Count, Avg, Sum
 from django.forms import inlineformset_factory, formset_factory, modelformset_factory
 from django.http import HttpResponse
+from django.contrib import messages
+
+
+
+def apply_for_waver(request):
+    if request.method == 'POST':
+        if Waver.objects.filter(Q(company=request.user) & Q(referenceid=request.POST.get('referenceid'))).exists():
+            messages.error(request, 'You have already applied for waver.')
+            return redirect('dispute-ex-demand-notice', request.POST.get('referenceid'))
+
+        form = WaverForm(request.POST or None, request.FILES or None)
+        
+        if form.is_valid():
+            print("WAVER HERE FORM IS VALID ")
+            wave = form.save(commit=False)
+            wave.referenceid = request.POST.get('referenceid')
+            wave.company = request.user
+            wave.save()
+
+            messages.success(request, 'Your request for waver was sent successfully.')
+            return redirect('dispute-ex-demand-notice', request.POST.get('referenceid'))
+        else:
+            print("FILE FORMAT INVALID", form.errors)
+      
+        messages.error(request, 'Your request for waver failed.')
+        return redirect('dispute-ex-demand-notice', request.POST.get('referenceid'))
+
 
 def generate_ref_id():
     today = date.today()
@@ -62,10 +89,6 @@ def apply_for_existing_permit(request):
             len = request.POST['length']
 
         print("AMOUNT OR NUMBER: ", infra_rate.infra_name.lower())
-
-        # age = age(request.POST['year_installed'])
-
-        # print("AGE OF INFRA", age)
 
         if form.is_valid():
             print("Form is valid")
@@ -124,7 +147,7 @@ def add_permit_ex_form(request):
 
 
 
-
+# Receipt (DN)
 def demand_notice_ex_receipt(request, ref_id):
     permits = Permit.objects.filter(referenceid = ref_id, is_disputed=False)
     if not permits.first().company == request.user:
@@ -159,6 +182,17 @@ def demand_notice_ex_receipt(request, ref_id):
         waver = Waver.objects.get(referenceid=ref).wave_amount
     else:
         waver = 0
+    # PENALTY CALCULATION
+    refid = Q(referenceid = ref_id)
+    is_exist = Q(is_existing=True)
+    current_user = request.user
+    age_sum = Permit.objects.filter(refid & is_exist).aggregate(ages = Sum('age'))['ages']
+
+    print("AGE Calculated: ", age_sum)
+    
+    penalty_sum = age_sum * penalty.rate
+    print("PENALTY Calculated: ", penalty_sum)
+
     
     # print("WAVER: ", waver)
     total_liability = total_due - waver
@@ -179,13 +213,18 @@ def demand_notice_ex_receipt(request, ref_id):
         'total_due': total_due,
         'waver': waver,
         'total_liability': total_liability,
-        'ref_id': ref_id
+        'ref_id': ref_id,
+        'penalty_sum': penalty_sum,
+        'penalty': penalty,
+        'age_sum': age_sum
     }
     return render(request, 'tax-payers/receipts/demand-notice-ex-receipt .html', context)
 
 
 @login_required
 def dispute_ex_demand_notice(request, ref_id):
+
+    form = WaverForm()
 
     ref = Q(referenceid=ref_id)
     coy = Q(company=request.user)
@@ -194,16 +233,17 @@ def dispute_ex_demand_notice(request, ref_id):
     is_existing = Q(is_existing = True)
     permits = Permit.objects.filter(ref & coy & is_dis & is_existing)
     undisputed_permits = Permit.objects.filter(ref & coy & not_dis & is_existing)
-    print("PERMIT COUNT: ", permits)
-    print("UNDISPUTED COUNT: ", undisputed_permits)
+    # print("PERMIT COUNT: ", permits)
+    # print("UNDISPUTED COUNT: ", undisputed_permits)
     
-    if request.method == "POST":
-        print("POST SHOWS HERE....")
+    # if request.method == "POST":
+        # print("POST SHOWS HERE....")
    
     context = {
         'ref_id': ref_id,
         'permits': permits,
-        'undisputed_permits': undisputed_permits
+        'undisputed_permits': undisputed_permits,
+        'form': form
     }
     return render(request, 'tax-payers/existing_infra_temp/apply_for_ex_permit_edit.html', context)
 
@@ -218,9 +258,10 @@ def undispute_ex_demand_notice_receipt(request, ref_id):
     app_fee = AdminSetting.objects.get(slug="application-fee")
     site_assessment = AdminSetting.objects.get(slug="site-assessment")
     admin_pm_fees = AdminSetting.objects.get(slug="admin-pm-fees")
+    penalty = AdminSetting.objects.get(slug="penalty")
 
-    mast_roof = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=False), Q(infra_type__infra_name__istartswith='Mast') | Q(infra_type__infra_name__istartswith='Roof'))
-    length = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=False), Q(infra_type__infra_name__istartswith='Optic') | Q(infra_type__infra_name__istartswith='Gas') | Q(infra_type__infra_name__istartswith='Power') | Q(infra_type__infra_name__istartswith='Pipeline'))
+    mast_roof = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=True), Q(infra_type__infra_name__istartswith='Mast') | Q(infra_type__infra_name__istartswith='Roof'))
+    length = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=True), Q(infra_type__infra_name__istartswith='Optic') | Q(infra_type__infra_name__istartswith='Gas') | Q(infra_type__infra_name__istartswith='Power') | Q(infra_type__infra_name__istartswith='Pipeline'))
     #application number = number of masts and rooftops 
 
     mast_roof_no = mast_roof.aggregate(no_sites = Sum('amount'))
@@ -238,10 +279,21 @@ def undispute_ex_demand_notice_receipt(request, ref_id):
     total_due = tot_sum_infra['no_sum'] + total_app_fee + admin_pm_fees_sum + sar_rate
 
     # ADD WAVER
-    if Waver.objects.filter(referenceid=ref).exists():
-        waver = Waver.objects.get(referenceid=ref).wave_amount
+    if Waver.objects.filter(referenceid=ref_id).exists():
+        waver = Waver.objects.get(referenceid=ref_id).wave_amount
     else:
         waver = 0
+    # PENALTY CALCULATION
+    refid = Q(referenceid = ref_id)
+    is_exist = Q(is_existing=True)
+    current_user = request.user
+    age_sum = Permit.objects.filter(refid & is_exist).aggregate(ages = Sum('age'))['ages']
+
+    print("AGE Calculated: ", age_sum)
+    
+    penalty_sum = age_sum * penalty.rate
+    print("PENALTY Calculated: ", penalty_sum)
+
     
     # print("WAVER: ", waver)
     total_liability = total_due - waver
@@ -262,7 +314,10 @@ def undispute_ex_demand_notice_receipt(request, ref_id):
         'total_due': total_due,
         'waver': waver,
         'total_liability': total_liability,
-        'ref_id': ref_id
+        'ref_id': ref_id,
+        'penalty_sum': penalty_sum,
+        'penalty': penalty,
+        'age_sum': age_sum
     }
     return render(request, 'tax-payers/receipts/undisputed_ex_dn_receipt.html', context)
 

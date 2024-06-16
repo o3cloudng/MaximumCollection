@@ -98,7 +98,7 @@
               </div>
               <div class="text-orange-400 font-normal mt-2">
                 <h2 class="block text-xl">Amount Due:</h2>
-                <h2 class="text-lg">N{{ total_liability | floatformat:2 | intcomma }}</h2>
+                <h2 class="text-lg">&#8358;{{ total_liability | floatformat:2 | intcomma }}</h2>
               </div>
             </div>
           </div>
@@ -116,8 +116,8 @@
                 <th>Infrastructure</th>
                 <th>No of Sites</th>
                 <th>Length(Meters)</th>
-                <th>Rate(N)</th>
-                <th class="!text-right">Amount(N)</th>
+                <th>Rate(&#8358;)</th>
+                <th class="!text-right">Amount(&#8358;)</th>
               </tr>
             </thead>
             <!-- hover:[&>*:nth-child(odd)]:bg-white -->
@@ -129,7 +129,7 @@
                 <td>{{ permit.amount}}</td>
                 <td>{{ permit.length }}</td>
                 <td class="!text-right">{{ permit.infra_type.rate | floatformat:2 | intcomma }}</td>
-                <td class="!text-right">{{ permit.infra_cost | floatformat:2 | intcomma  }}</td>
+                <td class="!text-right">&#8358;{{ permit.infra_cost | floatformat:2 | intcomma  }}</td>
               </tr>
               {% endfor %}
             </tbody>
@@ -138,7 +138,7 @@
             class="flex flex-row justify-between items-center w-full border-y-2 border-gray-600 text-gray-800 p-3"
           >
             <h3>Sub-Total(Permit Fees)</h3>
-            <h3>{{ tot_sum_infra.no_sum | floatformat:2 | intcomma }}</h3>
+            <h3>&#8358;{{ tot_sum_infra.no_sum | floatformat:2 | intcomma }}</h3>
           </div>
           <table class="md:w-full">
             <!-- hover:[&>*:nth-child(odd)]:bg-white -->
@@ -149,7 +149,7 @@
                 <td class="!text-right">{{ app_fee.rate | floatformat:2 | intcomma }}</td>
                 <td></td>
                 <td></td>
-                <td class="!text-right">{{ total_app_fee | floatformat:2 | intcomma }}</td>
+                <td class="!text-right">&#8358;{{ total_app_fee | floatformat:2 | intcomma }}</td>
               </tr>
               <tr>
                 <td class="!w-40">
@@ -159,7 +159,7 @@
                 <td class="!text-right">{{admin_pm_fees.rate }}%</td>
                 <td></td>
                 <td></td>
-                <td class="!text-right">{{ admin_pm_fees_sum | floatformat:2 | intcomma }}</td>
+                <td class="!text-right">&#8358;{{ admin_pm_fees_sum | floatformat:2 | intcomma }}</td>
               </tr>
               <tr>
                 <td>Site Assessment Report (SAR)</td>
@@ -167,7 +167,7 @@
                 <td class="!text-right">{{ site_assessment.rate | floatformat:2 | intcomma }}</td>
                 <td></td>
                 <td></td>
-                <td class="!text-right">{{ sar_rate | floatformat:2 | intcomma }}</td>
+                <td class="!text-right">&#8358;{{ sar_rate | floatformat:2 | intcomma }}</td>
               </tr>
             </tbody>
           </table>
