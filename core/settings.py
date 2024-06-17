@@ -84,36 +84,21 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 # if config('DEBUG'):
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-# else:
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=config('DB_URL'),
-#         conn_max_age=600,
-#         conn_health_checks=True,
-#     )
-# }
-
-# print("DBUSER", config('DB_USER'))
-# print("DBNAME", config('DB_NAME'))
-# print("DBPASS", config('DBPASS'))
-# print("DBHOST", config('DBHOST'))
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': config('DB_NAME'),
-#         'USER': config('DB_USER'),
-#         'PASSWORD': config('DBPASS'),
-#         'HOST': 'lasimra-db-do-user-16653632-0.c.db.ondigitalocean.com',
-#         'PORT': '25060',
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+# else:
+DATABASES = {
+    'default': dj_database_url.config(
+        default=config('DB_URL'),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
