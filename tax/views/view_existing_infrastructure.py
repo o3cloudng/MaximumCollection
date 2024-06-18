@@ -148,8 +148,9 @@ def add_permit_ex_form(request):
 
 
 # Receipt (DN)
+@login_required
 def demand_notice_ex_receipt(request, ref_id):
-    permits = Permit.objects.filter(referenceid = ref_id, is_disputed=False)
+    permits = Permit.objects.filter(Q(referenceid = ref_id) & Q(is_disputed=False) & Q(is_existing=True))
     if not permits.first().company == request.user:
         return redirect('apply_for_permit')
     
@@ -159,8 +160,8 @@ def demand_notice_ex_receipt(request, ref_id):
     admin_pm_fees = AdminSetting.objects.get(slug="admin-pm-fees")
     penalty = AdminSetting.objects.get(slug="penalty")
 
-    mast_roof = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=False), Q(infra_type__infra_name__istartswith='Mast') | Q(infra_type__infra_name__istartswith='Roof'))
-    length = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=False), Q(infra_type__infra_name__istartswith='Optic') | Q(infra_type__infra_name__istartswith='Gas') | Q(infra_type__infra_name__istartswith='Power') | Q(infra_type__infra_name__istartswith='Pipeline'))
+    mast_roof = Permit.objects.filter(Q(referenceid = ref_id) & Q(is_disputed=False) & Q(is_existing=True) & (Q(infra_type__infra_name__istartswith='Mast') | Q(infra_type__infra_name__istartswith='Roof')))
+    length = Permit.objects.filter(Q(referenceid = ref_id) & (Q(is_disputed=False) & Q(is_existing=True) & Q(infra_type__infra_name__istartswith='Optic') | Q(infra_type__infra_name__istartswith='Gas') | Q(infra_type__infra_name__istartswith='Power') | Q(infra_type__infra_name__istartswith='Pipeline')))
     #application number = number of masts and rooftops 
 
     mast_roof_no = mast_roof.aggregate(no_sites = Sum('amount'))
@@ -168,15 +169,18 @@ def demand_notice_ex_receipt(request, ref_id):
     app_count = mast_roof_no['no_sites'] + length.count()
     total_app_fee = app_count * app_fee.rate
 
-    tot_sum_infra = Permit.objects.filter(referenceid = ref_id).aggregate(no_sum = Sum('infra_cost'))
+    tot_sum_infra = Permit.objects.filter(Q(referenceid = ref_id) & Q(is_existing=True)).aggregate(no_sum = Sum('infra_cost'))
 
     # Site assessment report rate
     sar_rate = mast_roof_no['no_sites'] * site_assessment.rate
+    # print("SUM: ", tot_sum_infra['no_sum'], type(tot_sum_infra['no_sum']))
 
-    admin_pm_fees_sum = admin_pm_fees.rate * tot_sum_infra['no_sum'] / 100
+
+    admin_pm_fees_sum = (admin_pm_fees.rate * tot_sum_infra['no_sum']) / 100
 
     total_due = tot_sum_infra['no_sum'] + total_app_fee + admin_pm_fees_sum + sar_rate
 
+    print("ADMIN FEE: ", total_due, type(total_due))
     # ADD WAVER
     if Waver.objects.filter(referenceid=ref).exists():
         waver = Waver.objects.get(referenceid=ref).wave_amount
@@ -185,17 +189,18 @@ def demand_notice_ex_receipt(request, ref_id):
     # PENALTY CALCULATION
     refid = Q(referenceid = ref_id)
     is_exist = Q(is_existing=True)
-    current_user = request.user
-    age_sum = Permit.objects.filter(refid & is_exist).aggregate(ages = Sum('age'))['ages']
+    # is_dispute = Q(is_disputed=True)
+    # current_user = Q(comapny = request.user)
+    age_sum = Permit.objects.filter(refid & is_exist).aggregate(ages = Sum('age'))
 
     print("AGE Calculated: ", age_sum)
     
-    penalty_sum = age_sum * penalty.rate
+    penalty_sum = age_sum['ages'] * penalty.rate
     print("PENALTY Calculated: ", penalty_sum)
 
     
     # print("WAVER: ", waver)
-    total_liability = total_due - waver
+    total_liability = total_due + penalty_sum - waver
     
 
     context = {
@@ -216,7 +221,7 @@ def demand_notice_ex_receipt(request, ref_id):
         'ref_id': ref_id,
         'penalty_sum': penalty_sum,
         'penalty': penalty,
-        'age_sum': age_sum
+        'age_sum': age_sum['ages']
     }
     return render(request, 'tax-payers/receipts/demand-notice-ex-receipt .html', context)
 
@@ -228,8 +233,8 @@ def dispute_ex_demand_notice(request, ref_id):
 
     ref = Q(referenceid=ref_id)
     coy = Q(company=request.user)
-    is_dis = Q(is_disputed = False)
-    not_dis = Q(is_disputed = True)
+    is_dis = Q(is_disputed = True)
+    not_dis = Q(is_disputed = False)
     is_existing = Q(is_existing = True)
     permits = Permit.objects.filter(ref & coy & is_dis & is_existing)
     undisputed_permits = Permit.objects.filter(ref & coy & not_dis & is_existing)
@@ -250,7 +255,7 @@ def dispute_ex_demand_notice(request, ref_id):
 
 @login_required
 def undispute_ex_demand_notice_receipt(request, ref_id):
-    permits = Permit.objects.filter(referenceid = ref_id, is_disputed=True)
+    permits = Permit.objects.filter(Q(referenceid = ref_id) & Q(is_disputed=True))
     if not permits.first().company == request.user:
         return redirect('apply_for_permit')
     
@@ -260,8 +265,8 @@ def undispute_ex_demand_notice_receipt(request, ref_id):
     admin_pm_fees = AdminSetting.objects.get(slug="admin-pm-fees")
     penalty = AdminSetting.objects.get(slug="penalty")
 
-    mast_roof = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=True), Q(infra_type__infra_name__istartswith='Mast') | Q(infra_type__infra_name__istartswith='Roof'))
-    length = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=True), Q(infra_type__infra_name__istartswith='Optic') | Q(infra_type__infra_name__istartswith='Gas') | Q(infra_type__infra_name__istartswith='Power') | Q(infra_type__infra_name__istartswith='Pipeline'))
+    mast_roof = Permit.objects.filter(Q(referenceid = ref_id) & Q(is_disputed=True) & (Q(infra_type__infra_name__istartswith='Mast') | Q(infra_type__infra_name__istartswith='Roof')))
+    length = Permit.objects.filter(Q(referenceid = ref_id) & Q(is_disputed=True) & (Q(infra_type__infra_name__istartswith='Optic') | Q(infra_type__infra_name__istartswith='Gas') | Q(infra_type__infra_name__istartswith='Power') | Q(infra_type__infra_name__istartswith='Pipeline')))
     #application number = number of masts and rooftops 
 
     mast_roof_no = mast_roof.aggregate(no_sites = Sum('amount'))
@@ -269,7 +274,7 @@ def undispute_ex_demand_notice_receipt(request, ref_id):
     app_count = mast_roof_no['no_sites'] + length.count()
     total_app_fee = app_count * app_fee.rate
 
-    tot_sum_infra = Permit.objects.filter(referenceid = ref_id).aggregate(no_sum = Sum('infra_cost'))
+    tot_sum_infra = Permit.objects.filter(Q(referenceid = ref_id) & Q(is_disputed=True)).aggregate(no_sum = Sum('infra_cost'))
 
     # Site assessment report rate
     sar_rate = mast_roof_no['no_sites'] * site_assessment.rate

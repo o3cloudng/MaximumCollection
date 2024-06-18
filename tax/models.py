@@ -41,7 +41,7 @@ class Permit(models.Model):
     is_revised = models.BooleanField(default=False)
     is_paid = models.BooleanField(default=False)
     is_existing = models.BooleanField(default=False)
-    infra_cost = models.CharField(max_length=100, default=0)
+    infra_cost = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
