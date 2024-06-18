@@ -46,41 +46,45 @@
                     <tr class="[&>th]:text-orange-600">
                       <!-- <th class="w-20 p-3 text-sm font-semibold tracking-wide text-left">No.</th> -->
                       <th class="p-3 text-xs font-semibold tracking-wide text-left">Infrastructure</th>
-                      <th class="w-24 p-3 text-xs font-semibold tracking-wide text-left">Quantity <span class="block text-[8px]">(no of sites)</span></th>
+                      <th class="w-24 p-3 text-xs font-semibold tracking-wide text-left">Number <span class="block text-[8px]">(no of sites)</span></th>
                       <th class="w-24 p-3 text-xs font-semibold tracking-wide text-left">Length <span class="block text-[8px]">(Meters)</span></th>
                       <th class="w-32 p-3 text-xs font-semibold tracking-wide text-left">Address <span class="block text-[8px]">(From)</span></th>
                       <th class="w-32 p-3 text-xs font-semibold tracking-wide text-left">Address To</th>
                       <th class="w-32 p-3 text-xs font-semibold tracking-wide text-left">Installation Date</th>
                       <th class="w-32 p-3 text-xs font-semibold tracking-wide text-left">Attach File<span class="block text-[8px]">(application letter)</span></th>
                       <th class="w-32 p-3 text-xs font-semibold tracking-wide text-left">Attach File<span class="block text-[8px]">(design drawing)</span></th>
-                      <th>
-                        <button href="javascript:void(0)" onclick="return false;" class="border-2 border-gray-600 rounded-md px-2 py-1 hover:border-orange-500 hover:bg-orange-500 hover:text-white cursor-pointer" title="Add new infrstructure"
-                          hx-post="{% url 'add_permit_form' %}"
-                          hx-swap="beforeend transition:true"
-                          hx-target="#infra-table"
-                          >
-                          +
-                          </button>
-                        <!-- <img id="spinner" class='htmx-indicator' src="{% static 'img/Circles-menu-3.gif' %}" /> -->
-                      </th>
+                      <!-- <th></th> -->
                     </tr>
                   </thead>
-                      <!-- hover:[&>*:nth-child(odd)]:bg-white -->
-                    
-                      
-                      <tbody class="divide-y divide-gray-100 bg-white "></tbody>
-                      
-                      {% include 'tax-payers/partials/apply_permit_form.html' %}
-          <!-- <button type="submit" class="btn btn-warning" id="submit-all-permit">Next</button> -->
+                  <tbody>
+                    <form method="POST" action="." enctype="multipart/form-data">
+                      {% csrf_token %}
+                      {{ formset.management_form }}
+                      {% for form in formset %}
+                      <tr>
+                        {{ form.id }}
+                        <!-- <input type="hidden" value="{{ form.company }}" name="company" />
+                        <input type="hidden" value="{{ form.referenceid }}" name="referenceid" /> -->
+                        <td>{{ form.infra_type }}</td>
+                        <td>{{ form.amount }}</td>
+                        <td>{{ form.length }}</td>
+                        <td>{{ form.add_from }}</td>
+                        <td>{{ form.add_to }}</td>
+                        <td></td>
+                        <td>{{ form.upload_application_letter }}</td>
+                        <td>{{ form.upload_asBuilt_drawing }}</td>
+                      </tr>
+
+                      {% endfor %}
                     </tbody>
-                    
-                      
                   </table>     
+                  {{ formset.errors }}
             </div>
             <div class="mt-10 mx-auto w-80">
-              <button id="submit-all-permit" 
+              <button id="submit-all-permit" type="submit"
               class="bg-orange-500 border-2 border-orange-500 px-20 py-3 text-white rounded-md hover:bg-transparent hover:border-orange-500 hover:text-orange-500">
-              Next</button>
+              Update </button>
+            </form>
             </div>
         </section>
 

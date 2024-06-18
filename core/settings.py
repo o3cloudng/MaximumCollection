@@ -6,6 +6,7 @@ from django.core.management.utils import get_random_secret_key
 import os
 
 from decouple import config
+import dj_database_url
 
 # SECRET_KEY = config('SECRET_KEY ')
 # DEBUG = config('DEBUG')
@@ -22,12 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = os.environ.get('SECRET_KEY')
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = config('SECRET_KEY', get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG')
 
-ALLOWED_HOSTS = ["164.92.108.254", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     'tax',
     'django_htmx',
     'django.contrib.humanize',
+    'payments',
 ]
 
 MIDDLEWARE = [
@@ -81,29 +83,22 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-# print("DBUSER", config('DB_USER'))
-# print("DBNAME", config('DB_NAME'))
-# print("DBPASS", config('DBPASS'))
-# print("DBHOST", config('DBHOST'))
-
+# if config('DEBUG'):
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': config('DB_NAME'),
-#         'USER': config('DB_USER'),
-#         'PASSWORD': config('DBPASS'),
-#         'HOST': 'lasimra-db-do-user-16653632-0.c.db.ondigitalocean.com',
-#         'PORT': '25060',
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+# else:
+DATABASES = {
+    'default': dj_database_url.config(
+        default=config('DB_URL'),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -187,3 +182,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "assets/media")
 
 LOGIN_URL = "/clients/"
 LOGIN_REDIRECT_URL = "/clients/dashboard/"
+
+PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')
+PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY')
+

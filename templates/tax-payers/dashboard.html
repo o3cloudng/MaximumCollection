@@ -23,6 +23,7 @@
             </div>
             
           </article>
+          {% include 'tax-payers/partials/toasts.html' %}
         </section>
         <!-- Form Tab -->
         <section class="w-full grid grid-rows  md:grid-cols-4 gap-4 justify-between items-center mt-10">
@@ -54,7 +55,7 @@
         
         <section class="mt-5 space-x-4 flex flex-col md:flex-row">
           <article class="flex flex-row items-center justify-start space-x-2">
-            <a href="{% url 'upload-existing-facilities' %}" class="btn">Upload Existing Facilities</a>
+            <a href="{% url 'apply_existing_infra' %}" class="btn border-2 border-orange-500">Upload Existing Facilities</a>
             <a href="{% url 'apply_for_permit' %}" class="btn-outline">Apply for New Permit to Build</a>
           </article>
         </section>
@@ -182,7 +183,7 @@
                     <tr>
                       <td> {{ forloop.counter }}</td>
                       <td>{{ demand_notice.referenceid }}</td>
-                      <td>{{ demand_notice.amount }}</td>
+                      <td>{{ demand_notice.total }}</td>
                       <td>{{ demand_notice.created_at | date:"d-m-Y" }}</td>
                       <td>
                         {% if demand_notice.status == "PAID" %}
@@ -215,7 +216,7 @@
                     {% endfor %}
                     {% else %}
                     <tr>
-                      <td colspan="6"> No paid demand notice
+                      <td colspan="6"> No demand notice
                       </td>
                     </tr>
                     {% endif %}
@@ -478,7 +479,6 @@
         </div>
       </section>
 <!-- Popup -->
-{% comment %} {% if not user.is_profile_complete %} {% endcomment %}
       <div id="modal" class="fixed z-50 inset-0 w-screen">
         <!-- bg-gray-500 bg-opacity-75 transition-opacity -->
         <div
@@ -524,12 +524,12 @@
               class="flex flex-col md:flex-row justify-between items-center md:gap-10 my-6 mb-20"
             >
               <a
-                href="{% url 'upload-existing-facilities' %}"
+                href="{% url 'apply_existing_infra' %}"
                 id="close-modal-btn"
                 type="button"
                 class="border border-gray-200 px-4 py-3 mt-10 bg-orange-400 hover:bg-orange-600 text-white rounded tracking-wider"
               >
-               {% if not is_profile_complete %} Upload Existing Facilities {% endif %}
+               Upload Existing Facilities 
               </a>
               <a
                 href="{% url 'apply_for_permit' %}"
@@ -543,7 +543,7 @@
           </div>
         </div>
       </div>
-{% comment %} {% endif %}       {% endcomment %}
+   
 {% endblock %}
 </script>
 

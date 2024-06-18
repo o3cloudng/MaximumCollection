@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import SignupForm, LoginForm, ProfileForm
 from django.contrib.auth import login, authenticate, logout
 from account.models import User, Sector
+from django.contrib import messages
 
 
 # @login_required
@@ -10,8 +11,8 @@ def userlogin_old(request):
     from django.contrib.auth import login, authenticate  # add to imports
 
 def userlogin(request):
-    # if request.user.is_authenticated:
-    #     return redirect("dashboard")
+    if request.user.is_authenticated:
+        return redirect("dashboard")
     
     form = LoginForm()
     message = ''
@@ -25,9 +26,13 @@ def userlogin(request):
             if user is not None:
                 login(request, user)
                 message = f'Hello {user.email}! You have been logged in'
+                messages.success(request, "You have successfully logged in.")
                 return redirect("dashboard")
             else:
+                messages.error(request, "Login failed!.")
                 message = 'Login failed!'
+
+            
     return render(request, 'tax-payers/login.html', context={'form': form, 'message': message})
     # context = {
     #     form: form
