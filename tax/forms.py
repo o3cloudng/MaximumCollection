@@ -54,7 +54,7 @@ class PermitForm(forms.ModelForm):
                 }),
             'upload_application_letter': forms.FileInput(attrs={
                 'class': "form-control",
-                'style': 'max-width: 150px;',
+                'style': 'max-width: 50px;',
                 'required': False,
                 'placeholder': 'Upload application letter'
                 }),
