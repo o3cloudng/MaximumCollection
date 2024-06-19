@@ -1,15 +1,9 @@
 from django.urls import path
-from .views import view, view_existing_infrastructure
+from .views import view, view_existing_infrastructure, page_view
 
 urlpatterns = [
-    path('dashboard/', view.dashboard, name="dashboard"),
     path('apply/permit/', view.apply_for_permit, name="apply_for_permit"),
     path('apply/permit/edit/<str:ref_id>/', view.apply_for_permit_edit, name="apply_for_permit_edit"),
-    path('apply/permit/demand_notice/', view.demand_notice, name="demand-notice"),
-    path('apply/permit/disputes/', view.disputes, name="disputes"),
-    path('apply/permit/infrastructures/', view.infrastructures, name="infrastructures"),
-    path('apply/permit/downloads/', view.downloads, name="downloads"),
-    path('apply/permit/settings/', view.settings, name="settings"),
     path('apply/permit/demand_notice/<str:ref_id>/', view.demand_notice_receipt, name="demand-notice-receipt"),
     path('apply/permit/dispute_notice/<str:ref_id>/', view.dispute_demand_notice, name="dispute-demand-notice"),
     path('apply/permit/demand_notice/receipt/<str:ref_id>/', view.dispute_demand_notice_receipt, name="dispute-demand-notice-receipt"),
@@ -31,5 +25,11 @@ urlpatterns = [
     path('apply/permit/ex/dn/edit/<int:pk>/', view_existing_infrastructure.dispute_ex_dn_edit, name="dispute_ex_dn_edit"),
     path('apply/waver', view_existing_infrastructure.apply_for_waver, name="apply_for_waver"),
 
-
+    #  PAGES URL
+    path('dashboard/', page_view.dashboard, name="dashboard"),
+    path('demand_notice/', page_view.demand_notice, name="demand-notice"),
+    path('disputes/', page_view.disputes, name="disputes"),
+    path('infrastructures/', page_view.infrastructures, name="infrastructures"),
+    path('downloads/', page_view.downloads, name="downloads"),
+    path('settings/', page_view.settings, name="settings"),
 ]

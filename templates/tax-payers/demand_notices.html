@@ -172,28 +172,42 @@
                     {% if demand_notices.exists %}
                      {% for demand_notice in demand_notices %}
                     <tr>
-                      <td> {{ forloop.counter }}</td>
-                      <td>{{ demand_notice.referenceid }}</td>
-                      <td>{{ demand_notice.amount }}</td>
-                      <td>{{ demand_notice.created_at | date:"d-m-Y" }}</td>
                       <td>
-                        {% if demand_notice.status == "PAID" %}
+                        <a href="{% url 'dispute-demand-notice' demand_notice.referenceid %}">
+                          {{ forloop.counter }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' demand_notice.referenceid %}">
+                          {{ demand_notice.referenceid }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' demand_notice.referenceid %}">
+                          {{ demand_notice.total }}</a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' demand_notice.referenceid %}">
+                          
+                          {{ demand_notice.created_at | date:"M, d Y" }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' demand_notice.referenceid %}">
+                        {% if demand_notice.is_paid %}
                         <span class="status-paid">
-                          {{ demand_notice.status | title }}
+                          PAID {{ demand_notice.is_paid }}
                         </span>
-                        {% elif demand_notice.status == "UNPAID" %}
-                        <span class="status-disputed">
-                          {{ demand_notice.status | title }}
-                        </span>
-                        {% elif demand_notice.status == "DISPUTED" %}
-                        <span class="status-disputed">
-                          {{ demand_notice.status | title }}
-                        </span>
-                        {% elif demand_notice.status == "RESOLVED" %}
+                        {% elif demand_notice.is_revised %}
                         <span class="status-revised">
-                          {{ demand_notice.status | title }}
+                          REVISED
+                        </span>
+                        {% elif demand_notice.is_disputed %}
+                        <span class="status-disputed">
+                          DISPUTED
+                        </span>
+                        {% else %}
+                        <span class="status-others">
+                          NEW
                         </span>
                         {% endif %}
+                        </a>
                       </td>
                       <td>
                         <span class="flex justify-end items-center text-gray-400">
@@ -203,6 +217,7 @@
                           
                         </span>
                       </td>
+                    </a>
                     </tr>
                     {% endfor %}
                     {% else %}
