@@ -28,24 +28,24 @@
           <div class="card">
           
             <p>Mast</p>
-            <h4>50000</h4>
+            <h4>{{ mast.count }}</h4>
           
           </div>
           <div class="card">
           
             <p>Fibre</p>
-            <h4>700000</h4>
+            <h4>{{ fibre.count }}</h4>
           
           </div>
           <div class="card">
           
             <p>Power Lines</p>
-            <h4>50000</h4>
+            <h4>{{ power_line.count }}</h4>
           </div>
           <div class="card">
           
             <p>Pipe Lines</p>
-            <h4>50000</h4>
+            <h4>{{ pipeline.count }}</h4>
           
           </div>
         </div>
@@ -169,58 +169,63 @@
                       </thead>
                       <!-- hover:[&>*:nth-child(odd)]:bg-white -->
                     <tbody class="divide-y divide-gray-100 bg-white ">
-                    <tr>
-                      <td>1</td>
-                      <td>ED1234GTH</td>
-                      <td>500000</td>
-                      <td>12-7-2027</td>
+                    {% if infrastructures.exists %}
+                     {% for m in infrastructures %}
+                     <tr>
                       <td>
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
+                          {{ forloop.counter }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
+                          {{ m.referenceid }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
+                          {{ m.total }}</a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
+                          
+                          {{ m.created_at | date:"M, d Y" }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
+                        {% if m.is_paid %}
+                        <span class="status-paid">
+                          PAID {{ m.is_paid }}
+                        </span>
+                        {% elif m.is_revised %}
+                        <span class="status-revised">
+                          REVISED
+                        </span>
+                        {% elif m.is_disputed %}
                         <span class="status-disputed">
-                          Disputed
+                          DISPUTED
                         </span>
-                        
+                        {% else %}
+                        <span class="status-others">
+                          NEW
+                        </span>
+                        {% endif %}
+                        </a>
                       </td>
                       <td>
                         <span class="flex justify-end items-center text-gray-400">
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                        </svg>
-
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                          </svg>
+                          
                         </span>
                       </td>
+                    </a>
                     </tr>
+                    {% endfor %}
+                    {% else %}
                     <tr>
-                      <td>2</td>
-                      <td>ED1234GTH</td>
-                      <td>500000</td>
-                      <td>12-7-2027</td>
-                      <td>
-                        <span class="status-revised">Revised</span>
-                        </td>
-                      <td>
-                        <span class="flex justify-end items-center text-gray-400">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                        </svg>
-
-                        </span>
+                      <td colspan="6"> No demand notice
                       </td>
                     </tr>
-                    <tr>
-                      <td>3</td>
-                      <td>ED1234GTH</td>
-                      <td>500000</td>
-                      <td>12-7-2027</td>
-                      <td><span class="status-paid">Paid</span></td>
-                      <td>
-                        <span class="flex justify-end items-center text-gray-400">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                        </svg>
-
-                        </span>
-                      </td>
-                    </tr>
+                    {% endif %}
                     </tbody>
                     <tfoot>
                       <tr>

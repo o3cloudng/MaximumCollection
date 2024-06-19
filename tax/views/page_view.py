@@ -57,33 +57,52 @@ def demand_notice(request):
 
 @login_required
 def infrastructures(request):
-    demand_notices = Permit.objects.filter(company=request.user.id)
-    demand_notices_paid = Permit.objects.filter(company=request.user.id, status="PAID")
-    demand_notices_unpaid = Permit.objects.filter(company=request.user.id, status="UNPAID")
-    demand_notices_disputed = Permit.objects.filter(company=request.user.id, status="DISPUTED")
-    demand_notices_resolved = Permit.objects.filter(company=request.user.id, status="RESOLVED")
+    infrastructures = Permit.objects.values('infra_type', 'referenceid').filter(Q(company=request.user.id) & Q(infra_type__infra_name__icontains="mast")).annotate(total=Count('id'), created_at=Max('created_at')).order_by('-created_at')
+
+    mast = Permit.objects.filter(Q(company=request.user.id) & Q(infra_type__infra_name__icontains="mast"))
+    fibre = Permit.objects.filter(Q(company=request.user.id) & Q(infra_type__infra_name__icontains="fibre"))
+    power_line = Permit.objects.filter(Q(company=request.user.id) & Q(infra_type__infra_name__icontains="power"))
+    pipeline = Permit.objects.filter(Q(company=request.user.id) & Q(infra_type__infra_name__icontains="pipe"))
     context = {
-         "is_profile_complete" : False,
-         "demand_notices": demand_notices,
-         "demand_notices_paid": demand_notices_paid,
-         "demand_notices_unpaid": demand_notices_unpaid,
-        "demand_notices_disputed": demand_notices_disputed,
-        "demand_notices_resolved": demand_notices_resolved,
+        "infrastructures": infrastructures,
+         "mast": mast,
+         "fibre": fibre,
+        "power_line": power_line,
+        "pipeline": pipeline,
     }
     return render(request, 'tax-payers/infrastructure.html', context)
 
 
 @login_required
 def disputes(request):
-    user = User.objects.get(id = request.user.id)
+    dispute_notices = Permit.objects.values('referenceid', 'is_disputed', 'is_revised').filter(Q(company=request.user) & Q(is_disputed=True)).annotate(total=Count('id'), created_at=Max('created_at')).order_by('-created_at')
+    dispute_notices_paid = Permit.objects.values('referenceid').filter(Q(company=request.user) & Q(is_paid=True) & Q(is_disputed=True)).annotate(total=Count('id'), created_at=Max('created_at')).order_by('-created_at')
+    dispute_notices_unpaid = Permit.objects.values('referenceid').filter(Q(company=request.user) & Q(is_paid=False) & Q(is_disputed=True)).annotate(total=Count('id'), created_at=Max('created_at')).order_by('-created_at')
+    dispute_notices_disputed = Permit.objects.values('referenceid').filter(Q(company=request.user) & Q(is_disputed=True) & Q(is_disputed=True)).annotate(total=Count('id'), created_at=Max('created_at')).order_by('-created_at')
+    dispute_notices_resolved = Permit.objects.values('referenceid').filter(Q(company=request.user) & Q(is_revised=True) & Q(is_disputed=True)).annotate(total=Count('id'), created_at=Max('created_at')).order_by('-created_at')
+    # print("DN: ", demand_notices)
     context = {
-        "user":user
+         "is_profile_complete" : False,
+         "dispute_notices": dispute_notices,
+         "dispute_notices_paid": dispute_notices_paid,
+         "dispute_notices_unpaid": dispute_notices_unpaid,
+        "dispute_notices_disputed": dispute_notices_disputed,
+        "dispute_notices_resolved": dispute_notices_resolved,
     }
     return render(request, 'tax-payers/disputes.html', context)
 
 @login_required
 def downloads(request):
-    context = {}
+    files = Permit.objects.filter(company=request.user)
+    print("FILE: ", files)
+    for file in files:
+        print("File Here", file.referenceid)
+        print("File Here", file.upload_application_letter)
+        print("File Here", file.infra_type)
+
+    context = {
+        "files": files
+    }
     return render(request, 'tax-payers/downloads.html', context)
 
 @login_required

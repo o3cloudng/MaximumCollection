@@ -28,24 +28,24 @@
           <div class="card">
           
             <p>Total Dispute Notices</p>
-            <h4>50000</h4>
+            <h4> {{ dispute_notices.count }}</h4>
           
           </div>
           <div class="card">
           
             <p>Paid Dispute Notices</p>
-            <h4>700000</h4>
+            <h4>{{ dispute_notices_paid.count }}</h4>
           
           </div>
           <div class="card">
           
             <p>Unpaid Dispute Notices</p>
-            <h4>50000</h4>
+            <h4>{{ dispute_notices_unpaid.count }}</h4>
           </div>
           <div class="card">
           
             <p>Disputed Dispute Notices</p>
-            <h4>50000</h4>
+            <h4>{{ dispute_notices_disputed.count }}</h4>
           
           </div>
         </div>
@@ -169,58 +169,49 @@
                       </thead>
                       <!-- hover:[&>*:nth-child(odd)]:bg-white -->
                     <tbody class="divide-y divide-gray-100 bg-white ">
-                    <tr>
-                      <td>1</td>
-                      <td>ED1234GTH</td>
-                      <td>500000</td>
-                      <td>12-7-2027</td>
+                      {% if dispute_notices.exists %}
+                      {% for dispute_notice in dispute_notices %}
+                      <tr>
                       <td>
+                        <a href="{% url 'dispute-demand-notice' dispute_notice.referenceid %}">
+                          {{ forloop.counter }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' dispute_notice.referenceid %}">
+                          {{ dispute_notice.referenceid }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' dispute_notice.referenceid %}">
+                          {{ dispute_notice.total }}</a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' dispute_notice.referenceid %}">
+                          
+                          {{ dispute_notice.created_at | date:"M, d Y" }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' dispute_notice.referenceid %}">
                         <span class="status-disputed">
-                          Disputed
+                          DISPUTED
                         </span>
-                        
+                        </a>
                       </td>
                       <td>
                         <span class="flex justify-end items-center text-gray-400">
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                        </svg>
-
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                          </svg>
+                          
                         </span>
                       </td>
+                    </a>
                     </tr>
-                    <tr>
-                      <td>2</td>
-                      <td>ED1234GTH</td>
-                      <td>500000</td>
-                      <td>12-7-2027</td>
-                      <td>
-                        <span class="status-revised">Revised</span>
+                      {% endfor %}
+                    {% else %}
+                      <tr>
+                        <td colspan="6"> No disputed demand notice
                         </td>
-                      <td>
-                        <span class="flex justify-end items-center text-gray-400">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                        </svg>
-
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>3</td>
-                      <td>ED1234GTH</td>
-                      <td>500000</td>
-                      <td>12-7-2027</td>
-                      <td><span class="status-paid">Paid</span></td>
-                      <td>
-                        <span class="flex justify-end items-center text-gray-400">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                        </svg>
-
-                        </span>
-                      </td>
-                    </tr>
+                      </tr>
+                    {% endif %}
                     </tbody>
                     <tfoot>
                       <tr>
@@ -274,56 +265,49 @@
                       </thead>
                       <!-- hover:[&>*:nth-child(odd)]:bg-white -->
                     <tbody class="divide-y divide-gray-100 bg-white ">
-                    <tr>
-                      <td>1</td>
-                      <td>ED1234GTH</td>
-                      <td>500000</td>
-                      <td>12-7-2027</td>
+                    {% if dispute_notices_paid.exists %}
+                      {% for dispute_notice_paid in dispute_notices_paid %}
+                      <tr>
                       <td>
-                        <span class="status-paid">Paid</span>
-                        
+                        <a href="{% url 'dispute-demand-notice' dispute_notice_paid.referenceid %}">
+                          {{ forloop.counter }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' dispute_notice_paid.referenceid %}">
+                          {{ dispute_notice_paid.referenceid }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' dispute_notice_paid.referenceid %}">
+                          {{ dispute_notice_paid.total }}</a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' dispute_notice_paid.referenceid %}">
+                          
+                          {{ dispute_notice_paid.created_at | date:"M, d Y" }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' dispute_notice_paid.referenceid %}">
+                        <span class="status-disputed">
+                          PAID
+                        </span>
+                        </a>
                       </td>
                       <td>
                         <span class="flex justify-end items-center text-gray-400">
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                        </svg>
-
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                          </svg>
+                          
                         </span>
                       </td>
+                    </a>
                     </tr>
-                    <tr>
-                      <td>2</td>
-                      <td>ED1234GTH</td>
-                      <td>500000</td>
-                      <td>12-7-2027</td>
-                      <td>
-                        <span class="status-paid">Paid</span>
+                      {% endfor %}
+                    {% else %}
+                      <tr>
+                        <td colspan="6"> No paid disputed notice
                         </td>
-                      <td>
-                        <span class="flex justify-end items-center text-gray-400">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                        </svg>
-
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>3</td>
-                      <td>ED1234GTH</td>
-                      <td>500000</td>
-                      <td>12-7-2027</td>
-                      <td><span class="status-paid">Paid</span></td>
-                      <td>
-                        <span class="flex justify-end items-center text-gray-400">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                        </svg>
-
-                        </span>
-                      </td>
-                    </tr>
+                      </tr>
+                    {% endif %}
                     </tbody>
                     <tfoot>
                       <tr>
@@ -377,62 +361,49 @@
                       </thead>
                       <!-- hover:[&>*:nth-child(odd)]:bg-white -->
                     <tbody class="divide-y divide-gray-100 bg-white ">
-                    <tr>
-                      <td>1</td>
-                      <td>ED1234GTH</td>
-                      <td>500000</td>
-                      <td>12-7-2027</td>
+                    {% if dispute_notices.exists %}
+                      {% for dispute_notice in dispute_notices %}
+                      <tr>
                       <td>
+                        <a href="{% url 'dispute-demand-notice' dispute_notice.referenceid %}">
+                          {{ forloop.counter }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' dispute_notice.referenceid %}">
+                          {{ dispute_notice.referenceid }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' dispute_notice.referenceid %}">
+                          {{ dispute_notice.total }}</a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' dispute_notice.referenceid %}">
+                          
+                          {{ dispute_notice.created_at | date:"M, d Y" }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' dispute_notice.referenceid %}">
                         <span class="status-disputed">
-                          Disputed
+                          DISPUTED
                         </span>
-                        
+                        </a>
                       </td>
                       <td>
                         <span class="flex justify-end items-center text-gray-400">
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                        </svg>
-
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                          </svg>
+                          
                         </span>
                       </td>
+                    </a>
                     </tr>
-                    <tr>
-                      <td>2</td>
-                      <td>ED1234GTH</td>
-                      <td>500000</td>
-                      <td>12-7-2027</td>
-                      <td>
-                        <span class="status-disputed">
-                          Disputed
-                        </span>
+                      {% endfor %}
+                    {% else %}
+                      <tr>
+                        <td colspan="6"> No disputed notice
                         </td>
-                      <td>
-                        <span class="flex justify-end items-center text-gray-400">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                        </svg>
-
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>3</td>
-                      <td>ED1234GTH</td>
-                      <td>500000</td>
-                      <td>12-7-2027</td>
-                      <td><span class="status-disputed">
-                          Disputed
-                        </span></td>
-                      <td>
-                        <span class="flex justify-end items-center text-gray-400">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                        </svg>
-
-                        </span>
-                      </td>
-                    </tr>
+                      </tr>
+                    {% endif %}
                     </tbody>
                     <tfoot>
                       <tr>
@@ -486,56 +457,49 @@
                       </thead>
                       <!-- hover:[&>*:nth-child(odd)]:bg-white -->
                     <tbody class="divide-y divide-gray-100 bg-white ">
-                    <tr>
-                      <td>1</td>
-                      <td>ED1234GTH</td>
-                      <td>500000</td>
-                      <td>12-7-2027</td>
+                    {% if dispute_notices_resolved.exists %}
+                      {% for dispute_notice_resolved in dispute_notices_resolved %}
+                      <tr>
                       <td>
-                        <span class="status-revised">Revised</span>
-                        
+                        <a href="{% url 'dispute-demand-notice' dispute_notice_resolved.referenceid %}">
+                          {{ forloop.counter }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' dispute_notice_resolved.referenceid %}">
+                          {{ dispute_notice_resolved.referenceid }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' dispute_notice_resolved.referenceid %}">
+                          {{ dispute_notice_resolved.total }}</a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' dispute_notice_resolved.referenceid %}">
+                          
+                          {{ dispute_notice_resolved.created_at | date:"M, d Y" }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' dispute_notice_resolved.referenceid %}">
+                        <span class="status-revised">
+                          REVISED
+                        </span>
+                        </a>
                       </td>
                       <td>
                         <span class="flex justify-end items-center text-gray-400">
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                        </svg>
-
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                          </svg>
+                          
                         </span>
                       </td>
+                    </a>
                     </tr>
-                    <tr>
-                      <td>2</td>
-                      <td>ED1234GTH</td>
-                      <td>500000</td>
-                      <td>12-7-2027</td>
-                      <td>
-                        <span class="status-revised">Revised</span>
+                      {% endfor %}
+                    {% else %}
+                      <tr>
+                        <td colspan="6"> No revised dispute notice
                         </td>
-                      <td>
-                        <span class="flex justify-end items-center text-gray-400">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                        </svg>
-
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>3</td>
-                      <td>ED1234GTH</td>
-                      <td>500000</td>
-                      <td>12-7-2027</td>
-                      <td><span class="status-revised">Revised</span></td>
-                      <td>
-                        <span class="flex justify-end items-center text-gray-400">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                        </svg>
-
-                        </span>
-                      </td>
-                    </tr>
+                      </tr>
+                    {% endif %}
                     </tbody>
                     <tfoot>
                       <tr>
