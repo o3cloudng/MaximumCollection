@@ -309,23 +309,9 @@
                           </a></td>
                         <td>
                           <a href="{% url 'dispute-demand-notice' demand_notice_paid.referenceid %}">
-                          {% if demand_notice_paid.is_paid %}
                           <span class="status-paid">
-                            PAID {{ demand_notice_paid.is_paid }}
+                            PAID 
                           </span>
-                          {% elif demand_notice_paid.is_revised %}
-                          <span class="status-revised">
-                            REVISED
-                          </span>
-                          {% elif demand_notice_paid.is_disputed %}
-                          <span class="status-disputed">
-                            DISPUTED
-                          </span>
-                          {% else %}
-                          <span class="status-others">
-                            NEW
-                          </span>
-                          {% endif %}
                           </a>
                         </td>
                       <td>
@@ -418,23 +404,9 @@
                         </a></td>
                       <td>
                         <a href="{% url 'dispute-demand-notice' demand_notice_disputed.referenceid %}">
-                        {% if demand_notice_disputed.is_paid %}
-                        <span class="status-paid">
-                          PAID {{ demand_notice_disputed.is_paid }}
-                        </span>
-                        {% elif demand_notice_disputed.is_revised %}
-                        <span class="status-revised">
-                          REVISED
-                        </span>
-                        {% elif demand_notice_disputed.is_disputed %}
                         <span class="status-disputed">
                           DISPUTED
                         </span>
-                        {% else %}
-                        <span class="status-others">
-                          NEW
-                        </span>
-                        {% endif %}
                         </a>
                       </td>
                       <td>
