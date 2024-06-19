@@ -173,6 +173,8 @@ def apply_for_permit(request):
     else:
         ref_id = generate_ref_id() + "00001"
 
+    print("NEW: APPLY FOR NEW PERMIT")
+
     if request.method == 'POST':
         form = PermitForm(request.POST or None, request.FILES or None)
 
@@ -196,17 +198,19 @@ def apply_for_permit(request):
             qty = 0
             len = request.POST['length']
 
+        # print("REFERENCES: ", request.POST)
+
         if form.is_valid():
-            print("Form is valid")
+            # print("Form is valid")
             permit = form.save(commit=False)
-            permit.referenceid = ref_id
+            permit.referenceid = request.POST['reference']
             permit.company = request.user
             permit.amount = qty
             permit.length = len
             permit.infra_cost = infra_cost
             permit.save()
         else:
-            print("FILE FORMAT INVALID")
+            print(form.errors)
     form = PermitForm()
 
     context = {
@@ -215,7 +219,7 @@ def apply_for_permit(request):
         'company': request.user
     }
 
-    print("APPLY PERMIT - CONTEXT: ", context)
+    # print("APPLY PERMIT - CONTEXT: ", context)
 
     if request.htmx:
         messages.success(request,"Infrastructure added successfully.")
@@ -281,8 +285,13 @@ def apply_for_permit_edit(request, ref_id):
     return render(request, 'tax-payers/apply_for_permit_edit.html', context)
 
 
-@login_required
+@login_required # Check this after
 def add_permit_form(request):
+    if Permit.objects.all().exists(): 
+        last = Permit.objects.latest("pk").id
+        ref_id = "LA"+generate_ref_id() + str(last + 1).zfill(5)
+    else:
+        ref_id = generate_ref_id() + "00001"
     
     permits = Permit.objects.all()
     if request.method == "POST":
@@ -304,7 +313,7 @@ def add_permit_form(request):
 
     context = {
         'form':form,
-        # 'referenceid': ref_id,
+        'referenceid': ref_id,
         'company': request.user
     }
     return render(request, 'tax-payers/partials/apply_permit_form.html', context)
@@ -412,27 +421,27 @@ def infrastructures(request):
     }
     return render(request, 'tax-payers/infrastructure.html', context)
 
-
+@login_required
 def downloads(request):
     context = {}
     return render(request, 'tax-payers/downloads.html', context)
 
-
+@login_required
 def settings(request):
     context = {}
     return render(request, 'tax-payers/settings.html', context)
 
-
+@login_required
 def resources(request):
     context = {}
     return render(request, 'tax-payers/resources.html', context)
 
-
+@login_required
 def upload_existing_facilities(request):
     context = {}
     return render(request, 'tax-payers/upload-existing-facility.html', context)
 
-
+@login_required
 def demand_notice_receipt(request, ref_id):
     permits = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=False))
     if not permits.exists():
@@ -493,7 +502,7 @@ def demand_notice_receipt(request, ref_id):
     }
     return render(request, 'tax-payers/receipts/demand-notice-receipt.html', context)
 
-
+@login_required
 def dispute_demand_notice_receipt(request, ref_id):
     print("DN - REF ID: ", ref_id)
     permits = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=True))

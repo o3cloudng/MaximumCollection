@@ -4,6 +4,7 @@
   hx-on="htmx:afterRequest: this.remove()"
   hx-trigger="click from:#submit-all-permit" >
   <tr>
+    <input type="hidden" name="reference" value="{{ referenceid }}" />
     <td>{{ form.infra_type }}</td>
     <td>{{ form.amount }}</td>
     <td>{{ form.length }}</td>

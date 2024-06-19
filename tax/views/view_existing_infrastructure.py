@@ -13,7 +13,7 @@ from django.http import HttpResponse
 from django.contrib import messages
 
 
-
+@login_required
 def apply_for_waver(request):
     if request.method == 'POST':
         if Waver.objects.filter(Q(company=request.user) & Q(referenceid=request.POST.get('referenceid'))).exists():
@@ -66,7 +66,7 @@ def apply_for_existing_permit(request):
     else:
         ref_id = "LA"+generate_ref_id() + "00001"
 
-    print("WE ARE HERE...")
+    print("EXISITING: APPLY FOR EXISTING PERMIT")
 
     if request.htmx:
         print("REF: ", ref_id)
@@ -88,12 +88,12 @@ def apply_for_existing_permit(request):
             qty = 0
             len = request.POST['length']
 
-        print("AMOUNT OR NUMBER: ", infra_rate.infra_name.lower())
+        # print("AMOUNT OR NUMBER: ", infra_rate.infra_name.lower())
 
         if form.is_valid():
-            print("Form is valid")
+            # print("Form is valid")
             permit = form.save(commit=False)
-            permit.referenceid = ref_id
+            permit.referenceid = request.POST['reference']
             permit.company = request.user
             permit.amount = qty
             permit.length = len
@@ -102,7 +102,8 @@ def apply_for_existing_permit(request):
             permit.infra_cost = infra_cost
             permit.save()
         else:
-            print("FILE FORMAT INVALID")
+            print(form.errors)
+
     form = PermitForm()
 
     context = {
@@ -119,6 +120,11 @@ def apply_for_existing_permit(request):
 
 @login_required
 def add_permit_ex_form(request):
+    if Permit.objects.all().exists(): 
+        last = Permit.objects.latest("pk").id
+        ref_id = "LA"+generate_ref_id() + str(last + 1).zfill(5)
+    else:
+        ref_id = "LA"+generate_ref_id() + "00001"
     
     permits = Permit.objects.all()
     if request.method == "POST":
@@ -140,7 +146,7 @@ def add_permit_ex_form(request):
 
     context = {
         'form':form,
-        # 'referenceid': ref_id,
+        'referenceid': ref_id,
         'company': request.user
     }
     return render(request, 'tax-payers/partials/apply_permit_ex_form.html', context)

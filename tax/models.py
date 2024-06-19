@@ -57,7 +57,11 @@ class Permit(models.Model):
         super(Permit, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.infra_type} - {self.referenceid}"
+        if self.is_existing:
+            prem = "Existing Infrastructure"
+        else:
+            prem = "New Infrastructure"
+        return f"{self.referenceid} - ({prem}) ---- {self.infra_type}"
     
 
 class Waver(models.Model):

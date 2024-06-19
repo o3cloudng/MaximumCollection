@@ -69,16 +69,20 @@ class PermitForm(forms.ModelForm):
                 'style': 'max-width: 150px;',
                 'required': False,
                 'placeholder': 'Upload payment receipt'
-                }),
+                })
         }
 
     def __init__(self, *args, **kwargs):
         #  question_id = kwargs.pop('question_id')
-         super().__init__(*args, **kwargs)
-         self.fields['infra_type'] = forms.ModelChoiceField(
-             queryset=InfrastructureType.objects.all(),
-             widget=forms.Select(attrs={'class': 'form-control select2', 'placeholder':'Infrastructure'})
+        # self.referenceid = referenceid
+        super().__init__(*args, **kwargs)
+        self.fields['infra_type'] = forms.ModelChoiceField(
+            queryset=InfrastructureType.objects.all(),
+            widget=forms.Select(attrs={'class': 'form-control select2', 'placeholder':'Infrastructure'})
          )
+    # def __init__(self, *args, your_important_var=None, **kwargs):
+    #     self.your_important_var = your_important_var
+    #     super().__init__(*args, **kwargs)
 
 class PermitEditForm(forms.ModelForm):
     class Meta:
