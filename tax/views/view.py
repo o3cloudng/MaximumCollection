@@ -696,5 +696,5 @@ def dispute_demand_notice_receipt(request, ref_id):
         'ref_id': ref_id,
         'is_disputed': True
     }
-    return render(request, 'tax-payers/undisputed-receipt.html', context)
+    return render(request, 'tax-payers/receipts/undisputed-receipt.html', context)
 
