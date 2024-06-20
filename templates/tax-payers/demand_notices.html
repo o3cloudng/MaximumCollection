@@ -173,23 +173,43 @@
                      {% for demand_notice in demand_notices %}
                     <tr>
                       <td>
-                        <a href="{% url 'dispute-demand-notice' demand_notice.referenceid %}">
+                        {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice.referenceid %}">
+                          {% endif %}
                           {{ forloop.counter }}
                         </a></td>
                       <td>
-                        <a href="{% url 'dispute-demand-notice' demand_notice.referenceid %}">
+                        {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice.referenceid %}">
+                          {% endif %}
                           {{ demand_notice.referenceid }}
                         </a></td>
                       <td>
-                        <a href="{% url 'dispute-demand-notice' demand_notice.referenceid %}">
+                        {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice.referenceid %}">
+                          {% endif %}
                           {{ demand_notice.total }}</a></td>
                       <td>
-                        <a href="{% url 'dispute-demand-notice' demand_notice.referenceid %}">
+                        {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice.referenceid %}">
+                          {% endif %}
                           
                           {{ demand_notice.created_at | date:"M, d Y" }}
                         </a></td>
                       <td>
-                        <a href="{% url 'dispute-demand-notice' demand_notice.referenceid %}">
+                        {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice.referenceid %}">
+                          {% endif %}
                         {% if demand_notice.is_paid %}
                         <span class="status-paid">
                           PAID {{ demand_notice.is_paid }}
@@ -204,7 +224,7 @@
                         </span>
                         {% else %}
                         <span class="status-others">
-                          NEW
+                          UNPAID
                         </span>
                         {% endif %}
                         </a>
@@ -282,14 +302,47 @@
                     {% if demand_notices_paid.exists %}
                       {% for demand_notice_paid in demand_notices_paid %}
                       <tr>
-                        <td> {{ forloop.counter }}</td>
-                        <td>{{ demand_notice_paid.referenceid }}</td>
-                        <td>{{ demand_notice_paid.amount }}</td>
-                        <td>{{ demand_notice_paid.created_at | date:"d-m-Y" }}</td>
                         <td>
+                          {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_paid.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice_paid.referenceid %}">
+                          {% endif %}
+                          {{ forloop.counter }}</a></td>
+                        <td>
+                          {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_paid.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice_paid.referenceid %}">
+                          {% endif %}
+                          {{ demand_notice_paid.referenceid }}
+                        </a></td>
+                        <td>
+                          {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_paid.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice_paid.referenceid %}">
+                          {% endif %}
+                          {{ demand_notice_paid.amount }}
+                        </a></td>
+                        <td>
+                          {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_paid.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice_paid.referenceid %}">
+                          {% endif %}
+                          {{ demand_notice_paid.created_at | date:"d-m-Y" }}
+                        </a></td>
+                        <td>
+                          {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_paid.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice_paid.referenceid %}">
+                          {% endif %}
                           <span class="status-paid">
                             {{ demand_notice_paid.status | title }}
                           </span>
+                          </a>
                         </td>
                         <td>
                           <span class="flex justify-end items-center text-gray-400">
@@ -363,14 +416,49 @@
                     {% if demand_notices_disputed.exists %}
                       {% for demand_notice_disputed in demand_notices_disputed %}
                       <tr>
-                        <td> {{ forloop.counter }}</td>
-                        <td>{{ demand_notice_disputed.referenceid }}</td>
-                        <td>{{ demand_notice_disputed.amount }}</td>
-                        <td>{{ demand_notice_disputed.created_at | date:"d-m-Y" }}</td>
                         <td>
+                          {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_disputed.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice_disputed.referenceid %}">
+                          {% endif %}
+                          {{ forloop.counter }}
+                        </a></td>
+                        <td>
+                          {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_disputed.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice_disputed.referenceid %}">
+                          {% endif %}
+                          {{ demand_notice_disputed.referenceid }}
+                        </a></td>
+                        <td>
+                          {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_disputed.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice_disputed.referenceid %}">
+                          {% endif %}
+                          {{ demand_notice_disputed.amount }}
+                        </a></td>
+                        <td>
+                          {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_disputed.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice_disputed.referenceid %}">
+                          {% endif %}
+                          {{ demand_notice_disputed.created_at | date:"d-m-Y" }}
+                        </a></td>
+                        <td>
+                          {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_disputed.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice_disputed.referenceid %}">
+                          {% endif %}
                           <span class="status-disputed">
                             {{ demand_notice_disputed.status | title }}
+                            DISPUTED
                           </span>
+                          </a>
                         </td>
                         <td>
                           <span class="flex justify-end items-center text-gray-400">
@@ -444,14 +532,48 @@
                     {% if demand_notices_resolved.exists %}
                       {% for demand_notice_resolved in demand_notices_resolved %}
                       <tr>
-                        <td> {{ forloop.counter }}</td>
-                        <td>{{ demand_notice_resolved.referenceid }}</td>
-                        <td>{{ demand_notice_resolved.amount }}</td>
-                        <td>{{ demand_notice_resolved.created_at | date:"d-m-Y" }}</td>
                         <td>
+                          {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice.referenceid %}">
+                          {% endif %}
+                          {{ forloop.counter }}
+                        </a></td>
+                        <td>
+                          {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice.referenceid %}">
+                          {% endif %}
+                          {{ demand_notice_resolved.referenceid }}
+                        </a></td>
+                        <td>
+                          {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice.referenceid %}">
+                          {% endif %}
+                          {{ demand_notice_resolved.amount }}
+                        </a></td>
+                        <td>
+                          {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice.referenceid %}">
+                          {% endif %}
+                          {{ demand_notice_resolved.created_at | date:"d-m-Y" }}
+                        </a></td>
+                        <td>
+                          {% if demand_notice.is_disputed == True %}
+                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice.referenceid %}">
+                          {% else %}
+                          <a href="{% url 'demand-notice-receipt' demand_notice.referenceid %}">
+                          {% endif %}
                           <span class="status-revised">
                             {{ demand_notice_resolved.status | title }}
                           </span>
+                          </a>
                         </td>
                         <td>
                           <span class="flex justify-end items-center text-gray-400">

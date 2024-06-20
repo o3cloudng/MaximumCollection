@@ -10,9 +10,18 @@ urlpatterns = [
     path('apply/permit/undisputed_notice_receipt/<str:ref_id>/', view.undispute_demand_notice_receipt, name="undispute_demand_notice_receipt"),
     path('apply/permit/resources/', view.resources, name="resources"),
     path('apply/permit/dn/edit/<int:pk>/', view.dispute_dn_edit, name="dispute-dn-edit"),
-    path('apply/permit/dn/edit/add/', view.add_dispute_dn_edit, name="add_dispute_dn_edit"),
+    
+    path('apply/permit/add/new/<str:ref_id>/', view.add_new_permit_form, name="add_new_permit_form"),
+    path('apply/permit/add/new/ex/<str:ref_id>/', view.add_new_ex_permit_form, name="add_new_ex_permit_form"),
+    
+    # HTMX endpoint
     path('apply/permit/add/', view.add_permit_form, name="add_permit_form"),
-    # path('template/', template, name="template"),
+    path('apply/permit/dn/edit/add/', view.add_dispute_dn_edit, name="add_dispute_dn_edit"),
+    path('apply/permit/dn/add/', view.add_undispute_edit, name="add_undispute_edit"),
+    path('apply/permit/dn/add/ex/', view.add_ex_undispute_edit, name="add_ex_undispute_edit"),
+    path('apply/permit/dn/delete/<int:pk>/', view.del_undisputed_edit, name="del_undisputed_edit"),
+    path('apply/permit/dn/delete/<int:pk>/', view.del_ex_undisputed_edit, name="del_ex_undisputed_edit"),
+    path('apply/permit/dn/accept/<int:pk>/', view.accept_undisputed_edit, name="accept_undisputed_edit"),
     ####### Exisiting Infrastructures
     # path('apply/permit/existing_permit', view.existing_permit, name="existing_permit"),
     path('apply/permit/exist/', view_existing_infrastructure.apply_for_existing_permit, name="apply_existing_infra"),
