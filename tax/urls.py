@@ -1,5 +1,7 @@
 from django.urls import path
 from .views import view, view_existing_infrastructure, page_view
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('apply/permit/', view.apply_for_permit, name="apply_for_permit"),
@@ -32,7 +34,8 @@ urlpatterns = [
     path('apply/permit/undisputed_ex_notice_receipt/<str:ref_id>/', view_existing_infrastructure.undispute_ex_demand_notice_receipt, name="undispute_ex_demand_notice_receipt"),
     path('apply/permit/ex/dn/edit/add/', view_existing_infrastructure.add_dispute_ex_dn_edit, name="add_ex_dispute_dn_edit"),
     path('apply/permit/ex/dn/edit/<int:pk>/', view_existing_infrastructure.dispute_ex_dn_edit, name="dispute_ex_dn_edit"),
-    path('apply/waver', view_existing_infrastructure.apply_for_waver, name="apply_for_waver"),
+    path('apply/waver/', view_existing_infrastructure.apply_for_waver, name="apply_for_waver"),
+    path('apply/remittance/', view_existing_infrastructure.apply_remittance, name="apply_remittance"),
 
     #  PAGES URL
     path('dashboard/', page_view.dashboard, name="dashboard"),
@@ -41,4 +44,4 @@ urlpatterns = [
     path('infrastructures/', page_view.infrastructures, name="infrastructures"),
     path('downloads/', page_view.downloads, name="downloads"),
     path('settings/', page_view.settings, name="settings"),
-]
+]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 

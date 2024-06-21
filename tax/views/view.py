@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from tax.forms import PermitForm, PermitEditForm
+from tax.forms import PermitForm, PermitEditForm, RemittanceForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from account.models import User, AdminSetting
@@ -254,9 +254,9 @@ def del_ex_undisputed_edit(request, pk):
 @login_required
 def accept_undisputed_edit(request, pk):
     permit = Permit.objects.get(pk=pk)
-    print("DATE FORMAT: ", permit.year_installed, type(str(permit.year_installed)))
-    yr = datetime.strptime(str(permit.year_installed), "%m/ %d/%Y %H:%M:%S")
-    print(yr)
+    print("DATE FORMAT: ", date.today(), type(str(date.today())))
+    # yr = datetime.strptime(str(permit.year_installed), "%m/ %d/%Y %H:%M:%S")
+    # print(yr)
     data = {
         'company': permit.company,
         'referenceid': permit.referenceid,
@@ -265,7 +265,7 @@ def accept_undisputed_edit(request, pk):
         'length': permit.length,
         'add_from': permit.add_from,
         'add_to': permit.add_to,
-        'year_installed': yr,
+        'year_installed': str(date.today()),
         'age': permit.age,
         'upload_application_letter': permit.upload_application_letter,
         'upload_asBuilt_drawing': permit.upload_asBuilt_drawing,

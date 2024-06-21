@@ -45,15 +45,24 @@ class Permit(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
-    # @property
-    # def get_age(self):
-    #     return relativedelta(self.birth_date.days, datetime.date.now()).years
     def save(self, *args, **kwargs):
         # generate Age from the year_installed field
         installed_date = datetime.strptime(str(self.year_installed), '%Y-%m-%d').date()
         today = date.today()
-        self.age = (today - installed_date).days
-        print("AGE IN DAYS: ", self.age)
+        age = (today - installed_date).days
+
+        if "mast" in self.infra_type.infra_name.lower():
+            cummulative_age = int(self.amount) * age
+            # self.infra_cost = self.amount * self.infra_type.rate
+        elif "roof" in self.infra_type.infra_name.lower():
+            cummulative_age = int(self.amount) * age
+            # self.infra_cost = self.amount * self.infra_type.rate
+        else:
+            cummulative_age = age
+
+        self.age = cummulative_age
+        print("AGE FROM DB: ", age, type(age), " | CUM AGE: ", cummulative_age, " | AMOUNT: ", type(self.amount), self.amount * age)
+ 
         super(Permit, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -61,7 +70,7 @@ class Permit(models.Model):
             prem = "Existing Infrastructure"
         else:
             prem = "New Infrastructure"
-        return f"{self.referenceid} - ({prem}) ---- {self.infra_type}"
+        return f"{self.referenceid} - ({prem}) ---- {self.infra_type} {self.age}"
     
 
 class Waver(models.Model):
@@ -74,4 +83,18 @@ class Waver(models.Model):
 
     def __str__(self):
         return f"{self.wave_amount}"
+    
+
+class Remittance(models.Model):
+    referenceid = models.CharField(max_length=200, blank=False)
+    company = models.ForeignKey(User, related_name="remit_comp", on_delete=models.CASCADE)
+    remitted_amount = models.IntegerField(blank=True)
+    receipt = models.FileField(upload_to='uploads/receipts/', blank=True, null=True)
+    approved = models.BooleanField(default=False)
+    apply_for_waver = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.referenceid} - {self.remitted_amount}"
     

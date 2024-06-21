@@ -2245,6 +2245,18 @@ tfoot > tr > td {
   color: rgb(153 27 27 / var(--tw-text-opacity));
 }
 
+.status-others {
+  width: 6rem;
+  border-radius: 9999px;
+  --tw-bg-opacity: 1;
+  background-color: #9ca3af;
+  padding: 0.25rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  --tw-text-opacity: 1;
+  color: #6b7280;
+}
+
 .status-revised {
   width: 6rem;
   border-radius: 9999px;

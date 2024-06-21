@@ -1,5 +1,5 @@
 from django import forms
-from tax.models import Permit, InfrastructureType, Waver
+from tax.models import Permit, InfrastructureType, Waver, Remittance
 from django import forms
 
 
@@ -188,6 +188,37 @@ class WaverForm(forms.ModelForm):
                 'required': True,
                 'placeholder': 'Amount paid'
                 }),
+            'receipt': forms.FileInput(
+                attrs={
+                'class': "form-control",
+                'style': 'max-width: 100%;',
+                'required': True,
+                'placeholder': 'Upload receipt'
+                })
+        }
+
+
+class RemittanceForm(forms.ModelForm):
+    class Meta:
+        model = Remittance
+        fields = ['referenceid', 'remitted_amount', 'receipt']
+
+        widgets = {
+            'referenceid': forms.TextInput(
+                attrs={
+                'class': "form-control",
+                'style': 'max-width: 100%;',
+                'required': False,
+                'type': 'hidden'
+                }),
+            'remitted_amount': forms.TextInput(
+                attrs={
+                'class': "form-control",
+                'style': 'max-width: 100%;',
+                'required': True,
+                'placeholder': 'Amount remitted'
+                }),
+            'apply_for_waver': forms.BooleanField(required=False, initial=False, label='Apply for waver'),
             'receipt': forms.FileInput(
                 attrs={
                 'class': "form-control",

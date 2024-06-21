@@ -203,9 +203,13 @@
                 Uploaded Documents
               </h3>
               <div class="flex flex-row gap-5">
-                <p class="text-sm text-orange-400">file1.pdf</p>
-                <p class="text-sm text-orange-400">receipt-1.pdf</p>
-                <p class="text-sm text-orange-400">remitance_doc.pdf</p>
+                 {% for permit in permits %}
+                <p class="text-sm text-orange-400">{{MEDIA_URL}}{{ permit.upload_application_letter }}</p>
+                <p class="text-sm text-orange-400">{{MEDIA_URL}}{{ permit.upload_asBuilt_drawing }}</p>
+                <p class="text-sm text-orange-400">{{MEDIA_URL}}{{ permit.upload_payment_receipt }}</p>
+                <!-- <p class="text-sm text-orange-400">receipt-1.pdf</p>
+                <p class="text-sm text-orange-400">remitance_doc.pdf</p> -->
+                {% endfor %}
               </div>
               <div class="w-80 flex flex-row mx-auto gap-4 my-4">
                 <form action="{% url 'initiate_payment' %}" method="POST">
