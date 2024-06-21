@@ -13,7 +13,7 @@
     {% endcomment %}
     <!-- <script src="https://cdn.tailwindcss.com?plugins=typography"></script> -->
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
-    <link rel="stylesheet" href="{% static 'css/main.css' %}" />
+    {% comment %} <link rel="stylesheet" href="{% static 'css/main.css' %}" /> {% endcomment %}
     <link rel="stylesheet" href="{% static 'css/main_latest.css' %}" />
     {% comment %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
@@ -48,7 +48,7 @@
             {% csrf_token %} {{ form.as_p}}
 
             <div>
-              <button type="submit" class="btn !w-full">Create Account</button>
+              <button type="submit" class="btn w-full">Create Account</button>
             </div>
           </form>
 
