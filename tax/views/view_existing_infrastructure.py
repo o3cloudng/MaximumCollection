@@ -7,7 +7,7 @@ from datetime import date, timedelta, datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django_htmx.http import HttpResponseClientRedirect
-from django.db.models import Q, Count, Avg, Sum
+from django.db.models import F, Q, Count, Avg, Sum
 from django.forms import inlineformset_factory, formset_factory, modelformset_factory
 from django.http import HttpResponse
 from django.contrib import messages
@@ -207,7 +207,7 @@ def demand_notice_ex_receipt(request, ref_id):
         mast_roof_no = 0
         # mast_roof_no['no_sites'] = 0
 
-    print("MAST & ROOF NO: ", mast_roof.count())
+    # print("MAST & ROOF NO: ", mast_roof.count())
     if length.exists():
         app_count = mast_roof_no + length.count()
     else:
@@ -219,14 +219,14 @@ def demand_notice_ex_receipt(request, ref_id):
 
     # Site assessment report rate
     sar_rate = mast_roof_no * site_assessment.rate
-    print("SUM: ", tot_sum_infra['no_sum'], type(tot_sum_infra['no_sum']))
+    # print("SUM: ", tot_sum_infra['no_sum'], type(tot_sum_infra['no_sum']))
 
 
     admin_pm_fees_sum = (admin_pm_fees.rate * tot_sum_infra['no_sum']) / 100
 
     total_due = tot_sum_infra['no_sum'] + total_app_fee + admin_pm_fees_sum + sar_rate
 
-    print("ADMIN FEE: ", total_due, type(total_due))
+    # print("ADMIN FEE: ", total_due, type(total_due))
     # ADD WAVER
     if Waver.objects.filter(referenceid=ref).exists():
         waver = Waver.objects.get(referenceid=ref).wave_amount
@@ -242,14 +242,19 @@ def demand_notice_ex_receipt(request, ref_id):
     else:
         age_sum = 0
 
-    print("AGE Calculated: ", age_sum)
+    # print("AGE Calculated: ", age_sum)
     
     penalty_sum = age_sum * penalty.rate
-    print("PENALTY Calculated: ", penalty_sum)
+    # print("PENALTY Calculated: ", penalty_sum)
 
     
     # print("WAVER: ", waver)
     total_liability = total_due + penalty_sum - waver
+
+    # Testing Model @property
+    # new_cum_age = Permit.objects.filter(refid & is_exist & not_dispute)
+    # new_cum_age = new_cum_age.annotate(age_now = F('updated_cum_age')).aggregate(total=Sum('age_now'))
+    # print("NEW CUM AGE: ", new_cum_age)
     
 
     context = {

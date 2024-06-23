@@ -2,6 +2,8 @@ from django.db import models
 from account.models import User
 from dateutil.relativedelta import relativedelta
 from datetime import date, datetime
+from django.db.models import F, Q, Count, Avg, Sum
+from queryable_properties.properties import queryable_property
     
 
 
@@ -45,25 +47,48 @@ class Permit(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
-    def save(self, *args, **kwargs):
-        # generate Age from the year_installed field
+    # def save(self, *args, **kwargs):
+    #     # generate Age from the year_installed field
+    #     installed_date = datetime.strptime(str(self.year_installed), '%Y-%m-%d').date()
+    #     today = date.today()
+    #     age = (today - installed_date).days
+
+    #     if "mast" in self.infra_type.infra_name.lower():
+    #         cummulative_age = int(self.amount) * age
+    #         # self.infra_cost = self.amount * self.infra_type.rate
+    #     elif "roof" in self.infra_type.infra_name.lower():
+    #         cummulative_age = int(self.amount) * age
+    #         # self.infra_cost = self.amount * self.infra_type.rate
+    #     else:
+    #         cummulative_age = age
+
+    #     self.age = cummulative_age
+    #     print("AGE FROM DB: ", age, type(age), " | CUM AGE: ", cummulative_age, " | AMOUNT: ", type(self.amount), self.amount * age)
+ 
+    #     super(Permit, self).save(*args, **kwargs)
+
+    # @property
+    @queryable_property
+    def updated_cum_age(self):
+        # updated_cum_age = ""
         installed_date = datetime.strptime(str(self.year_installed), '%Y-%m-%d').date()
         today = date.today()
         age = (today - installed_date).days
-
         if "mast" in self.infra_type.infra_name.lower():
-            cummulative_age = int(self.amount) * age
+            updated_cum_age = int(self.amount) * age
             # self.infra_cost = self.amount * self.infra_type.rate
         elif "roof" in self.infra_type.infra_name.lower():
-            cummulative_age = int(self.amount) * age
+            updated_cum_age = int(self.amount) * age
             # self.infra_cost = self.amount * self.infra_type.rate
         else:
-            cummulative_age = age
+            updated_cum_age = age
 
-        self.age = cummulative_age
-        print("AGE FROM DB: ", age, type(age), " | CUM AGE: ", cummulative_age, " | AMOUNT: ", type(self.amount), self.amount * age)
- 
-        super(Permit, self).save(*args, **kwargs)
+        print("CURRENT AGE IN DAYS: ", updated_cum_age)
+        # Permit.objects.filter(refid & is_exist & not_dispute).annotate('updated_cum_age').aggregate(sum_age = Sum('updated_cum_age'))
+        # cum_age = Permit.objects.annotate(sum_a_and_b=F('a') + F('b')).aggregate(total=Sum('sum_a_and_b'))
+        # cum_age = Permit.objects.annotate(sum_a_and_b=F('a') + F('b')).aggregate(total=Sum('sum_a_and_b'))
+
+        return updated_cum_age
 
     def __str__(self):
         if self.is_existing:
