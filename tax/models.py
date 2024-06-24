@@ -47,25 +47,25 @@ class Permit(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
-    # def save(self, *args, **kwargs):
-    #     # generate Age from the year_installed field
-    #     installed_date = datetime.strptime(str(self.year_installed), '%Y-%m-%d').date()
-    #     today = date.today()
-    #     age = (today - installed_date).days
+    def save(self, *args, **kwargs):
+        # generate Age from the year_installed field
+        installed_date = datetime.strptime(str(self.year_installed), '%Y-%m-%d').date()
+        today = date.today()
+        age = (today - installed_date).days
 
-    #     if "mast" in self.infra_type.infra_name.lower():
-    #         cummulative_age = int(self.amount) * age
-    #         # self.infra_cost = self.amount * self.infra_type.rate
-    #     elif "roof" in self.infra_type.infra_name.lower():
-    #         cummulative_age = int(self.amount) * age
-    #         # self.infra_cost = self.amount * self.infra_type.rate
-    #     else:
-    #         cummulative_age = age
+        if "mast" in self.infra_type.infra_name.lower():
+            cummulative_age = int(self.amount) * age
+            # self.infra_cost = self.amount * self.infra_type.rate
+        elif "roof" in self.infra_type.infra_name.lower():
+            cummulative_age = int(self.amount) * age
+            # self.infra_cost = self.amount * self.infra_type.rate
+        else:
+            cummulative_age = age
 
-    #     self.age = cummulative_age
-    #     print("AGE FROM DB: ", age, type(age), " | CUM AGE: ", cummulative_age, " | AMOUNT: ", type(self.amount), self.amount * age)
+        self.age = cummulative_age
+        print("AGE FROM DB: ", age, type(age), " | CUM AGE: ", cummulative_age, " | AMOUNT: ", type(self.amount), self.amount * age)
  
-    #     super(Permit, self).save(*args, **kwargs)
+        super(Permit, self).save(*args, **kwargs)
 
     # @property
     @queryable_property
