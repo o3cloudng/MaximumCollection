@@ -43,8 +43,8 @@
             alt=""
             class="w-20 h-20"
           />
-          <div>
-            <h1 class="text-orange-400 font-normal text-2xl my-2">
+          <div class="w-80 text-left">
+                <h1 class="text-orange-400 font-semibold text-4xl my-2">
               Undisputed Demand Notice
             </h1>
             <p class="text-xs text-gray-800 font-semibold">
@@ -82,23 +82,23 @@
             <h3 class="font-normal text-orange-400">Bill from:</h3>
 
             <div>
-              <p class="text-sm text-gray-800">
+              <p class="text-md font-bold text-gray-800">
                 Lagos State Infrastructure Maintenance And Regulatory Agency
                 (LASIMRA)
               </p>
 
-              <p class="text-sm text-gray-600 mt-2 font-bold">
+              <p class="text-md text-gray-600 mt-2 font-semibold">
                 2, Yusuf Close, Off HakeemBalogun St, Agidingbi, Ikeja
               </p>
-              <p class="text-sm text-gray-600">080368795683</p>
-              <p class="text-sm text-gray-600">compliant@lasimra.com</p>
+              <p class="text-sm text-gray-600 font-semibold mt-2">080368795683</p>
+              <p class="text-sm text-gray-600 font-semibold">compliant@lasimra.com</p>
               <div class="text-orange-400 text-sm mt-2">
-                <p>Date: <span class="text-gray-600">12/05/2024</span></p>
-                <p>Terms: <span class="text-gray-600">Due on Receipt</span></p>
+                <p class="font-semibold">Date: <span class="text-gray-600">12/05/2024</span></p>
+                <p class="font-semibold">Terms: <span class="text-gray-600">Due on Receipt</span></p>
               </div>
-              <div class="text-orange-400 font-normal mt-2">
-                <h2 class="block text-xl">Amount Due:</h2>
-                <h2 class="text-lg">&#8358;{{ total_liability | floatformat:2 | intcomma }}</h2>
+              <div class="text-orange-400 font-semibold mt-2 bg-gray-100 rounded-md shadow-sm p-2 hover:bg-orange-400 hover:text-white">
+                <h2 class="block text-sm">Amount Due:</h2>
+                <h2 class="text-2xl font-bold">&#8358;{{ total_liability | floatformat:2 | intcomma }}</h2>
               </div>
             </div>
           </div>
@@ -135,7 +135,7 @@
             </tbody>
           </table>
           <div
-            class="flex flex-row justify-between items-center w-full border-y-2 border-gray-600 text-gray-800 p-3"
+            class="flex flex-row justify-between items-center w-full border-y-2 border-gray-600 text-gray-800 p-3 bg-white"
           >
             <h3>Sub-Total(Permit Fees)</h3>
             <h3>&#8358;{{ tot_sum_infra.no_sum | floatformat:2 | intcomma }}</h3>
@@ -192,14 +192,15 @@
         </div>
         <div class="flex flex-col p-3 gap-4 w-full">
               <h3 class="text-sm font-semibold text-gray-800">
-                Uploaded Documents
+                Attached Documents
               </h3>
-              <div class="flex flex-row gap-5">
-                <p class="text-sm text-orange-400">file1.pdf</p>
-                <p class="text-sm text-orange-400">receipt-1.pdf</p>
-                <p class="text-sm text-orange-400">remitance_doc.pdf</p>
+              <div class="flex flex-row gap-5 justify-start overflow-x-auto">
+                <p class="text-sm text-black p-2 bg-gray-100 cursor-pointer rounded-sm hover:bg-gray-200">file1.pdf</p>
+                <p class="text-sm text-black p-2 bg-gray-100 cursor-pointer rounded-sm hover:bg-gray-200">receipt-1.pdf</p>
+                <p class="text-sm text-black p-2 bg-gray-100 cursor-pointer rounded-sm hover:bg-gray-200">remitance_doc.pdf</p>
               </div>
               <div class="w-80 flex flex-row mx-auto justify-center p-4 my-4">
+
                 <form action="{% url 'initiate_payment' %}" method="POST">
                   {% csrf_token %}
                   <input type="hidden" name="email" value="{{ request.user }}" />
@@ -208,9 +209,11 @@
 
                   <button class="btn" onclick="payWithPaystack()">Make Payment</button>
                 </form>
+
                 {% if is_disputed == False %}
                 <a href="{% url 'dispute-demand-notice' ref_id %}" class="btn-outline">Dispute/Object</a>
                 {% endif %}
+                <a href="" class="btn">Make Payment</a>
               </div>
               <div
                 class="flex flex-row justify-center items-center gap-10 px-auto my-4"

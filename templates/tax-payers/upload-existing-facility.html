@@ -61,9 +61,7 @@
   </div>
 
   {% include 'tax-payers/aside.html' %}
-  <main
-    class="w-full md:w-4/5 md:ml-[20%] ml-20 bg-gray-50 min-h-screen transition-all p-10"
-  >
+  <main class="main_side">
     <!-- Top Bar with title page, buttons and notification tabs -->
     <section
       class="w-full flex flex-col md:flex-row justify-between items-center gap-6"
@@ -239,23 +237,23 @@
 <!-- Script -->
 
 <script>
-  const modal = document.getElementById("modal");
-  const openButton = document.getElementById("open-modal-btn");
-  const closeButton = document.getElementById("close-modal-btn");
-  const btn = document.getElementsByName("button");
+  const modal = document.getElementById('modal')
+  const openButton = document.getElementById('open-modal-btn')
+  const closeButton = document.getElementById('close-modal-btn')
+  const btn = document.getElementsByName('button')
 
   //document.addEventListener('DOMContentLoaded', function (e) {
   //  modal.classList.remove('hidden')
   //  console.log('modal output')
   //})
 
-  openButton.addEventListener("click", function (e) {
-    modal.classList.remove("hidden");
-  });
+  openButton.addEventListener('click', function (e) {
+    modal.classList.remove('hidden')
+  })
 
-  closeButton.addEventListener("click", function (e) {
-    modal.classList.add("hidden");
-  });
+  closeButton.addEventListener('click', function (e) {
+    modal.classList.add('hidden')
+  })
 
   // btn.addEventListener('click', ())
 </script>
