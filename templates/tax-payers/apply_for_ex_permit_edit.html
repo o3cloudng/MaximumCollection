@@ -132,8 +132,23 @@
               <td>{{ pm.add_from }}</td>
               <td>{{ pm.add_to }}</td>
               <td>{{ pm.year_installed }}</td>
-              <td><a href="{{ pm.upload_application_letter }}">File</a></td>
-              <td><a href="{{ pm.upload_asBuilt_drawing }}">File</a></td>
+              <td>
+                {% if pm.upload_asBuilt_drawing %}
+                <a
+                  target="_blank"
+                  href="{{ MEDIA_URL }}/assets/media/{{ pm.upload_application_letter }}"
+                  >File</a
+                >{% else %} No file {% endif %}
+              </td>
+              <td>
+                {% if pm.upload_asBuilt_drawing %}
+                <a
+                  target="_blank"
+                  href="{{ MEDIA_URL }}/assets/media/{{ pm.upload_asBuilt_drawing }}"
+                  >File
+                </a>
+                {% else %} No file {% endif %}
+              </td>
               <!-- <td>
                 <button
                   hx-post="{% url 'dispute-dn-edit' pm.pk %}"
@@ -227,8 +242,23 @@
               <td>{{ pm.add_from }}</td>
               <td>{{ pm.add_to }}</td>
               <td>{{ pm.year_installed }}</td>
-              <td><a href="{{ pm.upload_application_letter }}">File</a></td>
-              <td><a href="{{ pm.upload_asBuilt_drawing }}">File</a></td>
+              <td>
+                {% if pm.upload_asBuilt_drawing %}
+                <a
+                  target="_blank"
+                  href="{{ MEDIA_URL }}/assets/media/{{ pm.upload_application_letter }}"
+                  >File</a
+                >{% else %} No file {% endif %}
+              </td>
+              <td>
+                {% if pm.upload_asBuilt_drawing %}
+                <a
+                  target="_blank"
+                  href="{{ MEDIA_URL }}/assets/media/{{ pm.upload_asBuilt_drawing }}"
+                  >File
+                </a>
+                {% else %} No file {% endif %}
+              </td>
               <td>
                 <button
                   hx-post="{% url 'dispute_ex_dn_edit' pm.pk %}"

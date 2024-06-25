@@ -16,16 +16,16 @@ eyeIcon.onclick = function () {
 modal = getElementById('modal')
 closeButton = getElementById('close-modal-btn')
 
+
 // load pop on page load
-const modal = document.getElementById('modal')
-const closeButton = document.getElementById('close-modal-btn')
-const btn = document.getElementsByName('button')
+const modal = document.getElementById("modal");
+const closeButton = document.getElementById("close-modal-btn");
+const btn = document.getElementsByName("button");
 
-document.addEventListener('DOMContentLoaded', function (e) {
-  modal.classList.remove('hidden')
-  console.log('modal output')
-})
-
+document.addEventListener("DOMContentLoaded", function (e) {
+  modal.classList.remove("hidden");
+  console.log("modal output");
+});
 closeButton.addEventListener('click', function (e) {
   modal.classList.add('hidden')
 })

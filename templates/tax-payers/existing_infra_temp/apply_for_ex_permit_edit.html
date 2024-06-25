@@ -1,4 +1,6 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
+{% extends 'base.html' %} {% load static %}
+{% load humanize %}
+{% block content %}
 <section
   class="relative w-full flex flex-row items-start justify-start h-screen z-10"
 >
@@ -69,7 +71,7 @@
       <div class="border-2 border-gray-50 rounded-md shadow-sm">
         <h2>Undisputed Notice</h2>
         <p>&nbsp;</p>
-        <table class="md:w-full" id="infra-table">
+        <table class="md:w-full" id="addtable">
           <thead class="bg-orange-50 border-b-2 border-gray-50">
             <tr class="[&>th]:text-orange-600">
               <!-- <th class="w-20 p-3 text-sm font-semibold tracking-wide text-left">No.</th> -->
@@ -115,11 +117,21 @@
                   >(design drawing)</span
                 >
               </th>
-              <!-- <th
+              <th
                 class="w-32 p-3 text-xs font-semibold tracking-wide text-left"
               >
-                Dispute<span class="block text-[8px]">Edit</span>
-              </th> -->
+                <button
+                  href="javascript:void(0)"
+                  onclick="return false;"
+                  class="border-2 border-gray-600 rounded-md px-2 py-1 hover:border-orange-500 hover:bg-orange-500 hover:text-white cursor-pointer"
+                  title="Add new infrstructure"
+                  hx-post="{% url 'add_new_ex_permit_form' ref_id %}"
+                  hx-swap="beforeend transition:true"
+                  hx-target="#addtable"
+                >
+                  +
+                </button>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -131,25 +143,32 @@
               <td>{{ pm.add_from }}</td>
               <td>{{ pm.add_to }}</td>
               <td>{{ pm.year_installed }}</td>
-              <td><a href="{{ pm.upload_application_letter }}">File</a></td>
-              <td><a href="{{ pm.upload_asBuilt_drawing }}">File</a></td>
-              <!-- <td>
+              <td><a href="/{{ pm.upload_application_letter }}">File</a></td>
+              <td><a href="/{{ pm.upload_asBuilt_drawing }}">File</a></td>
+              <td>
                 <button
-                  hx-post="{% url 'dispute-dn-edit' pm.pk %}"
+                  hx-post="{% url 'del_ex_undisputed_edit' pm.id %}"
                   hx-swap="beforebegin"
-                  hx-target="#table"
+                  hx-target="#addtable"
                   class="border-2 text-xm bg-orange-600 text-orange-600 border-orange-500 rounded-md px-2 py-1 hover:border-grey-500 hover:bg-grey-500 hover:text-grey-500 cursor-pointer"
                   type="button"
-                  title="Close"
+                  title="Edit"
                 >
-                  Edit
+                  X
                 </button>
-              </td> -->
+              </td>
             </tr>
             {% endfor %}
           </tbody>
         </table>
       </div>
+      <div class="flex mt-5 mb-10 text-green-500">
+        {% if remittance %}
+        Remittance applied: &#8358;{{ remittance.remitted_amount | floatformat:2 | intcomma }}
+        {% else %}
+        No remittance.
+        {% endif %}
+        </div>
       <div class="flex mt-10 mx-auto justify-center">
         <a
           href="{% url 'undispute_ex_demand_notice_receipt' ref_id %}"
@@ -160,14 +179,17 @@
           Update
         </a>
         <!-- Modal toggle -->
+    
     <button
       data-modal-target="static-modal"
       data-modal-toggle="static-modal"
       class="bg-transparent border-2 border-orange-500 px-20 py-3 text-orange-500 rounded-md hover:bg-orange-500 hover:border-orange-500 hover:text-white"
       type="button"
+      {% if remittance %} disabled {% endif %}
     >
-      Apply for waver
+      {% if remittance %} Remittance applied {% else %} Apply remittance {% endif %}
     </button>
+    
       </div>
     </section>
     {% endif %} {% if permits.exists %}
@@ -248,6 +270,14 @@
                 >
                   Edit
                 </button>
+                <button
+                  hx-post="{% url 'accept_undisputed_edit' pm.id %}"
+                  hx-swap="beforebegin"
+                  hx-target="#addtable"
+                  class="border-2 text-xm bg-white text-green-500 border-green-500 rounded-md px-2 py-1 cursor-pointer"
+                >
+                  Accept
+                </button>
               </td>
             </tr>
             {% endfor %}
@@ -283,7 +313,7 @@
             class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600"
           >
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-              Apply for waver
+              Upload Remittance
             </h3>
             <button
               type="button"
@@ -309,17 +339,24 @@
             </button>
           </div>
           <!-- Modal body -->
-          <form action="{% url 'apply_for_waver' %}" method="POST" enctype="multipart/form-data">
+          <form action="{% url 'apply_remittance' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
           <div class="p-4 md:p-5 space-y-4">
             <div
               class="text-base leading-relaxed text-gray-500 dark:text-gray-400"
             >
             <input type="hidden" name="referenceid" value="{{ ref_id }}" />
-              {{ form.wave_amount }}
+              {{ form.remitted_amount }}
             </div>
-            <div class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              {{ form.receipt }}
+            <div class="inline-flex flex-row">
+
+              <div class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                {{ form.receipt }}
+              </div>
+              <div class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                <label>Apply for waver</label><br/>
+                <input type="checkbox" name="apply_for_waver" value="1" />
+              </div>
             </div>
           </div>
           <!-- Modal footer -->
@@ -329,17 +366,17 @@
             <button
               data-modal-hide="static-modal"
               type="submit"
-              class="bg-orange-500 border-2 border-orange-500 px-20 py-3 mr-2 text-white rounded-md hover:bg-transparent hover:border-orange-500 hover:text-orange-500"
+              class="bg-orange-500 border-2 block border-orange-500 px-20 py-3 mr-2 text-white rounded-md hover:bg-transparent hover:border-orange-500 hover:text-orange-500"
             >
               Apply now
             </button>
-            <button
+            <!-- <button
               data-modal-hide="static-modal"
               type="button"
               class="px-20 py-3 ms-3 border-2 font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
             >
               Decline
-            </button>
+            </button> -->
             </form>
           </div>
         </div>

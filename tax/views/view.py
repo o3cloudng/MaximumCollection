@@ -1,17 +1,16 @@
 from django.shortcuts import render, redirect
-from tax.forms import PermitForm, PermitEditForm
+from tax.forms import PermitForm, PermitEditForm, RemittanceForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from account.models import User, AdminSetting
 from tax.models import Permit, InfrastructureType, Waver
-from datetime import date, timedelta
+from datetime import date, datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django_htmx.http import HttpResponseClientRedirect
 from django.db.models import Q, Count, Avg, Sum, Max
 from django.forms import inlineformset_factory, formset_factory, modelformset_factory
 from django.http import HttpResponse
-
 
 
 @login_required
@@ -129,6 +128,161 @@ def add_dispute_dn_edit(request):
 
 
 @login_required
+def add_undispute_edit(request):
+    ref_id = request.POST['referenceid']
+    if request.method == 'POST':
+        form = PermitEditForm(request.POST or None, request.FILES or None)
+
+        infra_rate = InfrastructureType.objects.get(pk=request.POST['infra_type'])
+        # print("READY POST: ", infra_rate.rate, type(infra_rate.rate))
+        # print("Permit type: ", request.POST['amount'], type(request.POST['amount']))
+        if "mast" in infra_rate.infra_name.lower():
+            infra_cost = infra_rate.rate * int(request.POST['amount'])
+            len = 0
+            qty = request.POST['amount']
+        elif "roof" in infra_rate.infra_name.lower():
+            infra_cost = infra_rate.rate * int(request.POST['amount'])
+            len = 0
+            qty = request.POST['amount']
+        else:
+            infra_cost = infra_rate.rate * int(request.POST['length'])
+            qty = 0
+            len = request.POST['length']
+
+        print("REFERENCE ID: ", ref_id)
+
+        if form.is_valid():
+            # print("Form is valid")
+            permit = form.save(commit=False)
+            permit.referenceid = ref_id
+            permit.company = request.user
+            permit.amount = qty
+            permit.length = len
+            permit.infra_cost = infra_cost
+            permit.is_disputed = True
+            permit.save()
+
+            context = {
+                'form':form,
+                'referenceid': ref_id,
+                'company': request.user
+            }
+            return HttpResponseClientRedirect('/tax/apply/permit/dispute_notice/'+permit.referenceid)
+
+        else:
+            print("FILE FORMAT INVALID")
+    form = PermitForm()
+
+    context = {
+        'form':form,
+        'referenceid': ref_id,
+        'company': request.user
+    }
+    return HttpResponseClientRedirect('/tax/apply/permit/dispute_notice/'+permit.referenceid)
+
+
+@login_required
+def add_ex_undispute_edit(request):
+    ref_id = request.POST['referenceid']
+    if request.method == 'POST':
+        form = PermitEditForm(request.POST or None, request.FILES or None)
+
+        infra_rate = InfrastructureType.objects.get(pk=request.POST['infra_type'])
+        # print("READY POST: ", infra_rate.rate, type(infra_rate.rate))
+        # print("Permit type: ", request.POST['amount'], type(request.POST['amount']))
+        if "mast" in infra_rate.infra_name.lower():
+            infra_cost = infra_rate.rate * int(request.POST['amount'])
+            len = 0
+            qty = request.POST['amount']
+        elif "roof" in infra_rate.infra_name.lower():
+            infra_cost = infra_rate.rate * int(request.POST['amount'])
+            len = 0
+            qty = request.POST['amount']
+        else:
+            infra_cost = infra_rate.rate * int(request.POST['length'])
+            qty = 0
+            len = request.POST['length']
+
+        print("REFERENCE ID: ", ref_id)
+
+        if form.is_valid():
+            # print("Form is valid")
+            permit = form.save(commit=False)
+            permit.referenceid = ref_id
+            permit.company = request.user
+            permit.amount = qty
+            permit.length = len
+            permit.infra_cost = infra_cost
+            permit.is_disputed = True
+            permit.is_existing = True
+            permit.save()
+
+            context = {
+                'form':form,
+                'referenceid': ref_id,
+                'company': request.user
+            }
+            return HttpResponseClientRedirect('/tax/apply/permit/dispute_ex_notice/'+permit.referenceid)
+
+        else:
+            print("FILE FORMAT INVALID")
+    form = PermitForm()
+
+    context = {
+        'form':form,
+        'referenceid': ref_id,
+        'company': request.user
+    }
+    return HttpResponseClientRedirect('/tax/apply/permit/dispute_notice/'+permit.referenceid)
+
+
+@login_required
+def del_undisputed_edit(request, pk):
+    permit = Permit.objects.get(pk=pk)
+    permit.delete()
+
+    return HttpResponseClientRedirect('/tax/apply/permit/dispute_notice/'+permit.referenceid)
+
+@login_required
+def del_ex_undisputed_edit(request, pk):
+    permit = Permit.objects.get(pk=pk)
+    permit.delete()
+
+    return HttpResponseClientRedirect('/tax/apply/permit/dispute_ex_notice/'+permit.referenceid)
+
+
+@login_required
+def accept_undisputed_edit(request, pk):
+    permit = Permit.objects.get(pk=pk)
+    print("DATE FORMAT: ", date.today(), type(str(date.today())))
+    # yr = datetime.strptime(str(permit.year_installed), "%m/ %d/%Y %H:%M:%S")
+    # print(yr)
+    data = {
+        'company': permit.company,
+        'referenceid': permit.referenceid,
+        'infra_type': permit.infra_type,
+        'amount': permit.amount,
+        'length': permit.length,
+        'add_from': permit.add_from,
+        'add_to': permit.add_to,
+        'year_installed': str(date.today()),
+        'age': permit.age,
+        'upload_application_letter': permit.upload_application_letter,
+        'upload_asBuilt_drawing': permit.upload_asBuilt_drawing,
+        'upload_payment_receipt': permit.upload_payment_receipt,
+        'status': permit.status,
+        'is_disputed': True,
+        'is_undisputed': permit.is_undisputed,
+        'is_revised': permit.is_revised,
+        'is_paid': permit.is_paid,
+        'is_existing': permit.is_existing
+    }
+    disputed_permit = Permit(data)
+    disputed_permit.save()
+
+    return HttpResponseClientRedirect('/tax/apply/permit/dispute_notice/'+permit.referenceid)
+
+@login_required
 def dispute_dn_edit(request, pk):
     permit = Permit.objects.get(pk=pk)
     form = PermitEditForm(instance = permit)
@@ -146,11 +300,11 @@ def dispute_demand_notice(request, ref_id):
     not_dis = Q(is_disputed = True)
     permits = Permit.objects.filter(ref & coy & is_dis)
     undisputed_permits = Permit.objects.filter(ref & coy & not_dis)
-    print("PERMIT COUNT: ", permits)
-    print("UNDISPUTED COUNT: ", undisputed_permits)
+    # print("PERMIT COUNT: ", permits)
+    # print("UNDISPUTED COUNT: ", undisputed_permits)
     
-    if request.method == "POST":
-        print("POST SHOWS HERE....")
+    # if request.method == "POST":
+    #     print("POST SHOWS HERE....")
    
     context = {
         'ref_id': ref_id,
@@ -318,6 +472,66 @@ def add_permit_form(request):
     }
     return render(request, 'tax-payers/partials/apply_permit_form.html', context)
 
+
+@login_required 
+def add_new_permit_form(request, ref_id):
+    
+    permits = Permit.objects.all()
+    if request.method == "POST":
+        form = PermitForm(request.POST or None, request.FILES or None)
+        if form.is_valid():
+            permit = form.save(commit=False)
+            # permit.referenceid = ref_id
+            permit.referenceid = request.POST['referenceid']
+            permit.is_disputed = True
+            permit.save()
+            permits = Permit.objects.all()
+            context = {
+                'permits': permits
+            }
+
+            return render(request, 'tax-payers/partials/permit_details.html', context)
+        else:
+            print(form.errors)
+
+    context = {
+        'form':form,
+        'referenceid': ref_id,
+        'company': request.user
+    }
+    return render(request, 'tax-payers/partials/apply_new_permit_form.html', context)
+
+
+@login_required 
+def add_new_ex_permit_form(request, ref_id):
+    
+    permits = Permit.objects.all()
+    if request.method == "POST":
+        form = PermitForm(request.POST or None, request.FILES or None)
+        if form.is_valid():
+            permit = form.save(commit=False)
+            # permit.referenceid = ref_id
+            permit.referenceid = request.POST['referenceid']
+            permit.is_disputed = True
+            # permit.is_existing = True
+            permit.save()
+            permits = Permit.objects.all()
+            context = {
+                'permits': permits
+            }
+
+            return render(request, 'tax-payers/partials/permit_details.html', context)
+        else:
+            print(form.errors)
+
+    context = {
+        'form':form,
+        'referenceid': ref_id,
+        'company': request.user
+    }
+    return render(request, 'tax-payers/partials/apply_new_ex_permit_form.html', context)
+
+
 # @login_required
 # def existing_permit(request):
 #     if Permit.objects.all().exists(): 
@@ -427,7 +641,11 @@ def demand_notice_receipt(request, ref_id):
 @login_required
 def dispute_demand_notice_receipt(request, ref_id):
     print("DN - REF ID: ", ref_id)
-    permits = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=True))
+
+    if not Permit.objects.filter(Q(referenceid = ref_id) & Q(is_disputed=True) & Q(is_existing=False)).exists():
+         return redirect('dashboard')
+    
+    permits = Permit.objects.filter(Q(referenceid = ref_id) & Q(is_disputed=True) & Q(is_existing=False))
     if not permits.first().company == request.user:
         return redirect('dashboard')
     
@@ -482,5 +700,5 @@ def dispute_demand_notice_receipt(request, ref_id):
         'ref_id': ref_id,
         'is_disputed': True
     }
-    return render(request, 'tax-payers/undisputed-receipt.html', context)
+    return render(request, 'tax-payers/receipts/undisputed-receipt.html', context)
 

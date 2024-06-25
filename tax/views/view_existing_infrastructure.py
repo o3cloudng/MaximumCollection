@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
-from tax.forms import PermitForm, PermitEditForm, WaverForm
+from tax.forms import PermitForm, PermitEditForm, WaverForm, RemittanceForm, PermitUploadForm
 from django.contrib.auth.decorators import login_required
 from account.models import User, AdminSetting
-from tax.models import Permit, InfrastructureType, Waver
+from tax.models import Permit, InfrastructureType, Waver, Remittance
 from datetime import date, timedelta, datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django_htmx.http import HttpResponseClientRedirect
-from django.db.models import Q, Count, Avg, Sum
+from django.db.models import F, Q, Count, Avg, Sum
 from django.forms import inlineformset_factory, formset_factory, modelformset_factory
 from django.http import HttpResponse
 from django.contrib import messages
@@ -35,6 +35,31 @@ def apply_for_waver(request):
             print("FILE FORMAT INVALID", form.errors)
       
         messages.error(request, 'Your request for waver failed.')
+        return redirect('dispute-ex-demand-notice', request.POST.get('referenceid'))
+
+@login_required
+def apply_remittance(request):
+    if request.method == 'POST':
+        if Remittance.objects.filter(Q(company=request.user) & Q(referenceid=request.POST.get('referenceid'))).exists():
+            messages.error(request, 'You have already applied for waver.')
+            return redirect('dispute-ex-demand-notice', request.POST.get('referenceid'))
+
+        form = RemittanceForm(request.POST or None, request.FILES or None)
+        
+        if form.is_valid():
+            print("WAVER HERE FORM IS VALID ")
+            remittance = form.save(commit=False)
+            remittance.referenceid = request.POST.get('referenceid')
+            remittance.company = request.user
+            remittance.apply_for_waver = request.POST.get('apply_for_waver')
+            remittance.save()
+
+            messages.success(request, 'Your remiitance was added successfully.')
+            return redirect('dispute-ex-demand-notice', request.POST.get('referenceid'))
+        else:
+            print("FILE FORMAT INVALID", form.errors)
+      
+        messages.error(request, 'Your remittance failed.')
         return redirect('dispute-ex-demand-notice', request.POST.get('referenceid'))
 
 
@@ -75,18 +100,19 @@ def apply_for_existing_permit(request):
         infra_rate = InfrastructureType.objects.get(pk=request.POST['infra_type'])
         print("READY POST: ", infra_rate.rate, type(infra_rate.rate))
         print("Permit type: ", request.POST['amount'], type(request.POST['amount']))
+
         if "mast" in infra_rate.infra_name.lower():
-            infra_cost = infra_rate.rate * int(request.POST['amount'])
             len = 0
             qty = request.POST['amount']
+            infra_cost = infra_rate.rate * int(request.POST['amount'])
         elif "roof" in infra_rate.infra_name.lower():
-            infra_cost = infra_rate.rate * int(request.POST['amount'])
             len = 0
             qty = request.POST['amount']
+            infra_cost = infra_rate.rate * int(request.POST['amount'])
         else:
             infra_cost = infra_rate.rate * int(request.POST['length'])
-            qty = 0
             len = request.POST['length']
+            qty = 0
 
         # print("AMOUNT OR NUMBER: ", infra_rate.infra_name.lower())
 
@@ -105,11 +131,13 @@ def apply_for_existing_permit(request):
             print(form.errors)
 
     form = PermitForm()
+    upload_form = PermitUploadForm()
 
     context = {
         'form':form,
         'referenceid': ref_id,
-        'company': request.user
+        'company': request.user,
+        'upload_form': upload_form
     }
 
     if request.htmx:
@@ -120,6 +148,7 @@ def apply_for_existing_permit(request):
 
 @login_required
 def add_permit_ex_form(request):
+    print("ADDING EXISITING INFRASTRUCTURE FORM")
     if Permit.objects.all().exists(): 
         last = Permit.objects.latest("pk").id
         ref_id = "LA"+generate_ref_id() + str(last + 1).zfill(5)
@@ -131,15 +160,15 @@ def add_permit_ex_form(request):
         form = PermitForm(request.POST or None, request.FILES or None)
         if form.is_valid():
             permit = form.save(commit=False)
-            # permit.referenceid = ref_id
-            permit.referenceid = request.user
+            permit.referenceid = ref_id
+            permit.company = request.user
+            permit.is_existing = True
             permit.save()
             permits = Permit.objects.all()
             context = {
                 'permits': permits
             }
 
-            print("USER ID: ", permits)
             return render(request, 'tax-payers/partials/permit_details.html', context)
         else:
             print("ERROR: ", form.errors)
@@ -180,7 +209,7 @@ def demand_notice_ex_receipt(request, ref_id):
         mast_roof_no = 0
         # mast_roof_no['no_sites'] = 0
 
-    print("MAST & ROOF NO: ", mast_roof)
+    # print("MAST & ROOF NO: ", mast_roof.count())
     if length.exists():
         app_count = mast_roof_no + length.count()
     else:
@@ -199,7 +228,7 @@ def demand_notice_ex_receipt(request, ref_id):
 
     total_due = tot_sum_infra['no_sum'] + total_app_fee + admin_pm_fees_sum + sar_rate
 
-    print("ADMIN FEE: ", total_due, type(total_due))
+    # print("ADMIN FEE: ", total_due, type(total_due))
     # ADD WAVER
     if Waver.objects.filter(referenceid=ref).exists():
         waver = Waver.objects.get(referenceid=ref).wave_amount
@@ -208,21 +237,26 @@ def demand_notice_ex_receipt(request, ref_id):
     # PENALTY CALCULATION
     refid = Q(referenceid = ref_id)
     is_exist = Q(is_existing=True)
-    # is_dispute = Q(is_disputed=True)
+    not_dispute = Q(is_disputed=False)
     # current_user = Q(comapny = request.user)
     if Permit.objects.filter(refid & is_exist).exists():
-        age_sum = Permit.objects.filter(refid & is_exist).aggregate(ages = Sum('age'))['ages']
+        age_sum = Permit.objects.filter(refid & is_exist & not_dispute).aggregate(ages = Sum('age'))['ages']
     else:
         age_sum = 0
 
-    print("AGE Calculated: ", age_sum)
+    # print("AGE Calculated: ", age_sum)
     
-    penalty_sum = app_count * age_sum * penalty.rate
-    print("PENALTY Calculated: ", penalty_sum)
+    penalty_sum = age_sum * penalty.rate
+    # print("PENALTY Calculated: ", penalty_sum)
 
     
     # print("WAVER: ", waver)
     total_liability = total_due + penalty_sum - waver
+
+    # Testing Model @property
+    # new_cum_age = Permit.objects.filter(refid & is_exist & not_dispute)
+    # new_cum_age = new_cum_age.annotate(age_now = F('updated_cum_age')).aggregate(total=Sum('age_now'))
+    # print("NEW CUM AGE: ", new_cum_age)
     
 
     context = {
@@ -251,7 +285,7 @@ def demand_notice_ex_receipt(request, ref_id):
 @login_required # Dispute Demand Notice - Issues
 def dispute_ex_demand_notice(request, ref_id):
 
-    form = WaverForm()
+    form = RemittanceForm()
 
     ref = Q(referenceid=ref_id)
     coy = Q(company=request.user)
@@ -265,11 +299,16 @@ def dispute_ex_demand_notice(request, ref_id):
     
     # if request.method == "POST":
         # print("POST SHOWS HERE....")
+    if Remittance.objects.filter(Q(referenceid=ref_id) & Q(company=request.user)).exists():
+        remittance = Remittance.objects.get(Q(referenceid=ref_id) & Q(company=request.user))
+    else:
+        remittance = 0
    
     context = {
         'ref_id': ref_id,
         'permits': permits,
         'undisputed_permits': undisputed_permits,
+        'remittance': remittance,
         'form': form
     }
     return render(request, 'tax-payers/existing_infra_temp/apply_for_ex_permit_edit.html', context)
@@ -295,6 +334,8 @@ def undispute_ex_demand_notice_receipt(request, ref_id):
     
     length = Permit.objects.filter(Q(referenceid = ref_id) & Q(is_disputed=True) & Q(is_existing=True) & (Q(infra_type__infra_name__istartswith='Optic') | Q(infra_type__infra_name__istartswith='Gas') | Q(infra_type__infra_name__istartswith='Power') | Q(infra_type__infra_name__istartswith='Pipeline')))
     #application number = number of masts and rooftops 
+
+    remittance = Remittance.objects.get(Q(referenceid=ref_id) & Q(company=request.user))
 
     if mast_roof.exists():
         mast_roof_no = mast_roof.aggregate(no_sites = Sum('amount'))['no_sites']
@@ -331,21 +372,25 @@ def undispute_ex_demand_notice_receipt(request, ref_id):
     # PENALTY CALCULATION
     refid = Q(referenceid = ref_id)
     is_exist = Q(is_existing=True)
-    # is_dispute = Q(is_disputed=True)
+    is_dispute = Q(is_disputed=True)
     # current_user = Q(comapny = request.user)
     if Permit.objects.filter(refid & is_exist).exists():
-        age_sum = Permit.objects.filter(refid & is_exist).aggregate(ages = Sum('age'))['ages']
+        age_sum = Permit.objects.filter(refid & is_exist & is_dispute).aggregate(ages = Sum('age'))['ages']
     else:
         age_sum = 0
 
     print("AGE Calculated: ", age_sum)
     
-    penalty_sum = app_count * age_sum * penalty.rate
+    penalty_sum = age_sum * penalty.rate
     print("PENALTY Calculated: ", penalty_sum)
+
+    print("REMITTANCE: ", remittance)
+
+    # print("NEW CUMMULATIVE AGES: ", cum_ages['cummulative_age'])
 
     
     # print("WAVER: ", waver)
-    total_liability = total_due + penalty_sum - waver
+    total_liability = total_due + penalty_sum - remittance.remitted_amount - waver
     
 
     context = {
@@ -366,6 +411,7 @@ def undispute_ex_demand_notice_receipt(request, ref_id):
         'ref_id': ref_id,
         'penalty_sum': penalty_sum,
         'penalty': penalty,
+        'remittance': remittance,
         'age_sum': age_sum
     }
     return render(request, 'tax-payers/receipts/undisputed_ex_dn_receipt.html', context)
@@ -382,15 +428,15 @@ def add_dispute_ex_dn_edit(request):
         # print("READY POST: ", infra_rate.rate, type(infra_rate.rate))
         # print("Permit type: ", request.POST['amount'], type(request.POST['amount']))
         if "mast" in infra_rate.infra_name.lower():
-            infra_cost = infra_rate.rate * int(request.POST['amount'])
+            # infra_cost = infra_rate.rate * int(request.POST['amount'])
             len = 0
             qty = request.POST['amount']
         elif "roof" in infra_rate.infra_name.lower():
-            infra_cost = infra_rate.rate * int(request.POST['amount'])
+            # infra_cost = infra_rate.rate * int(request.POST['amount'])
             len = 0
             qty = request.POST['amount']
         else:
-            infra_cost = infra_rate.rate * int(request.POST['length'])
+            # infra_cost = infra_rate.rate * int(request.POST['length'])
             qty = 0
             len = request.POST['length']
 
@@ -403,7 +449,7 @@ def add_dispute_ex_dn_edit(request):
             permit.company = request.user
             permit.amount = qty
             permit.length = len
-            permit.infra_cost = infra_cost
+            # permit.infra_cost = infra_cost
             permit.is_disputed = True
             permit.is_existing = True
             permit.save()

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django_htmx',
     'django.contrib.humanize',
     'payments',
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -194,3 +195,4 @@ LOGIN_REDIRECT_URL = "/clients/dashboard/"
 PAYSTACK_SECRET_KEY = config('PAYSTACK_SECRET_KEY')
 PAYSTACK_PUBLIC_KEY = config('PAYSTACK_PUBLIC_KEY')
 
+IMPORT_EXPORT_USE_TRANSACTIONS = True

@@ -202,10 +202,16 @@
               <h3 class="text-sm font-semibold text-gray-800">
                 Attached Documents
               </h3>
-              <div class="flex flex-row gap-5 justify-start overflow-x-auto">
-                <p class="text-sm text-black p-2 bg-gray-100 cursor-pointer rounded-sm hover:bg-gray-200">file1.pdf</p>
-                <p class="text-sm text-black p-2 bg-gray-100 cursor-pointer rounded-sm hover:bg-gray-200">receipt-1.pdf</p>
-                <p class="text-sm text-black p-2 bg-gray-100 cursor-pointer rounded-sm hover:bg-gray-200">remitance_doc.pdf</p>
+
+              <div class="flex flex-row gap-5">
+                 {% for permit in permits %}
+                <p class="text-sm text-orange-400">{{MEDIA_URL}}{{ permit.upload_application_letter }}</p>
+                <p class="text-sm text-orange-400">{{MEDIA_URL}}{{ permit.upload_asBuilt_drawing }}</p>
+                <p class="text-sm text-orange-400">{{MEDIA_URL}}{{ permit.upload_payment_receipt }}</p>
+                <!-- <p class="text-sm text-orange-400">receipt-1.pdf</p>
+                <p class="text-sm text-orange-400">remitance_doc.pdf</p> -->
+                {% endfor %}
+
               </div>
               <div class="w-[content] flex flex-row mx-auto gap-4 my-4">
                 <a href="{% url 'dispute-ex-demand-notice' ref_id %}" class="btn-outline">Dispute/Object</a>

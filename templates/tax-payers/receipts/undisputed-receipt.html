@@ -200,7 +200,16 @@
                 <p class="text-sm text-black p-2 bg-gray-100 cursor-pointer rounded-sm hover:bg-gray-200">remitance_doc.pdf</p>
               </div>
               <div class="w-80 flex flex-row mx-auto justify-center p-4 my-4">
-                
+
+                <form action="{% url 'initiate_payment' %}" method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="email" value="{{ request.user }}" />
+                  <input type="hidden" name="amount" value="{{ total_liability | floatformat:0 }}" />
+                  <input type="hidden" name="referenceid" value="{{ ref_id }}" />
+
+                  <button class="btn" onclick="payWithPaystack()">Make Payment</button>
+                </form>
+
                 {% if is_disputed == False %}
                 <a href="{% url 'dispute-demand-notice' ref_id %}" class="btn-outline">Dispute/Object</a>
                 {% endif %}
