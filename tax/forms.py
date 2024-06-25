@@ -227,3 +227,16 @@ class RemittanceForm(forms.ModelForm):
                 'placeholder': 'Upload receipt'
                 })
         }
+
+
+class PermitUploadForm(forms.Form):
+    class Meta:
+        fields = ['upload_csv_xlxs']
+
+        widgets = {
+            'upload_csv_xlxs': forms.HiddenInput( # id="dropzone-file" name="upload_csv_xlxs" type="file" class="hidden"
+                attrs={
+                'id': "dropzone-file",
+                'required': True
+                })
+        }

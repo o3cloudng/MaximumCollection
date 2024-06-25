@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import view, view_existing_infrastructure, page_view
+from .views import view, view_existing_infrastructure, page_view, import_export
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -44,4 +44,7 @@ urlpatterns = [
     path('infrastructures/', page_view.infrastructures, name="infrastructures"),
     path('downloads/', page_view.downloads, name="downloads"),
     path('settings/', page_view.settings, name="settings"),
+
+    # BULK UPLOAD (CSV / EXCEL)
+    path('upload/new/', import_export.upload_new, name="upload_new"),
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 

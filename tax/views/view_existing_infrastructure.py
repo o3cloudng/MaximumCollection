@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from tax.forms import PermitForm, PermitEditForm, WaverForm, RemittanceForm
+from tax.forms import PermitForm, PermitEditForm, WaverForm, RemittanceForm, PermitUploadForm
 from django.contrib.auth.decorators import login_required
 from account.models import User, AdminSetting
 from tax.models import Permit, InfrastructureType, Waver, Remittance
@@ -131,11 +131,13 @@ def apply_for_existing_permit(request):
             print(form.errors)
 
     form = PermitForm()
+    upload_form = PermitUploadForm()
 
     context = {
         'form':form,
         'referenceid': ref_id,
-        'company': request.user
+        'company': request.user,
+        'upload_form': upload_form
     }
 
     if request.htmx:
@@ -146,7 +148,7 @@ def apply_for_existing_permit(request):
 
 @login_required
 def add_permit_ex_form(request):
-    print("ADDING EXISITING INFRASTRUCTURE")
+    print("ADDING EXISITING INFRASTRUCTURE FORM")
     if Permit.objects.all().exists(): 
         last = Permit.objects.latest("pk").id
         ref_id = "LA"+generate_ref_id() + str(last + 1).zfill(5)
@@ -297,7 +299,10 @@ def dispute_ex_demand_notice(request, ref_id):
     
     # if request.method == "POST":
         # print("POST SHOWS HERE....")
-    remittance = Remittance.objects.get(Q(referenceid=ref_id) & Q(company=request.user))
+    if Remittance.objects.filter(Q(referenceid=ref_id) & Q(company=request.user)).exists():
+        remittance = Remittance.objects.get(Q(referenceid=ref_id) & Q(company=request.user))
+    else:
+        remittance = 0
    
     context = {
         'ref_id': ref_id,

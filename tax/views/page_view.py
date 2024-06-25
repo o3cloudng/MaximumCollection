@@ -4,11 +4,10 @@ from django.contrib.auth.decorators import login_required
 from account.models import User, AdminSetting
 from tax.models import Permit, InfrastructureType, Waver
 from datetime import date, timedelta
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse, reverse_lazy
 from django_htmx.http import HttpResponseClientRedirect
 from django.db.models import Q, Count, Avg, Sum, Max
-from django.http import HttpResponse
 
 
 @login_required

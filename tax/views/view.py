@@ -641,7 +641,11 @@ def demand_notice_receipt(request, ref_id):
 @login_required
 def dispute_demand_notice_receipt(request, ref_id):
     print("DN - REF ID: ", ref_id)
-    permits = Permit.objects.filter(Q(referenceid = ref_id, is_disputed=True))
+
+    if not Permit.objects.filter(Q(referenceid = ref_id) & Q(is_disputed=True) & Q(is_existing=False)).exists():
+         return redirect('dashboard')
+    
+    permits = Permit.objects.filter(Q(referenceid = ref_id) & Q(is_disputed=True) & Q(is_existing=False))
     if not permits.first().company == request.user:
         return redirect('dashboard')
     

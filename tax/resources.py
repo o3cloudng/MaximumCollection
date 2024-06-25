@@ -2,7 +2,7 @@ from import_export import resources
 from tax.models import Permit
 
 
-class BookResource(resources.ModelResource):
+class PermitResource(resources.ModelResource):
 
     class Meta:
         model = Permit
