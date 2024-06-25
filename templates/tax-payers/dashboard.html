@@ -2,7 +2,9 @@
 <section class="relative w-full flex flex-row items-start justify-start h-screen z-10">
       
       {% include 'tax-payers/aside.html' %}
-      <main class="w-full md:w-4/5 md:ml-[20%] ml-20 bg-gray-50 min-h-screen transition-all p-10">
+
+      
+      <main class="main_side">
 
         <!-- Top Bar with title page, buttons and notification tabs -->
         <section class="w-full flex flex-row justify-between items-center mb-10">
@@ -679,7 +681,7 @@
         </div>
       </section>
 <!-- Popup -->
-      <div id="modal" class="fixed z-50 inset-0 w-screen">
+      <div id="modal" class="fixed z-50 inset-0 w-screen hidden">
         <!-- bg-gray-500 bg-opacity-75 transition-opacity -->
         <div
           class="flex items-center justify-center w-screen min-h-screen bg-gray-100 bg-opacity-75 transition-opacity"
@@ -712,12 +714,12 @@
                 class="text-2xl leading-6 font-medium text-black tracking-wider titlecase"
                 id="modal-title"
               >
-                Congratulations!
+                Welcome!
               </h3>
               <p
                 class="mt-4 text-xl text-gray-700 font-light md:w-80 text-center"
               >
-                Your Company's profile has been successfully created
+                Please use the buttons below to apply for a new building permit or to register your exisiting infrastructures.
               </p>
             </div>
             <div
@@ -753,9 +755,12 @@
       const closeButton = document.getElementById("close-modal-btn");
       const btn = document.getElementsByName("button");
 
-      document.addEventListener("DOMContentLoaded", function (e) {
-        modal.classList.remove("hidden");
-      });
+      const displayPopup = function (e) {
+        modal.classList.remove('hidden')
+        
+      }
+
+      const delayPopUp = setTimeout(displayPopup, 4000)
 
       closeButton.addEventListener("click", function (e) {
         modal.classList.add("hidden");
