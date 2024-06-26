@@ -199,7 +199,7 @@
                 <p class="text-sm text-black p-2 bg-gray-100 cursor-pointer rounded-sm hover:bg-gray-200">receipt-1.pdf</p>
                 <p class="text-sm text-black p-2 bg-gray-100 cursor-pointer rounded-sm hover:bg-gray-200">remitance_doc.pdf</p>
               </div>
-              <div class="w-80 flex flex-row mx-auto justify-center p-4 my-4">
+              <div class="w-[content] flex flex-row mx-auto gap-4 my-4">
                 
                 {% if is_disputed == False %}
                 <a href="{% url 'dispute-demand-notice' ref_id %}" class="btn-outline">Dispute/Object</a>
