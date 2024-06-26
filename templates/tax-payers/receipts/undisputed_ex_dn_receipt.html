@@ -170,12 +170,12 @@
                 <td class="!text-right">&#8358;{{ sar_rate | floatformat:2 | intcomma }}</td>
               </tr>
               <tr>
-                <td>Penalty</td>
-                <td>{{ age_sum }} days</td>
-                <td class="!text-right">{{ penalty.rate | floatformat:2 | intcomma }}</td>
+                <td   class="text-gray-300 line-through">Penalty</td>
+                <td  class="text-gray-300 line-through">{{ age_sum }} days</td>
+                <td class="!text-right text-gray-300 line-through">{{ penalty.rate | floatformat:2 | intcomma }}</td>
                 <td></td>
                 <td></td>
-                <td class="!text-right">&#8358;{{ penalty_sum | floatformat:2 | intcomma }}</td>
+                <td class="!text-right text-gray-300 line-through">&#8358;{{ penalty_sum | floatformat:2 | intcomma }}</td>
               </tr>
               </tr>
               <tr>
