@@ -51,9 +51,9 @@
         </div>
         </section>
 
-      <section class="mt-10 w-full" >
+        <section class="mt-10 w-full" >
           <!--Tabs navigation-->
-          <div x-data="{currentTab: 'Mast'}">
+          <div x-data="{currentTab: 'All'}">
 
           <ul
             class="mb-5 flex list-none flex-row flex-wrap md:gap-4 border-b-0 ps-0"
@@ -72,7 +72,7 @@
                 
                 @click = "currentTab=$el.innerHTML"
                 :class = "currentTab == $el.innerHTML ? 'active' : '' "
-                >Mast</a
+                >All</a
               >
             </li>
             <li role="presentation">
@@ -87,7 +87,7 @@
                 aria-selected="false"
                 @click = "currentTab=$el.innerHTML"
                 :class = "currentTab == $el.innerHTML ? 'active' : '' "
-                >Fibre</a
+                >Mast</a
               >
             </li>
             <li role="presentation">
@@ -102,7 +102,7 @@
                 aria-selected="false"
                 @click = "currentTab=$el.innerHTML"
                 :class = "currentTab == $el.innerHTML ? 'active' : '' "
-                >Power Lines</a
+                >Fibre</a
               >
             </li>
             <li role="presentation">
@@ -117,7 +117,7 @@
                 aria-selected="false"
                 @click = "currentTab=$el.innerHTML"
                 :class = "currentTab == $el.innerHTML ? 'active' : '' "
-                >Pipelines</a
+                >Power Line</a
               >
             </li>
             
@@ -126,7 +126,7 @@
           <!--Tabs content-->
           <div class="mb-6">
             <div
-              x-show = "currentTab == 'Mast'"
+              x-show = "currentTab == 'All'"
               class=" opacity-100 transition-opacity duration-150 ease-linear"
               id="tabs-all"
               role="tabpanel"
@@ -219,7 +219,7 @@
               </section>
             </div>
             <div
-              x-show = "currentTab == 'Fibre'"
+              x-show = "currentTab == 'Paid'"
               class="transition-opacity duration-150 ease-linear"
               id="tabs-paid"
               role="tabpanel"
@@ -261,79 +261,44 @@
                       </thead>
                       <!-- hover:[&>*:nth-child(odd)]:bg-white -->
                     <tbody class="divide-y divide-gray-100 bg-white ">
-                    {% if demand_notices_paid.exists %}
-                      {% for demand_notice_paid in demand_notices_paid %}
-                      <tr>
-                        <td>
-                          {% if demand_notice_paid.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% endif %}
-                            {{ forloop.counter }}
-                          </a></td>
-                        <td>
-                          {% if demand_notice_paid.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% endif %}
-                            {{ demand_notice_paid.referenceid }}
-                          </a></td>
-                        <td>
-                          {% if demand_notice_paid.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% endif %}
-                            {{ demand_notice_paid.total }}</a></td>
-                        <td>
-                          {% if demand_notice_paid.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% endif %}
-                            
-                            {{ demand_notice_paid.created_at | date:"M, d Y" }}
-                          </a></td>
-                        <td>
-                          {% if demand_notice_paid.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% endif %}
-                          <span class="status-paid">
-                            PAID 
-                          </span>
-                          </a>
-                        </td>
+                    {% if masts.exists %}
+                     {% for m in masts %}
+                     <tr>
                       <td>
-                        {% if demand_notice_paid.is_disputed == True %}
-                          <a
-                          class="border-2 text-xm bg-orange-600 text-orange-600 border-orange-500 rounded-md px-2 py-1 hover:border-grey-500 hover:bg-grey-500 hover:text-grey-500 cursor-pointer"
-                          title="View" 
-                          href="{% url 'dispute-demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% else %}
-                          <a
-                          class="border-2 text-xm bg-orange-600 text-orange-600 border-orange-500 rounded-md px-2 py-1 hover:border-grey-500 hover:bg-grey-500 hover:text-grey-500 cursor-pointer"
-                          title="View"
-                          href="{% url 'demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% endif %}
-                          View
-                          <span class="flex justify-end items-center text-gray-400">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                            </svg>
-                          </span>
-                        </a>
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
+                          {{ forloop.counter }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
+                          {{ m.referenceid }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
+                          {{ m.amount }}</a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
+                          
+                          {{ m.created_at | date:"M, d Y" }}
+                        </a></td>
+                      <td>
+                        &nbsp;
+                      </td>
+                      <td>
+                        <span class="flex justify-end items-center text-gray-400">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                          </svg>
+                          
+                        </span>
+                      </td>
+                    </a>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                      <td colspan="6"> No demand notice
                       </td>
                     </tr>
-                      {% endfor %}
-                    {% else %}
-                      <tr>
-                        <td colspan="6"> No paid demand notice
-                        </td>
-                      </tr>
                     {% endif %}
                     </tbody>
                     <tfoot>
@@ -346,7 +311,7 @@
               </section>
             </div>
             <div
-              x-show = "currentTab == 'Power Lines'"
+              x-show = "currentTab == 'Disputed'"
               class="transition-opacity duration-150 ease-linear"
               id="tabs-disputed"
               role="tabpanel"
@@ -388,81 +353,62 @@
                       </thead>
                       <!-- hover:[&>*:nth-child(odd)]:bg-white -->
                     <tbody class="divide-y divide-gray-100 bg-white ">
-                    {% if demand_notices_disputed.exists %}
-                      {% for demand_notice_disputed in demand_notices_disputed %}
-                      <tr>
+                    <tr>
+                      <td>1</td>
+                      <td>ED1234GTH</td>
+                      <td>500000</td>
+                      <td>12-7-2027</td>
                       <td>
-                        {% if demand_notice_disputed.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% endif %}
-                          {{ forloop.counter }}
-                        </a></td>
-                      <td>
-                        {% if demand_notice_disputed.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% endif %}
-                          {{ demand_notice_disputed.referenceid }}
-                        </a></td>
-                      <td>
-                        {% if demand_notice_disputed.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% endif %}
-                          {{ demand_notice_disputed.total }}</a></td>
-                      <td>
-                        {% if demand_notice_disputed.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% endif %}
-                          
-                          {{ demand_notice_disputed.created_at | date:"M, d Y" }}
-                        </a></td>
-                      <td>
-                        {% if demand_notice_disputed.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% endif %}
                         <span class="status-disputed">
-                          DISPUTED
+                          Disputed
                         </span>
-                        </a>
+                        
                       </td>
                       <td>
-                        {% if demand_notice_disputed.is_disputed == True %}
-                          <a
-                          class="border-2 text-xm bg-orange-600 text-orange-600 border-orange-500 rounded-md px-2 py-1 hover:border-grey-500 hover:bg-grey-500 hover:text-grey-500 cursor-pointer"
-                        
-                          title="View"                          
-                          href="{% url 'dispute-demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% endif %}
-                        >
-                          View
-                        </a>
                         <span class="flex justify-end items-center text-gray-400">
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                          </svg>
-                          
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                        </svg>
+
                         </span>
                       </td>
-                    </a>
                     </tr>
-                      {% endfor %}
-                    {% else %}
-                      <tr>
-                        <td colspan="6"> No disputed demand notice
+                    <tr>
+                      <td>2</td>
+                      <td>ED1234GTH</td>
+                      <td>500000</td>
+                      <td>12-7-2027</td>
+                      <td>
+                        <span class="status-disputed">
+                          Disputed
+                        </span>
                         </td>
-                      </tr>
-                    {% endif %}
+                      <td>
+                        <span class="flex justify-end items-center text-gray-400">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                        </svg>
+
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>3</td>
+                      <td>ED1234GTH</td>
+                      <td>500000</td>
+                      <td>12-7-2027</td>
+                      <td><span class="status-disputed">
+                          Disputed
+                        </span></td>
+                      <td>
+                        <span class="flex justify-end items-center text-gray-400">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                        </svg>
+
+                        </span>
+                      </td>
+                    </tr>
                     </tbody>
                     <tfoot>
                       <tr>
@@ -474,7 +420,7 @@
               </section>
             </div>
             <div
-              x-show = "currentTab == 'Pipelines'"
+              x-show = "currentTab == 'Revised'"
               class="transition-opacity duration-150 ease-linear"
               id="tabs-revised"
               role="tabpanel"
@@ -516,94 +462,56 @@
                       </thead>
                       <!-- hover:[&>*:nth-child(odd)]:bg-white -->
                     <tbody class="divide-y divide-gray-100 bg-white ">
-                    {% if demand_notices_resolved.exists %}
-                      {% for demand_notice_resolved in demand_notices_resolved %}
-                      <tr>
+                    <tr>
+                      <td>1</td>
+                      <td>ED1234GTH</td>
+                      <td>500000</td>
+                      <td>12-7-2027</td>
                       <td>
-                        {% if demand_notices_resolved.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% endif %}
-                          {{ forloop.counter }}
-                        </a></td>
-                      <td>
-                        {% if demand_notices_resolved.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% endif %}
-                          {{ demand_notice_resolved.referenceid }}
-                        </a></td>
-                      <td>
-                        {% if demand_notices_resolved.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% endif %}
-                          {{ demand_notice_resolved.total }}</a></td>
-                      <td>
-                        {% if demand_notices_resolved.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% endif %}
-                          
-                          {{ demand_notice_resolved.created_at | date:"M, d Y" }}
-                        </a></td>
-                      <td>
-                       {% if demand_notices_resolved.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% endif %}
-                        {% if demand_notice_resolved.is_paid %}
-                        <span class="status-paid">
-                          PAID {{ demand_notice_resolved.is_paid }}
-                        </span>
-                        {% elif demand_notice_resolved.is_revised %}
-                        <span class="status-revised">
-                          REVISED
-                        </span>
-                        {% elif demand_notice_resolved.is_disputed %}
-                        <span class="status-disputed">
-                          DISPUTED
-                        </span>
-                        {% else %}
-                        <span class="status-others">
-                          UNPAID
-                        </span>
-                        {% endif %}
-                        </a>
+                        <span class="status-revised">Revised</span>
+                        
                       </td>
                       <td>
-                        {% if demand_notice_disputed.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% endif %}
-                          class="border-2 text-xm bg-orange-600 text-orange-600 border-orange-500 rounded-md px-2 py-1 hover:border-grey-500 hover:bg-grey-500 hover:text-grey-500 cursor-pointer"
-                          type="button"
-                          title="View"
-                        >
-                          View
-                        </a>
                         <span class="flex justify-end items-center text-gray-400">
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                          </svg>
-                          
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                        </svg>
+
                         </span>
                       </td>
-                    </a>
                     </tr>
-                      {% endfor %}
-                    {% else %}
-                      <tr>
-                        <td colspan="6"> No revised demand notice
+                    <tr>
+                      <td>2</td>
+                      <td>ED1234GTH</td>
+                      <td>500000</td>
+                      <td>12-7-2027</td>
+                      <td>
+                        <span class="status-revised">Revised</span>
                         </td>
-                      </tr>
-                    {% endif %}
+                      <td>
+                        <span class="flex justify-end items-center text-gray-400">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                        </svg>
+
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>3</td>
+                      <td>ED1234GTH</td>
+                      <td>500000</td>
+                      <td>12-7-2027</td>
+                      <td><span class="status-revised">Revised</span></td>
+                      <td>
+                        <span class="flex justify-end items-center text-gray-400">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                        </svg>
+
+                        </span>
+                      </td>
+                    </tr>
                     </tbody>
                     <tfoot>
                       <tr>
