@@ -4,7 +4,7 @@
 <section class="w-full flex flex-row items-start justify-start h-screen">
   {% include 'tax-payers/aside.html' %}
   <main
-    class="w-full md:w-4/5 md:ml-[20%] ml-20 bg-gray-50 min-h-screen transition-all p-10"
+    class="main_side"
   >
     <!-- Top Bar with title page, buttons and notification tabs -->
     <section class="w-full flex flex-row justify-between items-center">
@@ -216,7 +216,7 @@
                 <p class="text-sm text-black p-2 bg-gray-100 cursor-pointer rounded-sm hover:bg-gray-200">receipt-1.pdf</p>
                 <p class="text-sm text-black p-2 bg-gray-100 cursor-pointer rounded-sm hover:bg-gray-200">remitance_doc.pdf</p>
               </div>
-              <div class="w-80 flex flex-row mx-auto gap-4 my-4 justify-center">
+              <div class="w-[content] flex flex-row mx-auto gap-4 my-4">
                 <form action="{% url 'initiate_payment' %}" method="POST">
                   {% csrf_token %}
                   <input type="hidden" name="email" value="{{ request.user }}" />

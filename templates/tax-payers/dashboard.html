@@ -57,7 +57,7 @@
         
         <section class="mt-5 space-x-4 flex flex-col md:flex-row">
           <article class="flex flex-row items-center justify-start space-x-2">
-            <a href="{% url 'apply_existing_infra' %}" class="btn border-2 border-orange-500">Upload Existing Facilities</a>
+            <a href="{% url 'apply_existing_infra' %}" class="btn">Upload Existing Facilities</a>
             <a href="{% url 'apply_for_permit' %}" class="btn-outline">Apply for New Permit to Build</a>
           </article>
         </section>
@@ -243,21 +243,21 @@
                       <td>
                         {% if demand_notice.is_disputed == True %}
                           <a 
-                          class="border-2 text-xm bg-orange-600 text-orange-600 border-orange-500 rounded-md px-2 py-1 hover:border-grey-500 hover:bg-grey-500 hover:text-grey-500 cursor-pointer"
+                          class="text-right text-xm bg-orange-600 text-orange-600 cursor-pointer"
                           title="View"
                           href="{% url 'dispute-demand-notice-receipt' demand_notice.referenceid %}">
                           {% else %}
                           <a
-                          class="border-2 text-xm bg-orange-600 text-orange-600 border-orange-500 rounded-md px-2 py-1 hover:border-grey-500 hover:bg-grey-500 hover:text-grey-500 cursor-pointer"
+                          class="text-right text-xm bg-orange-600 text-orange-600 cursor-pointer"
                           title="View"
                           href="{% url 'demand-notice-receipt' demand_notice.referenceid %}">
                           {% endif %}
                           View
-                          <span class="flex justify-end items-center text-gray-400">
+                          {% comment %} <span class="flex justify-end items-center text-gray-400">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                               <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
                             </svg>
-                          </span>
+                          </span> {% endcomment %}
                         </a>
                       </td>
                     </a>
