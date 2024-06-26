@@ -40,7 +40,7 @@
           </span>
           Bulk Upload
         </button>
-        <a href="#" class="text-sm text-gray-800 underline">Download Format</a>
+        <a href="/assets/media/uploads/bulk_upload_sample.csv" class="text-sm text-gray-800 underline">Download Format</a>
       </article>
 
       <article
@@ -164,7 +164,9 @@
       </div>
       <div class="flex mt-5 mb-10 text-green-500">
         {% if remittance %}
-        Remittance applied: &#8358;{{ remittance.remitted_amount | floatformat:2 | intcomma }}
+        <p>Remittance applied: &#8358;{{ remittance.remitted_amount | floatformat:2 | intcomma }} - </p>
+        <p><a href="/assets/media/{{remittance.receipt }}" target="_blank">Receipt</a></p>
+
         {% else %}
         No remittance.
         {% endif %}
@@ -185,7 +187,7 @@
       data-modal-toggle="static-modal"
       class="bg-transparent border-2 border-orange-500 px-20 py-3 text-orange-500 rounded-md hover:bg-orange-500 hover:border-orange-500 hover:text-white"
       type="button"
-      {% if remittance %} disabled {% endif %}
+      {% comment %}{% if remittance %} disabled {% endif %}{% endcomment %}
     >
       {% if remittance %} Remittance applied {% else %} Apply remittance {% endif %}
     </button>
@@ -351,11 +353,12 @@
             <div class="inline-flex flex-row">
 
               <div class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                <a href="/assets/media/{{ remittance.receipt }}" target="_blank">{{ remittance.receipt }}</a>
                 {{ form.receipt }}
               </div>
               <div class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
                 <label>Apply for waver</label><br/>
-                <input type="checkbox" name="apply_for_waver" value="1" />
+                <input type="radio" name="apply_for_waver" value="1" />
               </div>
             </div>
           </div>

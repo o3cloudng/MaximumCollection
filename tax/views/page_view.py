@@ -56,18 +56,31 @@ def demand_notice(request):
 
 @login_required
 def infrastructures(request):
-    infrastructures = Permit.objects.values('infra_type', 'referenceid').filter(Q(company=request.user.id) & Q(infra_type__infra_name__icontains="mast")).annotate(total=Count('id'), created_at=Max('created_at')).order_by('-created_at')
+    # infrastructures = Permit.objects.values('infra_type', 'referenceid').filter(Q(company=request.user.id) & Q(infra_type__infra_name__icontains="mast")).annotate(total=Count('id'), created_at=Max('created_at')).order_by('-created_at')
+    coy = Q(company=request.user.id)
+    roof_masts = (Q(infra_type__infra_name__icontains="mast") | Q(infra_type__infra_name__icontains="roof"))
+    is_disp = Q(is_disputed = True)
+    masts = Permit.objects.filter(coy & is_disp & roof_masts)
+    fibre = Permit.objects.filter(coy & is_disp & Q(infra_type__infra_name__icontains="fibre"))
+    power_line = Permit.objects.filter(coy & is_disp & Q(infra_type__infra_name__icontains="power"))
+    pipeline = Permit.objects.filter(coy & is_disp & Q(infra_type__infra_name__icontains="pipe"))
+    gas = Permit.objects.filter(coy & is_disp & Q(infra_type__infra_name__icontains="gas"))
 
-    mast = Permit.objects.filter(Q(company=request.user.id) & Q(infra_type__infra_name__icontains="mast"))
-    fibre = Permit.objects.filter(Q(company=request.user.id) & Q(infra_type__infra_name__icontains="fibre"))
-    power_line = Permit.objects.filter(Q(company=request.user.id) & Q(infra_type__infra_name__icontains="power"))
-    pipeline = Permit.objects.filter(Q(company=request.user.id) & Q(infra_type__infra_name__icontains="pipe"))
+    mast_roof_count = masts.aggregate(no_m = Sum('amount'))
+    # fibre_count = fibre.count()
+    # power_count = power_line.count()
+    # pipe_count = pipeline.count()
+    # gas_count = gas.count()
+    # print("SUM OF MASTS: ", mast_count, "----- Fibre: ", fibre_count, "-----Power: ", power_count, "---Pipeline: ", pipe_count, "---Gas: ", gas_count)
+    print("SUM OF MASTS: ", mast_roof_count['no_m'])
     context = {
         "infrastructures": infrastructures,
-         "mast": mast,
+         "masts": masts,
+         "mast_roof_count": mast_roof_count['no_m'],
          "fibre": fibre,
         "power_line": power_line,
         "pipeline": pipeline,
+        "gas": gas
     }
     return render(request, 'tax-payers/infrastructure.html', context)
 
@@ -104,7 +117,4 @@ def downloads(request):
     }
     return render(request, 'tax-payers/downloads.html', context)
 
-@login_required
-def settings(request):
-    context = {}
-    return render(request, 'tax-payers/settings.html', context)
+

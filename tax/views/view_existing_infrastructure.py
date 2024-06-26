@@ -18,7 +18,7 @@ def apply_for_waver(request):
     if request.method == 'POST':
         if Waver.objects.filter(Q(company=request.user) & Q(referenceid=request.POST.get('referenceid'))).exists():
             messages.error(request, 'You have already applied for waver.')
-            return redirect('dispute-ex-demand-notice', request.POST.get('referenceid'))
+            # return redirect('dispute-ex-demand-notice', request.POST.get('referenceid'))
 
         form = WaverForm(request.POST or None, request.FILES or None)
         
@@ -40,11 +40,17 @@ def apply_for_waver(request):
 @login_required
 def apply_remittance(request):
     if request.method == 'POST':
-        if Remittance.objects.filter(Q(company=request.user) & Q(referenceid=request.POST.get('referenceid'))).exists():
-            messages.error(request, 'You have already applied for waver.')
-            return redirect('dispute-ex-demand-notice', request.POST.get('referenceid'))
+        # if Remittance.objects.filter(Q(company=request.user) & Q(referenceid=request.POST.get('referenceid'))).exists():
+        #     messages.error(request, 'You have already applied for waver.')
+        #     return redirect('dispute-ex-demand-notice', request.POST.get('referenceid'))
+        
+        if Remittance.objects.filter(company=request.user).exists():
+            remit = Remittance.objects.get(company=request.user)
+            form = RemittanceForm(request.POST or None, request.FILES or None, instance=remit)
+            print("REMIT: = ", remit)
+        else:
+            form = RemittanceForm(request.POST or None, request.FILES or None)
 
-        form = RemittanceForm(request.POST or None, request.FILES or None)
         
         if form.is_valid():
             print("WAVER HERE FORM IS VALID ")
@@ -284,8 +290,13 @@ def demand_notice_ex_receipt(request, ref_id):
 
 @login_required # Dispute Demand Notice - Issues
 def dispute_ex_demand_notice(request, ref_id):
+    if Remittance.objects.filter(referenceid=ref_id).exists():
+        remit = Remittance.objects.get(referenceid=ref_id)
+        form = RemittanceForm(instance=remit)
+        print("REMITTANCE: ", remit.receipt)
+    else:
+        form = RemittanceForm()
 
-    form = RemittanceForm()
 
     ref = Q(referenceid=ref_id)
     coy = Q(company=request.user)
@@ -352,18 +363,20 @@ def undispute_ex_demand_notice_receipt(request, ref_id):
     app_count = mast_roof_no + len_count
     total_app_fee = app_count * app_fee.rate
 
-    tot_sum_infra = Permit.objects.filter(Q(referenceid = ref_id) & Q(is_existing=True)).aggregate(no_sum = Sum('infra_cost'))
-
+    tot_sum_infra = Permit.objects.filter(Q(referenceid = ref_id) & Q(is_disputed=True) & Q(is_existing=True)).aggregate(no_sum = Sum('infra_cost'))
+    # tot_sum_infra = Permit.objects.filter(Q(referenceid = ref_id) & Q(is_existing=True)).aggregate(no_sum = Sum('infra_cost'))
+    
+    print("INFRA COST: ", tot_sum_infra)
     # Site assessment report rate
     sar_rate = mast_roof_no * site_assessment.rate
-    # print("SUM: ", tot_sum_infra['no_sum'], type(tot_sum_infra['no_sum']))
+    print("SUM: ", tot_sum_infra['no_sum'], type(tot_sum_infra['no_sum']))
 
 
     admin_pm_fees_sum = (admin_pm_fees.rate * tot_sum_infra['no_sum']) / 100
 
     total_due = tot_sum_infra['no_sum'] + total_app_fee + admin_pm_fees_sum + sar_rate
 
-    print("ADMIN FEE: ", total_due, type(total_due))
+    print("TOTAL DUE: ", total_due, type(total_due))
     # ADD WAVER
     if Waver.objects.filter(referenceid=ref).exists():
         waver = Waver.objects.get(referenceid=ref).wave_amount
@@ -386,11 +399,9 @@ def undispute_ex_demand_notice_receipt(request, ref_id):
 
     print("REMITTANCE: ", remittance)
 
-    # print("NEW CUMMULATIVE AGES: ", cum_ages['cummulative_age'])
-
     
-    # print("WAVER: ", waver)
-    total_liability = total_due + penalty_sum - remittance.remitted_amount - waver
+    # Remove penalty from the total calculation after dispute
+    total_liability = total_due  - remittance.remitted_amount - waver
     
 
     context = {
@@ -428,17 +439,17 @@ def add_dispute_ex_dn_edit(request):
         # print("READY POST: ", infra_rate.rate, type(infra_rate.rate))
         # print("Permit type: ", request.POST['amount'], type(request.POST['amount']))
         if "mast" in infra_rate.infra_name.lower():
-            # infra_cost = infra_rate.rate * int(request.POST['amount'])
             len = 0
             qty = request.POST['amount']
+            infra_cost = infra_rate.rate * int(request.POST['amount'])
         elif "roof" in infra_rate.infra_name.lower():
-            # infra_cost = infra_rate.rate * int(request.POST['amount'])
             len = 0
             qty = request.POST['amount']
+            infra_cost = infra_rate.rate * int(request.POST['amount'])
         else:
-            # infra_cost = infra_rate.rate * int(request.POST['length'])
-            qty = 0
+            infra_cost = infra_rate.rate * int(request.POST['length'])
             len = request.POST['length']
+            qty = 0
 
         print("AMOUNT OR NUMBER: ", infra_rate.infra_name.lower())
 
@@ -449,7 +460,7 @@ def add_dispute_ex_dn_edit(request):
             permit.company = request.user
             permit.amount = qty
             permit.length = len
-            # permit.infra_cost = infra_cost
+            permit.infra_cost = infra_cost
             permit.is_disputed = True
             permit.is_existing = True
             permit.save()

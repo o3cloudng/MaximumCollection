@@ -43,7 +43,7 @@ urlpatterns = [
     path('disputes/', page_view.disputes, name="disputes"),
     path('infrastructures/', page_view.infrastructures, name="infrastructures"),
     path('downloads/', page_view.downloads, name="downloads"),
-    path('settings/', page_view.settings, name="settings"),
+    # path('settings/', page_view.settings, name="settings"),
 
     # BULK UPLOAD (CSV / EXCEL)
     path('upload/new/', import_export.upload_new, name="upload_new"),

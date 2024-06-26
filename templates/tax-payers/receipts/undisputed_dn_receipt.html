@@ -59,7 +59,7 @@
             <h3 class="font-normal text-orange-400">Bill to:</h3>
             <div class="flex flex-row justify-start gap-3 mt-1">
               <img
-                src="{% static 'img/mtn-logo.png' %}"
+                src='/assets/media/{{ request.user.company_logo }}'
                 alt=""
                 class="w-10 h-10 rounded-full"
               />
@@ -67,7 +67,7 @@
                 <p class="text-l text-gray-800">
                   {{ request.user.company_name }}
                 </p>
-                <p class="text-sm text-gray-600">Telecoms</p>
+                <p class="text-sm text-gray-600">{{ request.user.sector}}</p>
                 <p class="text-sm text-gray-600 mt-2 font-bold">
                   {{ request.user.address}}
                 </p>
@@ -93,12 +93,12 @@
               <p class="text-sm text-gray-600">080368795683</p>
               <p class="text-sm text-gray-600">compliant@lasimra.com</p>
               <div class="text-orange-400 text-sm mt-2">
-                <p>Date: <span class="text-gray-600">12/05/2024</span></p>
+                <p>Date: <span class="text-gray-600">{% now "d/m/Y" %}</span></p>
                 <p>Terms: <span class="text-gray-600">Due on Receipt</span></p>
               </div>
-              <div class="text-orange-400 font-normal mt-2">
-                <h2 class="block text-xl">Amount Due:</h2>
-                <h2 class="text-lg">&#8358;{{ total_liability | floatformat:2 | intcomma }}</h2>
+              <div class="text-orange-400 font-semibold mt-2 bg-gray-100 rounded-md shadow-sm p-2 hover:bg-orange-400 hover:text-white">
+                <h2 class="block text-sm">Amount Due:</h2>
+                <h2 class="text-2xl font-bold">&#8358;{{ total_liability | floatformat:2 | intcomma }}</h2>
               </div>
             </div>
           </div>
@@ -177,12 +177,12 @@
             <p>Total Due</p>
             <h4>&#8358;{{ total_due | floatformat:2 | intcomma }}</h4>
           </div>
-          <div
+          <!-- <div
             class="font-normal text-sm w-full text-green-800 flex flex-row justify-between items-center p-3"
           >
             <p>Waiver Applied</p>
             <h4 class="">&#8358;{{ waver | floatformat:2 | intcomma }}</h4>
-          </div>
+          </div> -->
           <div
             class="bg-orange-100 font-bold w-full text-orange-800 flex flex-row justify-between items-center p-3"
           >
@@ -195,9 +195,15 @@
                 Uploaded Documents
               </h3>
               <div class="flex flex-row gap-5">
-                <p class="text-sm text-orange-400">file1.pdf</p>
-                <p class="text-sm text-orange-400">receipt-1.pdf</p>
-                <p class="text-sm text-orange-400">remitance_doc.pdf</p>
+                {% if permits.exists %}
+                  {% for permit in permits %}
+                  <p class="text-sm text-orange-400">{{MEDIA_URL}}{{ permit.upload_application_letter }}</p>
+                  <p class="text-sm text-orange-400">{{MEDIA_URL}}{{ permit.upload_asBuilt_drawing }}</p>
+                  <p class="text-sm text-orange-400">{{MEDIA_URL}}{{ permit.upload_payment_receipt }}</p>
+                  <!-- <p class="text-sm text-orange-400">receipt-1.pdf</p>
+                  <p class="text-sm text-orange-400">remitance_doc.pdf</p> -->
+                  {% endfor %}
+                {% endif %}
               </div>
               <div class="w-80 flex flex-row mx-auto gap-4 my-4 justify-center">
                 <form action="{% url 'initiate_payment' %}" method="POST">

@@ -116,7 +116,7 @@ class Remittance(models.Model):
     remitted_amount = models.IntegerField(blank=True)
     receipt = models.FileField(upload_to='uploads/receipts/', blank=True, null=True)
     approved = models.BooleanField(default=False)
-    apply_for_waver = models.BooleanField(default=False)
+    apply_for_waver = models.BooleanField(default=False, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 

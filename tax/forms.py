@@ -11,7 +11,7 @@ class PermitForm(forms.ModelForm):
 
         widgets = {
             'infra_type': forms.Select(
-                choices = InfrastructureType.objects.all(), 
+                # choices = InfrastructureType.objects.all(), 
                 attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',
@@ -92,7 +92,7 @@ class PermitEditForm(forms.ModelForm):
 
         widgets = {
             'infra_type': forms.Select(
-                choices = InfrastructureType.objects.all(), 
+                # choices = InfrastructureType.objects.all(), 
                 attrs={
                 'class': "form-control",
                 'style': 'max-width: 150px;',

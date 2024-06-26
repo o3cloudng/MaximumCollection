@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .forms import SignupForm, LoginForm, ProfileForm
+from .forms import SignupForm, LoginForm, ProfileForm, UserProfileForm
 from django.contrib.auth import login, authenticate, logout
 from account.models import User, Sector
 from django.contrib import messages
@@ -81,9 +81,9 @@ def dashboard(request):
 def setup_profile(request):
     user = User.objects.get(pk=request.user.id)
     if request.method == "POST":
-        form = ProfileForm(request.POST, instance=user)
+        form = UserProfileForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
-            print("PROFILE: ", form)
+            # print("PROFILE: ", form)
             profile = form.save(commit=False)
             profile.email = request.user.email
             profile.is_profile_complete = True
@@ -94,14 +94,16 @@ def setup_profile(request):
             #     rc_number = form.cleaned_data['rc_number'],
             #     phone_number = form.cleaned_data['phone_number ' ],
             #     )
-
-            return redirect("apply_for_permit")
+            messages.success(request, "Profile completed successfully")
+            return redirect("dashboard")
+        else:
+            print("FORM IS INVALID.")
+            print("ERRORS: ", form.errors)
         
-    print("FORM IS INVALID.")
-    form = ProfileForm(instance=user)
+    form = UserProfileForm(instance=user)
             
     context = {
         'form':form,
         'user':user,
     }
-    return render(request, 'tax-payers/setup_profile.html', context)
+    return render(request, 'tax-payers/settings.html', context)

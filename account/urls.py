@@ -9,4 +9,5 @@ urlpatterns = [
     path('logout/', logout_user, name="logout_user"),
     # path('dashboard/', dashboard, name="dashboard"),
     path('setup_profile/', setup_profile, name="setup_profile"),
+    path('settings/', setup_profile, name="settings"),
 ]

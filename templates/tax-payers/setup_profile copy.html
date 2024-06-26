@@ -1,155 +1,103 @@
-{% load static %} 
+{% extends 'base.html' %} {% load static %} {% block content %}
 
-<div class="container mt-5 mb-5">
-  <div class="row justify-content-center mt-5">
-    <div class="col-5">
-      <div class="text-center">
-        <!-- <img
-          src="{% static '/images/nsib-logo-150.jpg' %}"
-          alt="NSIB Logo"
-          class=""
-        /> -->
-        <h3 class="text-center">Welcome {{ user.company_name }}</h3>
-        <p>Enter the required details below to complete your profile setup.</p>
-      </div>
-      <div class="py-4 px-3 rounded my-3 bg-light text-dark">
-        <p>
-          <strong>Company name</strong><br/>
-          {{ user.company_name }}
-        </p>
-        <p>
-          <strong>Telephone</strong><br/>
-          {{ user.phone_number }}
-        </p>
-        <p>
-          <strong>Email</strong><br/>
-          {{ user.email }}
-        </p>
-        <p>
-          <strong>RC Number</strong><br/>
-          {{ user.rc_number }}
-        </p>
-        <hr>
-        
-        <div class="d-flex justify-content-left mt-5">
-          <form method="POST" action="" enctype="multipart/form-data">
-            {% csrf_token %}
-            <strong>Sector</strong>
-            {% if user.sector is None %}
-            {{ form.sector }} 
-            {% else %}
-            {{ user.sector.name }}
-            {% endif %}<br/>
-            <strong>Company logo</strong>
-            {{ form.company_logo }}
-            {% if user.company_logo is None %}
-            {% else %}
-            <img src="{{ user.company_logo }}"  width="200px" />
-            {{ user.company_logo }}
-            {% endif %}<br/>
+{% comment %} {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@4.10.1/dist/full.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <!-- <script src="https://cdn.tailwindcss.com?plugins=typography"></script> -->
+    <script src="https://unpkg.com/htmx.org@1.9.11"></script>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <title>LASIMRA:: Tax Payers</title>
+  </head>
+  <body> {% endcomment %}
 
-            <input type="submit" value="Submit" class="btn btn-warning btn-block btn-large my-4" />
+    <section class="relative w-full flex flex-row items-start justify-start h-screen z-10">
+      
+      {% include 'tax-payers/aside.html' %}
+      <main class="w-full md:w-4/5 md:ml-[20%] ml-20 bg-gray-50 min-h-screen transition-all p-10">
+    {% comment %} <section class="w-full flex flex-row items-start justify-start h-screen">
+      <aside
+        class="min-w-60 max-w-60 flex flex-col h-screen items-start justify-start space-y-10 bg-lightGrayBg"
+      >
+        <div class="w-full">
+          <img
+            class="w-20 mx-auto mt-10"
+            src="{% static 'img/lasimra_logo.png' %}"
+            alt=""
+          />
+        </div>
+        <div>
+          <ul class="sidebar-menu">
+            <li>
+              <a href="">
+                <span>Setup Profile</span>
+              </a>
+            </li>
+
+            <li class="mt-10">
+              <a href="{% url 'logout_user' %}">
+                <img
+                  src="https://img.icons8.com/ios/100/logout-rounded--v1.png"
+                  alt="logout-rounded--v1"
+                />
+                <span>Logout</span></a
+              >
+            </li>
+          </ul>
+        </div>
+      </aside> {% endcomment %}
+      {% comment %} <main class="flex flex-col p-9 w-screen h-screen overflow-y-auto"> {% endcomment %}
+        <!-- Top Bar with title page, buttons and notification tabs -->
+        <section class="w-full flex flex-row justify-between items-center">
+          <article class="flex flex-col">
+            <h2 class="text-xl text-darkBlue">Profile</h2>
+            <p class="text-sm text-gray600">
+              Please, complete your company profile
+            </p>
+          </article>
+          <article
+            class="w-fit space-x-5 flex flex-row items-center justify-between bg-lightGray600 rounded-full bg-slate-100 p-3"
+          >
+            <img
+              width="20"
+              height="20"
+              src="https://img.icons8.com/ios/100/appointment-reminders--v1.png"
+              alt="appointment-reminders--v1"
+            />
+            <p class="text-sm text-gray800">{{ user.email }}</p>
+            <div class="w-6 h-6 rounded-full">
+              <img
+                src="https://img.icons8.com/ios-glyphs/90/user--v1.png"
+                alt="user--v1"
+              />
+            </div>
+          </article>
+        </section>
+        <!-- Form Tab -->
+        <!-- sm:mx-auto sm:w-full sm:max-w-sm -->
+        <div class="w-[712px] p-8 mt-10 bg-white rounded-md">
+          <form class="space-y-2 form-control" action="" method="POST">
+            {% csrf_token %} {{ form.as_p }}
+
+            <div>
+              <button
+                type="submit"
+                class="flex justify-center btn btn-neutral btn-block border-0 mt-4 bg-darkBlue text-white hover:bg-lightBlue"
+              >
+                Save
+              </button>
+            </div>
           </form>
         </div>
-      </div>
-      <div class="d-flex justify-content-center mt-5">
-        <p>
-          {%  if request.user.is_authenticated %}
-            <p>You are logged in as {{ request.user }}. Click here to <a href="{% url 'logout_user' %}">log out</a></p>
-            <p>
-              <a href="{% url 'setup_profile' %}">Setup Profile</a>
-            </p>
-        {% endif %}
-        </p>
-        <!-- <p><a href="" class="text-decoration-none">Reset password</a></p> -->
-      </div>
-    </div>
-  </div>
-</div>
-
-{% endblock content %}
-<div>
-              <label for="company" class="label text-sm text-gray600"
-                >Company Name</label
-              >
-              <div class="mt-1">
-                <input
-                  id="company"
-                  name="company_name"
-                  value="{% if user.company_name %}{{ user.company_name }} {% endif %}"
-                  type="company"
-                  autocomplete="company"
-                  placeholder="MTN Nigeria"
-                  required
-                  class="w-full input input-bordered input-md bg-white block py-1 sm:text-sm sm:leading-2"
-                />
-              </div>
-            </div>
-            <div>
-              <label for="address" class="label text-sm text-gray600"
-                >Company Address</label
-              >
-              <div class="mt-1">
-                <input
-                  id="address"
-                  name="address"
-                  value="{% if user.address %}{{ user.address }} {% endif %}"
-                  type="address"
-                  autocomplete="company"
-                  placeholder="7 Alakija Street"
-                  required
-                  class="w-full input input-bordered input-md bg-white block py-1 sm:text-sm sm:leading-2"
-                />
-              </div>
-            </div>
-            <div>
-              <label for="name" class="label text-sm text-gray600"
-                >RC Number</label
-              >
-              <div class="mt-1">
-                <input
-                  id="rcnumber"
-                  name="rc_number"
-                  value="{% if user.rc_number %}{{ user.rc_number }} {% endif %}"
-                  type="text"
-                  placeholder="RC-567890BN"
-                  autocomplete="name"
-                  required
-                  class="w-full input input-bordered input-md bg-white block py-1 sm:text-sm sm:leading-2"
-                />
-              </div>
-            </div>
-            <div>
-              <label for="phone" class="label text-sm text-gray600"
-                >Telephone</label
-              >
-              <div class="mt-1">
-                <input
-                  id="phone"
-                  name="phone"
-                  type="phone"
-                  value="{% if user.company_name %}{{ user.phone_number }} {% endif %}"
-                  autocomplete="phone"
-                  placeholder="mobile number"
-                  required
-                  class="w-full input input-bordered input-md bg-white block py-1 sm:text-sm sm:leading-2"
-                />
-              </div>
-            </div>
-            <div>
-              <label for="email" class="label text-sm text-gray600"
-                >Email Address</label
-              >
-              <div class="mt-1">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value="{% if user.company_name %}{{ user.email }} {% endif %}"
-                  placeholder="your email address"
-                  autocomplete="email"
-                  disabled
-                  class="w-full input input-bordered input-md bg-white block py-1 sm:text-sm sm:leading-2"
-                />
-              </div>
-            </div>
+      </main>
+    </section>
+  {% endblock %}
+</html>
