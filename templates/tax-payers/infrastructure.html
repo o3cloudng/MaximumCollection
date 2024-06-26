@@ -161,7 +161,7 @@
                         <tr>
                       <th>SN</th>
                       <th>ID</th>
-                      <th>Amount</th>
+                      <th>Units</th>
                       <th>Date Created</th>
                       <th>Status</th>
                       <th class="!text-right">Actions</th>
@@ -204,7 +204,7 @@
                     {% endfor %}
                     {% else %}
                     <tr>
-                      <td colspan="6"> No demand notice
+                      <td colspan="6"> No mast infrastructure
                       </td>
                     </tr>
                     {% endif %}
@@ -253,7 +253,7 @@
                         <tr>
                       <th>SN</th>
                       <th>ID</th>
-                      <th>Amount</th>
+                      <th>Units</th>
                       <th>Date Created</th>
                       <th>Status</th>
                       <th class="!text-right">Actions</th>
@@ -261,79 +261,44 @@
                       </thead>
                       <!-- hover:[&>*:nth-child(odd)]:bg-white -->
                     <tbody class="divide-y divide-gray-100 bg-white ">
-                    {% if demand_notices_paid.exists %}
-                      {% for demand_notice_paid in demand_notices_paid %}
-                      <tr>
-                        <td>
-                          {% if demand_notice_paid.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% endif %}
-                            {{ forloop.counter }}
-                          </a></td>
-                        <td>
-                          {% if demand_notice_paid.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% endif %}
-                            {{ demand_notice_paid.referenceid }}
-                          </a></td>
-                        <td>
-                          {% if demand_notice_paid.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% endif %}
-                            {{ demand_notice_paid.total }}</a></td>
-                        <td>
-                          {% if demand_notice_paid.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% endif %}
-                            
-                            {{ demand_notice_paid.created_at | date:"M, d Y" }}
-                          </a></td>
-                        <td>
-                          {% if demand_notice_paid.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% endif %}
-                          <span class="status-paid">
-                            PAID 
-                          </span>
-                          </a>
-                        </td>
+                    {% if fibre.exists %}
+                     {% for m in fibre %}
+                     <tr>
                       <td>
-                        {% if demand_notice_paid.is_disputed == True %}
-                          <a
-                          class="border-2 text-xm bg-orange-600 text-orange-600 border-orange-500 rounded-md px-2 py-1 hover:border-grey-500 hover:bg-grey-500 hover:text-grey-500 cursor-pointer"
-                          title="View" 
-                          href="{% url 'dispute-demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% else %}
-                          <a
-                          class="border-2 text-xm bg-orange-600 text-orange-600 border-orange-500 rounded-md px-2 py-1 hover:border-grey-500 hover:bg-grey-500 hover:text-grey-500 cursor-pointer"
-                          title="View"
-                          href="{% url 'demand-notice-receipt' demand_notice_paid.referenceid %}">
-                          {% endif %}
-                          View
-                          <span class="flex justify-end items-center text-gray-400">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                            </svg>
-                          </span>
-                        </a>
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
+                          {{ forloop.counter }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
+                          {{ m.referenceid }}
+                        </a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
+                          {{ m.amount }}</a></td>
+                      <td>
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
+                          
+                          {{ m.created_at | date:"M, d Y" }}
+                        </a></td>
+                      <td>
+                        &nbsp;
+                      </td>
+                      <td>
+                        <span class="flex justify-end items-center text-gray-400">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                          </svg>
+                          
+                        </span>
+                      </td>
+                    </a>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                      <td colspan="6"> No fibre Infrastructure
                       </td>
                     </tr>
-                      {% endfor %}
-                    {% else %}
-                      <tr>
-                        <td colspan="6"> No paid demand notice
-                        </td>
-                      </tr>
                     {% endif %}
                     </tbody>
                     <tfoot>
@@ -380,7 +345,7 @@
                         <tr>
                       <th>SN</th>
                       <th>ID</th>
-                      <th>Amount</th>
+                      <th>Units</th>
                       <th>Date Created</th>
                       <th>Status</th>
                       <th class="!text-right">Actions</th>
@@ -388,65 +353,29 @@
                       </thead>
                       <!-- hover:[&>*:nth-child(odd)]:bg-white -->
                     <tbody class="divide-y divide-gray-100 bg-white ">
-                    {% if demand_notices_disputed.exists %}
-                      {% for demand_notice_disputed in demand_notices_disputed %}
-                      <tr>
+                    {% if power_line.exists %}
+                     {% for m in power_line %}
+                     <tr>
                       <td>
-                        {% if demand_notice_disputed.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% endif %}
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
                           {{ forloop.counter }}
                         </a></td>
                       <td>
-                        {% if demand_notice_disputed.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% endif %}
-                          {{ demand_notice_disputed.referenceid }}
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
+                          {{ m.referenceid }}
                         </a></td>
                       <td>
-                        {% if demand_notice_disputed.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% endif %}
-                          {{ demand_notice_disputed.total }}</a></td>
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
+                          {{ m.amount }}</a></td>
                       <td>
-                        {% if demand_notice_disputed.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% endif %}
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
                           
-                          {{ demand_notice_disputed.created_at | date:"M, d Y" }}
+                          {{ m.created_at | date:"M, d Y" }}
                         </a></td>
                       <td>
-                        {% if demand_notice_disputed.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% endif %}
-                        <span class="status-disputed">
-                          DISPUTED
-                        </span>
-                        </a>
+                        &nbsp;
                       </td>
                       <td>
-                        {% if demand_notice_disputed.is_disputed == True %}
-                          <a
-                          class="border-2 text-xm bg-orange-600 text-orange-600 border-orange-500 rounded-md px-2 py-1 hover:border-grey-500 hover:bg-grey-500 hover:text-grey-500 cursor-pointer"
-                        
-                          title="View"                          
-                          href="{% url 'dispute-demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% endif %}
-                        >
-                          View
-                        </a>
                         <span class="flex justify-end items-center text-gray-400">
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
@@ -456,12 +385,12 @@
                       </td>
                     </a>
                     </tr>
-                      {% endfor %}
+                    {% endfor %}
                     {% else %}
-                      <tr>
-                        <td colspan="6"> No disputed demand notice
-                        </td>
-                      </tr>
+                    <tr>
+                      <td colspan="6"> No power line infrastructure
+                      </td>
+                    </tr>
                     {% endif %}
                     </tbody>
                     <tfoot>
@@ -508,7 +437,7 @@
                         <tr>
                       <th>SN</th>
                       <th>ID</th>
-                      <th>Amount</th>
+                      <th>Units</th>
                       <th>Date Created</th>
                       <th>Status</th>
                       <th class="!text-right">Actions</th>
@@ -516,78 +445,29 @@
                       </thead>
                       <!-- hover:[&>*:nth-child(odd)]:bg-white -->
                     <tbody class="divide-y divide-gray-100 bg-white ">
-                    {% if demand_notices_resolved.exists %}
-                      {% for demand_notice_resolved in demand_notices_resolved %}
-                      <tr>
+                    {% if pipeline.exists %}
+                     {% for m in pipeline %}
+                     <tr>
                       <td>
-                        {% if demand_notices_resolved.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% endif %}
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
                           {{ forloop.counter }}
                         </a></td>
                       <td>
-                        {% if demand_notices_resolved.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% endif %}
-                          {{ demand_notice_resolved.referenceid }}
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
+                          {{ m.referenceid }}
                         </a></td>
                       <td>
-                        {% if demand_notices_resolved.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% endif %}
-                          {{ demand_notice_resolved.total }}</a></td>
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
+                          {{ m.amount }}</a></td>
                       <td>
-                        {% if demand_notices_resolved.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% endif %}
+                        <a href="{% url 'dispute-demand-notice' m.referenceid %}">
                           
-                          {{ demand_notice_resolved.created_at | date:"M, d Y" }}
+                          {{ m.created_at | date:"M, d Y" }}
                         </a></td>
                       <td>
-                       {% if demand_notices_resolved.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notices_resolved.referenceid %}">
-                          {% endif %}
-                        {% if demand_notice_resolved.is_paid %}
-                        <span class="status-paid">
-                          PAID {{ demand_notice_resolved.is_paid }}
-                        </span>
-                        {% elif demand_notice_resolved.is_revised %}
-                        <span class="status-revised">
-                          REVISED
-                        </span>
-                        {% elif demand_notice_resolved.is_disputed %}
-                        <span class="status-disputed">
-                          DISPUTED
-                        </span>
-                        {% else %}
-                        <span class="status-others">
-                          UNPAID
-                        </span>
-                        {% endif %}
-                        </a>
+                        &nbsp;
                       </td>
                       <td>
-                        {% if demand_notice_disputed.is_disputed == True %}
-                          <a href="{% url 'dispute-demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% else %}
-                          <a href="{% url 'demand-notice-receipt' demand_notice_disputed.referenceid %}">
-                          {% endif %}
-                          class="border-2 text-xm bg-orange-600 text-orange-600 border-orange-500 rounded-md px-2 py-1 hover:border-grey-500 hover:bg-grey-500 hover:text-grey-500 cursor-pointer"
-                          type="button"
-                          title="View"
-                        >
-                          View
-                        </a>
                         <span class="flex justify-end items-center text-gray-400">
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
@@ -597,12 +477,12 @@
                       </td>
                     </a>
                     </tr>
-                      {% endfor %}
+                    {% endfor %}
                     {% else %}
-                      <tr>
-                        <td colspan="6"> No revised demand notice
-                        </td>
-                      </tr>
+                    <tr>
+                      <td colspan="6"> No pipeline infrastructure
+                      </td>
+                    </tr>
                     {% endif %}
                     </tbody>
                     <tfoot>
